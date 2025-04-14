@@ -14,8 +14,12 @@ pub struct HtmlGenericElement;
 #[derive(Debug, Clone, Copy)]
 pub struct HtmlInputElement;
 
-pub trait HtmlRender: DynClone {
-    fn render(&self) -> String;
+pub trait HtmlRender: DynClone + Debug {
+    fn render(&self) -> String {
+        self.render_with_indent(false)
+    }
+
+    fn render_with_indent(&self, indent: bool) -> String;
 }
 
 dyn_clone::clone_trait_object!(HtmlRender);
@@ -23,16 +27,25 @@ dyn_clone::clone_trait_object!(HtmlRender);
 pub type HtmlElements = Vec<Box<dyn HtmlRender>>;
 
 impl HtmlRender for HtmlElements {
-    fn render(&self) -> String {
+    fn render_with_indent(&self, indent: bool) -> String {
         self.iter()
-            .map(|o| o.render())
+            .map(|o| {
+                o.render_with_indent(indent)
+                    .lines()
+                    .map(|o| {
+                        if indent {
+                            format!("  {}", o)
+                        } else {
+                            o.to_string()
+                        }
+                    })
+                    .collect::<Vec<_>>()
+                    .join("\n")
+            })
             .collect::<Vec<_>>()
             .join("\n")
     }
 }
-
-#[derive(Debug, Clone, Copy)]
-pub struct HtmlNoChildrens;
 
 #[derive(Debug, Clone, Copy)]
 pub enum HtmlTagWrap {
@@ -42,23 +55,23 @@ pub enum HtmlTagWrap {
 }
 
 #[derive(Clone)]
-pub struct HTMLElement<T, G, C> {
+pub struct HTMLElement<T, G> {
     pub tag_name: T,
     pub attrs: HashMap<String, String>,
     pub empty_attrs: HashSet<String>,
     pub wrap_options: HtmlTagWrap,
-    pub childrens: C,
+    pub children: Option<HtmlElements>,
     group: PhantomData<G>,
 }
 
-impl<T: Debug, G, C: Debug> Debug for HTMLElement<T, G, C> {
+impl<T: Debug, G> Debug for HTMLElement<T, G> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("HTMLElement")
             .field("tag_name", &self.tag_name)
             .field("attrs", &self.attrs)
             .field("empty_attrs", &self.empty_attrs)
             .field("wrap_options", &self.wrap_options)
-            .field("childrens", &self.childrens)
+            .field("children", &self.children)
             .field("group", &self.group)
             .finish()
     }
@@ -96,20 +109,45 @@ macro_rules! set_empty_attr {
     };
 }
 
-impl<T, G> HTMLElement<T, G, HtmlNoChildrens> {
+impl<T, G> HTMLElement<T, G> {
     pub fn new(tag_name: T, wrap_options: HtmlTagWrap) -> Self {
         HTMLElement {
             tag_name,
             attrs: HashMap::new(),
             empty_attrs: HashSet::new(),
             wrap_options,
-            childrens: HtmlNoChildrens,
+            children: None,
             group: PhantomData,
         }
     }
-}
 
-impl<T, G, C> HTMLElement<T, G, C> {
+    pub fn add_child<Q: AsRef<str> + Debug + Clone + 'static, W: Clone + 'static>(
+        mut self,
+        child: HTMLElement<Q, W>,
+    ) -> Self {
+        match self.children.as_mut() {
+            Some(children) => {
+                children.push(child.boxed());
+            }
+            None => {
+                self.children = Some(vec![child.boxed()]);
+            }
+        }
+        self
+    }
+
+    pub fn add_children(mut self, mut children: HtmlElements) -> Self {
+        match self.children.as_mut() {
+            Some(current_children) => {
+                current_children.append(&mut children);
+            }
+            None => {
+                self.children = Some(children);
+            }
+        }
+        self
+    }
+
     pub fn set_attr(mut self, attr: impl ToString, value: impl ToString) -> Self {
         self.attrs.insert(attr.to_string(), value.to_string());
         self
@@ -125,58 +163,66 @@ impl<T, G, C> HTMLElement<T, G, C> {
     }
 
     pub fn render_attrs(&self) -> String {
-        self.attrs
+        if !self.have_attrs() {
+            return String::new();
+        }
+        let attrs = self
+            .attrs
             .iter()
-            .map(|(k, v)| format!(" {}={:?}", k, v))
+            .map(|(k, v)| format!("{}={:?}", k, v))
             .chain(self.empty_attrs.iter().cloned())
             .collect::<Vec<_>>()
-            .join(" ")
+            .join(" ");
+        format!(" {}", attrs)
+    }
+
+    pub fn render_children(&self) -> String {
+        match &self.children {
+            Some(children) => children.render(),
+            None => String::new(),
+        }
     }
 
     set_attr!(id, class, title, style);
     set_empty_attr!(hidden, autofocus);
 }
 
-impl<T, C> HTMLElement<T, HtmlInputElement, C> {
-    set_attr!(r#type);
+impl<T> HTMLElement<T, HtmlInputElement> {
+    set_attr!(r#type, name);
 }
 
-impl<T: AsRef<str> + Clone + 'static, G: Clone + 'static, C: Clone + 'static> HTMLElement<T, G, C> {
+impl<T: AsRef<str> + Debug + Clone + 'static, G: Clone + 'static> HTMLElement<T, G> {
     pub fn boxed(self) -> Box<dyn HtmlRender> {
         Box::new(self)
     }
 }
 
-impl<T: AsRef<str> + Clone, G: Clone, C: Clone> HtmlRender for HTMLElement<T, G, C> {
-    fn render(&self) -> String {
+impl<T: AsRef<str> + Debug + Clone, G: Clone> HtmlRender for HTMLElement<T, G> {
+    fn render_with_indent(&self, _indent: bool) -> String {
         let tag = self.tag_name.as_ref();
-        match self.wrap_options {
-            HtmlTagWrap::Wrap => {
-                if self.have_attrs() {
-                    format!("<{} {}></{}>", tag, self.render_attrs(), tag)
-                } else {
-                    format!("<{}></{}>", tag, tag)
-                }
-            }
-            HtmlTagWrap::NoWrap => {
-                if self.have_attrs() {
-                    format!("<{} {} />", tag, self.render_attrs())
-                } else {
-                    format!("<{} />", tag)
-                }
-            }
+        let (tag_start, tag_end) = match self.wrap_options {
+            HtmlTagWrap::Wrap => (
+                format!("<{}{}>", tag, self.render_attrs()),
+                format!("</{}>", tag),
+            ),
+            HtmlTagWrap::NoWrap => (format!("<{}{} />", tag, self.render_attrs()), String::new()),
             HtmlTagWrap::NoWrapNoClose => {
-                if self.have_attrs() {
-                    format!("<{} {}>", tag, self.render_attrs())
-                } else {
-                    format!("<{}>", tag)
-                }
+                (format!("<{}{}>", tag, self.render_attrs()), String::new())
             }
+        };
+        match &self.children {
+            Some(children) => format!(
+                "{}\n{}\n{}",
+                tag_start,
+                children.render_with_indent(true),
+                tag_end
+            ),
+            None => format!("{}{}", tag_start, tag_end),
         }
     }
 }
 
-pub fn doctype_html() -> HTMLElement<&'static str, HtmlEmptyElement, HtmlNoChildrens> {
+pub fn doctype_html() -> HTMLElement<&'static str, HtmlEmptyElement> {
     HTMLElement::new("!doctype", HtmlTagWrap::NoWrapNoClose).set_empty_attr("html")
 }
 
@@ -184,7 +230,7 @@ macro_rules! create_web_element {
     ($name:ident) => {
         paste! {
             #[doc = "Creates a `" $name "` html element."]
-            pub fn $name() -> HTMLElement<&'static str, HtmlGenericElement, HtmlNoChildrens> {
+            pub fn $name() -> HTMLElement<&'static str, HtmlGenericElement> {
                 HTMLElement::new(stringify!($name), HtmlTagWrap::Wrap)
             }
         }
@@ -205,8 +251,8 @@ create_web_element!(
     canvas, svg, math, script, noscript, template, slot
 );
 
-pub fn input() -> HTMLElement<&'static str, HtmlInputElement, HtmlNoChildrens> {
-    HTMLElement::new("input", HtmlTagWrap::Wrap)
+pub fn input() -> HTMLElement<&'static str, HtmlInputElement> {
+    HTMLElement::new("input", HtmlTagWrap::NoWrap)
 }
 
 // voids = set('area base br col command embed hr img input keygen link meta param source track wbr !doctype'.split())
@@ -234,21 +280,22 @@ pub fn input() -> HTMLElement<&'static str, HtmlInputElement, HtmlNoChildrens> {
 
 #[cfg(test)]
 mod test {
-    use crate::elements::{HtmlRender, doctype_html, html};
+    use crate::elements::{HtmlRender, body, div, doctype_html, form, head, html, input};
 
     #[test]
     fn render_simple() {
-        let res = vec![doctype_html().boxed(), html().boxed()].render();
+        let res = vec![
+            doctype_html().boxed(),
+            html()
+                .add_child(head())
+                .add_child(
+                    body()
+                        .add_children(vec![div().id("x").boxed(), div().id("y").boxed()])
+                        .add_child(form().add_child(input().r#type("text").name("user"))),
+                )
+                .boxed(),
+        ]
+        .render();
         println!("{}", res);
-
-        // let el = div().id("some-id").class("bg-red-500").hidden();
-        // println!("{:#?}", el);
-        // let res = el.render();
-        // println!("{}", res);
-        //
-        // let el = input().id("name").r#type("wii");
-        // println!("{:#?}", el);
-        // let res = el.render();
-        // println!("{}", res);
     }
 }
