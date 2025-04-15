@@ -30,7 +30,8 @@ pub trait HtmlRender: DynClone + Debug {
 
 dyn_clone::clone_trait_object!(HtmlRender);
 
-pub type HtmlElements = Vec<Box<dyn HtmlRender>>;
+pub type HtmlSingleElement = Box<dyn HtmlRender>;
+pub type HtmlElements = Vec<HtmlSingleElement>;
 
 impl HtmlRender for HtmlElements {
     fn render_with_indent(&self, indent: usize) -> String {
@@ -189,7 +190,7 @@ impl<T, G> HtmlElement<T, G> {
 }
 
 impl<T: AsRef<str> + Debug + Clone + 'static, G: Clone + 'static> HtmlElement<T, G> {
-    pub fn boxed(self) -> Box<dyn HtmlRender> {
+    pub fn boxed(self) -> HtmlSingleElement {
         Box::new(self)
     }
 }
@@ -287,6 +288,7 @@ impl<T> HtmlElement<T, HtmlStyleElement> {
 
 impl<T> HtmlElement<T, HtmlInputElement> {
     set_attr!(r#type, name, placeholder);
+    set_empty_attr!(required);
 }
 
 // voids = set('area base br col command embed hr img input keygen link meta param source track wbr !doctype'.split())
