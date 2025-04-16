@@ -1,4 +1,4 @@
-use fhtmx::{elements::*, html_page::HtmlPage};
+use fhtmx::prelude::*;
 
 fn main() {
     let squares = (0..10)

@@ -1,4 +1,4 @@
-use fhtmx::{elements::*, html_page::HtmlPage};
+use fhtmx::prelude::*;
 
 fn labelled_fieldset(label: &str) -> HtmlElement<&str, HtmlGenericElement> {
     fieldset()
@@ -53,7 +53,7 @@ fn main() {
                 ),
         );
     let page = HtmlPage::new()
-        .custom_html_node(html().set_attr("data-theme", "dark").set_attr("lang", "en"))
+        .custom_html_node(html().set_attr("data-theme", "dark").lang("en"))
         .title("daisyui form")
         .add_header_child(
             link()

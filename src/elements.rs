@@ -75,38 +75,6 @@ impl<T: Debug, G> Debug for HtmlElement<T, G> {
     }
 }
 
-macro_rules! set_attr {
-    ($attr:ident) => {
-        paste! {
-            #[doc = "Sets the `" $attr "` attribute."]
-            pub fn $attr(self, value: impl ToString) -> Self {
-                self.set_attr(stringify!([< $attr:lower >]), value)
-            }
-        }
-    };
-
-    ($attr:ident, $($rest:ident),+) => {
-        set_attr!($attr);
-        set_attr!($($rest),+);
-    };
-}
-
-macro_rules! set_empty_attr {
-    ($attr:ident) => {
-        paste! {
-            #[doc = "Sets the `" $attr "` empty attribute."]
-            pub fn $attr(self) -> Self {
-                self.set_empty_attr(stringify!([< $attr:lower >]))
-            }
-        }
-    };
-
-    ($attr:ident, $($rest:ident),+) => {
-        set_empty_attr!($attr);
-        set_empty_attr!($($rest),+);
-    };
-}
-
 impl<T, G> HtmlElement<T, G> {
     pub fn new(tag_name: T, wrap_options: HtmlTagWrap) -> Self {
         HtmlElement {
@@ -184,9 +152,6 @@ impl<T, G> HtmlElement<T, G> {
             None => String::new(),
         }
     }
-
-    set_attr!(id, class, title, style);
-    set_empty_attr!(hidden, autofocus);
 }
 
 impl<T: AsRef<str> + Debug + Clone + 'static, G: Clone + 'static> HtmlElement<T, G> {
@@ -272,6 +237,58 @@ pub fn doctype_html() -> HtmlElement<&'static str, HtmlEmptyElement> {
     HtmlElement::new("!doctype", HtmlTagWrap::Void).set_empty_attr("html")
 }
 
+macro_rules! set_attr {
+    ($attr:ident) => {
+        paste! {
+            #[doc = "Sets the `" $attr "` attribute."]
+            pub fn $attr(self, value: impl ToString) -> Self {
+                self.set_attr(stringify!([< $attr:lower >]), value)
+            }
+        }
+    };
+
+    ($attr:ident, $($rest:ident),+) => {
+        set_attr!($attr);
+        set_attr!($($rest),+);
+    };
+}
+
+macro_rules! set_empty_attr {
+    ($attr:ident) => {
+        paste! {
+            #[doc = "Sets the `" $attr "` empty attribute."]
+            pub fn $attr(self) -> Self {
+                self.set_empty_attr(stringify!([< $attr:lower >]))
+            }
+        }
+    };
+
+    ($attr:ident, $($rest:ident),+) => {
+        set_empty_attr!($attr);
+        set_empty_attr!($($rest),+);
+    };
+}
+
+impl<T, G> HtmlElement<T, G> {
+    set_attr!(
+        accesskey,
+        class,
+        contenteditable,
+        dir,
+        draggable,
+        enterkeyhint,
+        id,
+        inputmode,
+        lang,
+        spellcheck,
+        style,
+        tabindex,
+        title,
+        translate
+    );
+    set_empty_attr!(hidden, inert, popover);
+}
+
 impl<T> HtmlElement<T, HtmlLinkElement> {
     set_attr!(href, rel, r#type);
 }
@@ -288,31 +305,8 @@ impl<T> HtmlElement<T, HtmlStyleElement> {
 
 impl<T> HtmlElement<T, HtmlInputElement> {
     set_attr!(r#type, name, placeholder);
-    set_empty_attr!(required);
+    set_empty_attr!(autofocus, required);
 }
-
-// voids = set('area base br col command embed hr img input keygen link meta param source track wbr !doctype'.split())
-// _g = globals()
-
-// _block_tags = {'div', 'p', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tfoot',
-//                'html', 'head', 'body', 'meta', 'title', '!doctype', 'input', 'script', 'link', 'style',
-//                'tr', 'th', 'td', 'section', 'article', 'nav', 'aside', 'header',
-//                'footer', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote'}
-// _inline_tags = {'a', 'span', 'b', 'i', 'u', 'em', 'strong', 'img', 'br', 'small',
-//                 'big', 'sub', 'sup', 'label', 'input', 'select', 'option'}
-
-// html_attrs = 'id cls title style accesskey contenteditable dir draggable enterkeyhint hidden inert inputmode lang popover spellcheck tabindex translate'.split()
-// hx_attrs = 'get post put delete patch trigger target swap swap_oob include select select_oob indicator push_url confirm disable replace_url vals disabled_elt ext headers history history_elt indicator inherit params preserve prompt replace_url request sync validate'
-// hx_attrs = [f'hx_{o}' for o in hx_attrs.split()]
-// hx_attrs_annotations = {
-//     "hx_swap": Literal["innerHTML", "outerHTML", "afterbegin", "beforebegin", "beforeend", "afterend", "delete", "none"] | str,
-//     "hx_swap_oob": Literal["true", "innerHTML", "outerHTML", "afterbegin", "beforebegin", "beforeend", "afterend", "delete", "none"] | str,
-//     "hx_push_url": Literal["true", "false"] | str,
-//     "hx_replace_url": Literal["true", "false"] | str,
-//     "hx_disabled_elt": Literal["this", "next", "previous"] | str,
-//     "hx_history": Literal["false"] | str,
-//     "hx_params": Literal["*", "none"] | str,
-//     "hx_validate": Literal["true", "false"],
 
 #[cfg(test)]
 mod test {
