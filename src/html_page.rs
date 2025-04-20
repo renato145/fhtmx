@@ -77,7 +77,7 @@ impl HtmlPage {
         let html_node = self.custom_html_node.unwrap_or_else(html);
         let mut header = head();
         if let Some(page_title) = self.title {
-            header = header.add_child(title().inner(page_title));
+            header = header.add_child(title().inner(&page_title));
         }
         if self.meta_charset {
             header = header.add_child(meta().set_attr("charset", "UTF-8"));

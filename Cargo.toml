@@ -5,4 +5,5 @@ edition = "2024"
 
 [dependencies]
 dyn-clone = "1.0"
+htmlescape = "0.3"
 paste = "1.0"

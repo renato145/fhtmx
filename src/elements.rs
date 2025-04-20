@@ -88,8 +88,14 @@ impl<T, G> HtmlElement<T, G> {
         }
     }
 
-    /// Sets the inner text of the html element
-    pub fn inner(mut self, inner_text: impl ToString) -> Self {
+    /// Sets the inner text (html encoded) of the element
+    pub fn inner(mut self, inner_text: &str) -> Self {
+        self.inner_text = Some(htmlescape::encode_minimal(inner_text));
+        self
+    }
+
+    /// Sets the inner text (not html encoded) of the element
+    pub fn inner_unsafe(mut self, inner_text: impl ToString) -> Self {
         self.inner_text = Some(inner_text.to_string());
         self
     }
@@ -304,7 +310,7 @@ impl<T> HtmlElement<T, HtmlStyleElement> {
 }
 
 impl<T> HtmlElement<T, HtmlInputElement> {
-    set_attr!(r#type, name, placeholder);
+    set_attr!(name, placeholder, r#type, value);
     set_empty_attr!(autofocus, required);
 }
 
