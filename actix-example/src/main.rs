@@ -11,6 +11,38 @@ use tracing_actix_web::TracingLogger;
 use tracing_subscriber::{fmt::format::FmtSpan, layer::SubscriberExt, util::SubscriberInitExt};
 use uuid::Uuid;
 
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    tracing_subscriber::registry()
+        .with(
+            tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| "info".into()),
+        )
+        .with(
+            tracing_subscriber::fmt::layer()
+                .compact()
+                .with_span_events(FmtSpan::NEW | FmtSpan::CLOSE),
+        )
+        .init();
+
+    let state = web::Data::new(State::default());
+
+    HttpServer::new(move || {
+        App::new()
+            .wrap(TracingLogger::default())
+            .route("/", web::get().to(index))
+            .route("/todo", web::post().to(add_todo))
+            .route("/todo/{id}", web::delete().to(rm_todo))
+            .route("/todo/{id}/form", web::get().to(todo_form))
+            .route("/todo/{id}", web::get().to(get_todo))
+            .route("/todo/{id}", web::put().to(update_todo))
+            .app_data(state.clone())
+    })
+    .bind(("127.0.0.1", 8000))?
+    .run()
+    .await?;
+    Ok(())
+}
+
 #[derive(Default)]
 struct State {
     todo_list: Mutex<Vec<TodoListItem>>,
@@ -19,6 +51,15 @@ struct State {
 impl State {
     fn read_todo_list(&self) -> Vec<TodoListItem> {
         self.todo_list.lock().unwrap().clone()
+    }
+
+    fn get_item(&self, id: Uuid) -> Option<TodoListItem> {
+        self.todo_list
+            .lock()
+            .unwrap()
+            .iter()
+            .find(|o| o.id == id)
+            .cloned()
     }
 }
 
@@ -41,44 +82,59 @@ impl TodoListItem {
             .inner(&self.value)
             .add_child(
                 button()
+                    .inner("modify")
+                    .hx_get(format!("/todo/{}/form", self.id))
+                    .hx_target(HXTarget::Closest("li"))
+                    .hx_swap(HXSwap::OuterHTML)
+                    .class("ml-2 link link-info text-xs"),
+            )
+            .add_child(
+                button()
+                    .inner("remove")
                     .hx_delete(format!("/todo/{}", self.id))
                     .hx_target(HXTarget::Closest("li"))
                     .hx_swap(HXSwap::Delete)
                     .hx_confirm("Are you sure?")
-                    .class("ml-2 link link-error text-xs")
-                    .inner("remove"),
+                    .class("ml-1 link link-error text-xs"),
             )
             .boxed()
     }
-}
 
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    tracing_subscriber::registry()
-        .with(
-            tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| "info".into()),
-        )
-        .with(
-            tracing_subscriber::fmt::layer()
-                .compact()
-                .with_span_events(FmtSpan::NEW | FmtSpan::CLOSE),
-        )
-        .init();
-
-    let state = web::Data::new(State::default());
-
-    HttpServer::new(move || {
-        App::new()
-            .wrap(TracingLogger::default())
-            .route("/", web::get().to(index))
-            .route("/todo", web::post().to(add_todo))
-            .route("/todo/{id}", web::delete().to(rm_todo))
-            .app_data(state.clone())
-    })
-    .bind(("127.0.0.1", 8000))?
-    .run()
-    .await?;
-    Ok(())
+    fn html_form(&self) -> HtmlSingleElement {
+        li().class("my-2")
+            .id(self.id)
+            .add_child(
+                form()
+                    .class("contents")
+                    .add_child(
+                        input()
+                            .class("input")
+                            .r#type("text")
+                            .name("content")
+                            .value(&self.value)
+                            .set_attr("onfocus", "this.select()")
+                            .autofocus()
+                            .required(),
+                    )
+                    .add_child(
+                        button()
+                            .inner("ok")
+                            .hx_put(format!("/todo/{}", self.id))
+                            .hx_target(HXTarget::Closest("li"))
+                            .hx_swap(HXSwap::OuterHTML)
+                            .class("ml-2 btn btn-primary"),
+                    )
+                    .add_child(
+                        button()
+                            .inner("cancel")
+                            .hx_get(format!("/todo/{}", self.id))
+                            .hx_target(HXTarget::Closest("li"))
+                            .hx_swap(HXSwap::OuterHTML)
+                            .class("ml-1 btn btn-error"),
+                    ),
+            )
+            .boxed()
+    }
 }
 
 fn page_layout<C: HtmlRender + 'static>(title: &str, content: C) -> HttpResponse {
@@ -118,7 +174,7 @@ fn todo_list_description(n: usize) -> HtmlElement<&'static str, HtmlGenericEleme
         1 => "1 item".to_string(),
         n => format!("{} items:", n),
     };
-    p().id("todo-list-description").inner(inner)
+    p().id("todo-list-description").inner(&inner)
 }
 
 #[tracing::instrument(skip_all)]
@@ -164,12 +220,15 @@ async fn index(state: web::Data<State>) -> HttpResponse {
 }
 
 #[derive(Debug, Deserialize)]
-struct AddTodo {
+struct TodoContent {
     content: String,
 }
 
 #[tracing::instrument(skip(state))]
-async fn add_todo(web::Form(params): web::Form<AddTodo>, state: web::Data<State>) -> HttpResponse {
+async fn add_todo(
+    web::Form(params): web::Form<TodoContent>,
+    state: web::Data<State>,
+) -> HttpResponse {
     let new_item = TodoListItem::new(params.content);
     let mut todo_list = state.todo_list.lock().unwrap();
     todo_list.push(new_item.clone());
@@ -200,6 +259,57 @@ async fn rm_todo(
     let html_body = todo_list_description(todo_list.len())
         .hx_swap_oob("true")
         .render();
+    Ok(HttpResponse::Ok()
+        .content_type(ContentType::html())
+        .body(html_body))
+}
+
+#[tracing::instrument(skip(state))]
+async fn todo_form(
+    id: web::Path<String>,
+    state: web::Data<State>,
+) -> Result<HttpResponse, actix_web::Error> {
+    let id = Uuid::from_str(&id).map_err(ErrorInternalServerError)?;
+    let html_body = state
+        .get_item(id)
+        .ok_or_else(|| ErrorBadRequest("id not found."))?
+        .html_form()
+        .render();
+    Ok(HttpResponse::Ok()
+        .content_type(ContentType::html())
+        .body(html_body))
+}
+
+#[tracing::instrument(skip(state))]
+async fn get_todo(
+    id: web::Path<String>,
+    state: web::Data<State>,
+) -> Result<HttpResponse, actix_web::Error> {
+    let id = Uuid::from_str(&id).map_err(ErrorInternalServerError)?;
+    let html_body = state
+        .get_item(id)
+        .ok_or_else(|| ErrorBadRequest("id not found."))?
+        .html()
+        .render();
+    Ok(HttpResponse::Ok()
+        .content_type(ContentType::html())
+        .body(html_body))
+}
+
+#[tracing::instrument(skip(state))]
+async fn update_todo(
+    id: web::Path<String>,
+    web::Form(params): web::Form<TodoContent>,
+    state: web::Data<State>,
+) -> Result<HttpResponse, actix_web::Error> {
+    let id = Uuid::from_str(&id).map_err(ErrorInternalServerError)?;
+    let mut todo_list = state.todo_list.lock().unwrap();
+    let item = todo_list
+        .iter_mut()
+        .find(|o| o.id == id)
+        .ok_or_else(|| ErrorBadRequest("id not found."))?;
+    item.value = params.content;
+    let html_body = item.html().render();
     Ok(HttpResponse::Ok()
         .content_type(ContentType::html())
         .body(html_body))
