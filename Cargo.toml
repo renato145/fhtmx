@@ -2,6 +2,7 @@
 name = "fhtmx"
 version = "0.1.0"
 edition = "2024"
+include = ["/src/**/*", "/LICENSE", "/README.md", "/CHANGELOG.md"]
 
 [dependencies]
 dyn-clone = "1.0"
