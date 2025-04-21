@@ -90,18 +90,6 @@ impl std::fmt::Display for HXTarget<'_> {
     }
 }
 
-/// The hx-trigger attribute allows you to specify what triggers an AJAX request. A trigger value
-/// can be one of the following:
-///
-/// - An event name (e.g. “click” or “my-custom-event”) followed by an event filter and a set of
-///   event modifiers
-/// - A polling definition of the form every <timing declaration>
-/// - A comma-separated list of such events
-#[derive(Debug, Clone)]
-pub enum HXTrigger {
-    // TODO:implement
-}
-
 macro_rules! set_htmx_attr {
     ($attr:ident = $name:expr) => {
         paste! {
@@ -156,11 +144,17 @@ impl<T, G> HtmlElement<T, G> {
 
 #[cfg(test)]
 mod test {
-    use crate::prelude::{HtmlRender, p};
+    use crate::{
+        htmx::HXSwap,
+        prelude::{HtmlRender, p},
+    };
 
     #[test]
     fn hx_attr_works() {
-        let res = p().hx_get("/some_route").render();
+        let res = p()
+            .hx_get("/some_route")
+            .hx_swap(HXSwap::OuterHTML)
+            .render();
         println!("{}", res);
     }
 }

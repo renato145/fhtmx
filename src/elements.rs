@@ -19,8 +19,6 @@ pub struct HtmlScriptElement;
 pub struct HtmlStyleElement;
 #[derive(Debug, Clone, Copy)]
 pub struct HtmlInputElement;
-#[derive(Debug, Clone, Copy)]
-pub struct HtmlSvgElement;
 
 pub trait HtmlRender: DynClone + Debug {
     fn render(&self) -> String {
@@ -245,14 +243,6 @@ pub fn doctype_html() -> HtmlElement<&'static str, HtmlEmptyElement> {
     HtmlElement::new("!doctype", HtmlTagWrap::Void).set_empty_attr("html")
 }
 
-pub fn svg() -> HtmlElement<&'static str, HtmlSvgElement> {
-    HtmlElement::new("svg", HtmlTagWrap::Wrap).set_attr("xmlns", "http://www.w3.org/2000/svg")
-}
-
-pub fn svg_path() -> HtmlElement<&'static str, HtmlSvgElement> {
-    HtmlElement::new("path", HtmlTagWrap::NoWrap)
-}
-
 macro_rules! set_attr {
     ($attr:ident) => {
         paste! {
@@ -269,6 +259,8 @@ macro_rules! set_attr {
     };
 }
 
+pub(crate) use set_attr;
+
 macro_rules! set_empty_attr {
     ($attr:ident) => {
         paste! {
@@ -284,6 +276,8 @@ macro_rules! set_empty_attr {
         set_empty_attr!($($rest),+);
     };
 }
+
+pub(crate) use set_empty_attr;
 
 impl<T, G> HtmlElement<T, G> {
     set_attr!(
