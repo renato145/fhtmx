@@ -1,6 +1,9 @@
 [package]
 name = "fhtmx"
 version = "0.1.0"
+authors = ["Renato Hermoza <rhermoza145@gmail.com>"]
+description = "Create html with rust."
+license = "MIT OR Apache-2.0"
 edition = "2024"
 include = ["/src/**/*", "/LICENSE", "/README.md", "/CHANGELOG.md"]
 
