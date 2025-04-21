@@ -19,6 +19,8 @@ pub struct HtmlScriptElement;
 pub struct HtmlStyleElement;
 #[derive(Debug, Clone, Copy)]
 pub struct HtmlInputElement;
+#[derive(Debug, Clone, Copy)]
+pub struct HtmlSvgElement;
 
 pub trait HtmlRender: DynClone + Debug {
     fn render(&self) -> String {
@@ -226,7 +228,7 @@ create_web_element!(
     colgroup, dd, details, div, dl, dt, em, fieldset, figcaption, figure, footer, form, h1, h2, h3,
     h4, h5, h6, head, header, html, i, iframe, label, legend, li, mark, math, nav, noscript,
     object, ol, option, p, pre, s, script:HtmlScriptElement, section, select, slot, small, span,
-    strike, strong, style:HtmlStyleElement, sub, summary, sup, svg, table, tbody, td, template,
+    strike, strong, style:HtmlStyleElement, sub, summary, sup, table, tbody, td, template,
     textarea, tfoot, th, thead, title, tr, u, ul, video
 );
 
@@ -241,6 +243,14 @@ pub fn main_tag() -> HtmlElement<&'static str, HtmlGenericElement> {
 
 pub fn doctype_html() -> HtmlElement<&'static str, HtmlEmptyElement> {
     HtmlElement::new("!doctype", HtmlTagWrap::Void).set_empty_attr("html")
+}
+
+pub fn svg() -> HtmlElement<&'static str, HtmlSvgElement> {
+    HtmlElement::new("svg", HtmlTagWrap::Wrap).set_attr("xmlns", "http://www.w3.org/2000/svg")
+}
+
+pub fn svg_path() -> HtmlElement<&'static str, HtmlSvgElement> {
+    HtmlElement::new("path", HtmlTagWrap::NoWrap)
 }
 
 macro_rules! set_attr {
