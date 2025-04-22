@@ -2,10 +2,14 @@
 name = "fhtmx"
 version = "0.1.0"
 authors = ["Renato Hermoza <rhermoza145@gmail.com>"]
+categories = ["html", "htmx"]
 description = "Create html with rust."
+documentation = "https://docs.rs/fhtmx"
+keywords = ["html", "htmx"]
 license = "MIT OR Apache-2.0"
 edition = "2024"
 include = ["/src/**/*", "/LICENSE", "/README.md", "/CHANGELOG.md"]
+repository = "https://github.com/renato145/fhtmx"
 
 [dependencies]
 dyn-clone = "1.0"
