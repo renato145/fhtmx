@@ -2,7 +2,6 @@
 name = "fhtmx"
 version = "0.2.0"
 authors = ["Renato Hermoza <rhermoza145@gmail.com>"]
-categories = ["html", "htmx"]
 description = "Create html with rust."
 documentation = "https://docs.rs/fhtmx"
 keywords = ["html", "htmx"]
