@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.0](https://github.com/renato145/fhtmx/compare/v0.1.0...v0.2.0) (2025-04-22)
+
+
+### Features
+
+* add license ([b89f9a1](https://github.com/renato145/fhtmx/commit/b89f9a111e9b0f100645aa60f81a4f5173d64e5f))
+* add svg elements ([4d48163](https://github.com/renato145/fhtmx/commit/4d48163b233673942ec8e36a33419d1a22f6cfda))
+
 ## 0.1.0 (2025-04-21)
 
 
