@@ -12,6 +12,8 @@ pub struct HtmlEmptyElement;
 #[derive(Debug, Clone, Copy)]
 pub struct HtmlGenericElement;
 #[derive(Debug, Clone, Copy)]
+pub struct HtmlAnchorElement;
+#[derive(Debug, Clone, Copy)]
 pub struct HtmlLinkElement;
 #[derive(Debug, Clone, Copy)]
 pub struct HtmlScriptElement;
@@ -222,12 +224,12 @@ macro_rules! create_web_element {
 }
 
 create_web_element!(
-    HtmlTagWrap::Wrap => a, article, aside, audio, b, body, button, canvas, caption, code,
-    colgroup, dd, details, div, dl, dt, em, fieldset, figcaption, figure, footer, form, h1, h2, h3,
-    h4, h5, h6, head, header, html, i, iframe, label, legend, li, mark, math, nav, noscript,
-    object, ol, option, p, pre, s, script:HtmlScriptElement, section, select, slot, small, span,
-    strike, strong, style:HtmlStyleElement, sub, summary, sup, table, tbody, td, template,
-    textarea, tfoot, th, thead, title, tr, u, ul, video
+    HtmlTagWrap::Wrap => a:HtmlAnchorElement, article, aside, audio, b, body, button, canvas,
+    caption, code, colgroup, dd, details, div, dl, dt, em, fieldset, figcaption, figure, footer,
+    form, h1, h2, h3, h4, h5, h6, head, header, html, i, iframe, label, legend, li, mark, math,
+    nav, noscript, object, ol, option, p, pre, s, script:HtmlScriptElement, section, select, slot,
+    small, span, strike, strong, style:HtmlStyleElement, sub, summary, sup, table, tbody, td,
+    template, textarea, tfoot, th, thead, title, tr, u, ul, video
 );
 
 create_web_element!(
@@ -297,6 +299,10 @@ impl<T, G> HtmlElement<T, G> {
         translate
     );
     set_empty_attr!(hidden, inert, popover);
+}
+
+impl<T> HtmlElement<T, HtmlAnchorElement> {
+    set_attr!(href, rel, target, r#type);
 }
 
 impl<T> HtmlElement<T, HtmlLinkElement> {
