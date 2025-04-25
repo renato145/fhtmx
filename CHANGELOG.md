@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/renato145/fhtmx/compare/v0.2.0...v0.3.0) (2025-04-25)
+
+
+### Features
+
+* add HtmlAnchorElement ([876841b](https://github.com/renato145/fhtmx/commit/876841becbc6d5adcf909c34ed9220aaf0e5556c))
+
 ## [0.2.0](https://github.com/renato145/fhtmx/compare/v0.1.0...v0.2.0) (2025-04-22)
 
 
