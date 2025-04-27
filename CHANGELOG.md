@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0](https://github.com/renato145/fhtmx/compare/v0.3.0...v0.4.0) (2025-04-27)
+
+
+### Features
+
+* add HtmlImgElement ([732ab53](https://github.com/renato145/fhtmx/commit/732ab53d64628385cead61b663eb3b8e6daf849e))
+* add optional attr setters ([e26cf53](https://github.com/renato145/fhtmx/commit/e26cf5345fa6f0867cf71d7028966a1782b20d73))
+
 ## [0.3.0](https://github.com/renato145/fhtmx/compare/v0.2.0...v0.3.0) (2025-04-25)
 
 
