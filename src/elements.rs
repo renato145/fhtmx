@@ -116,6 +116,23 @@ impl<T, G> HtmlElement<T, G> {
         self
     }
 
+    /// Adds child if it contains a value
+    pub fn add_opt_child<C: HtmlRender + 'static>(self, child: Option<C>) -> Self {
+        if let Some(child) = child {
+            return self.add_child(child);
+        }
+        self
+    }
+
+    /// Adds child if the closure returns a value
+    pub fn maybe_add_child<F, C>(self, child: F) -> Self
+    where
+        F: FnOnce() -> Option<C>,
+        C: HtmlRender + 'static,
+    {
+        self.add_opt_child(child())
+    }
+
     pub fn add_children(mut self, mut children: HtmlElements) -> Self {
         match self.children.as_mut() {
             Some(current_children) => {
@@ -128,28 +145,31 @@ impl<T, G> HtmlElement<T, G> {
         self
     }
 
+    /// Adds children if it contains a value
+    pub fn add_opt_children(self, children: Option<HtmlElements>) -> Self {
+        if let Some(children) = children {
+            return self.add_children(children);
+        }
+        self
+    }
+
+    /// Adds children if the closure returns a value
+    pub fn maybe_add_children<F>(self, children: F) -> Self
+    where
+        F: FnOnce() -> Option<HtmlElements>,
+    {
+        self.add_opt_children(children())
+    }
+
     pub fn set_attr(mut self, attr: impl ToString, value: impl ToString) -> Self {
         self.attrs.insert(attr.to_string(), value.to_string());
         self
     }
 
-    pub fn set_empty_attr(mut self, attr: impl ToString) -> Self {
-        self.empty_attrs.insert(attr.to_string());
-        self
-    }
-
     /// Sets an attribute if contains a value
-    pub fn set_opt_attr(mut self, attr: impl ToString, value: Option<impl ToString>) -> Self {
+    pub fn set_opt_attr(self, attr: impl ToString, value: Option<impl ToString>) -> Self {
         if let Some(value) = value {
-            self.attrs.insert(attr.to_string(), value.to_string());
-        }
-        self
-    }
-
-    /// Sets an empty_attrs if contains an attr
-    pub fn set_opt_empty_attr(mut self, attr: Option<impl ToString>) -> Self {
-        if let Some(attr) = attr {
-            self.empty_attrs.insert(attr.to_string());
+            return self.set_attr(attr, value);
         }
         self
     }
@@ -161,6 +181,19 @@ impl<T, G> HtmlElement<T, G> {
         R: ToString,
     {
         self.set_opt_attr(attr, value())
+    }
+
+    pub fn set_empty_attr(mut self, attr: impl ToString) -> Self {
+        self.empty_attrs.insert(attr.to_string());
+        self
+    }
+
+    /// Sets an empty_attrs if contains an attr
+    pub fn set_opt_empty_attr(self, attr: Option<impl ToString>) -> Self {
+        if let Some(attr) = attr {
+            return self.set_empty_attr(attr);
+        }
+        self
     }
 
     /// Sets an empty attribute if the closure returns an attr
@@ -377,6 +410,7 @@ mod test {
             .add_body_child(div().add_child(p().inner("Some content...")))
             .render();
         println!("{}", page);
+        // TODO: 1 assert results
     }
 
     #[test]
@@ -385,6 +419,7 @@ mod test {
             .maybe_set_attr("class", || Some("mx-4"))
             .maybe_set_empty_attr(|| Some("hidden"))
             .maybe_set_empty_attr(|| -> Option<String> { None })
+            .maybe_add_child(|| Some(p().inner("yay")))
             .render();
         println!("{}", content);
     }
