@@ -138,6 +138,40 @@ impl<T, G> HtmlElement<T, G> {
         self
     }
 
+    /// Sets an attribute if contains a value
+    pub fn set_opt_attr(mut self, attr: impl ToString, value: Option<impl ToString>) -> Self {
+        if let Some(value) = value {
+            self.attrs.insert(attr.to_string(), value.to_string());
+        }
+        self
+    }
+
+    /// Sets an empty_attrs if contains an attr
+    pub fn set_opt_empty_attr(mut self, attr: Option<impl ToString>) -> Self {
+        if let Some(attr) = attr {
+            self.empty_attrs.insert(attr.to_string());
+        }
+        self
+    }
+
+    /// Sets an attribute if the closure returns a value
+    pub fn maybe_set_attr<F, R>(self, attr: impl ToString, value: F) -> Self
+    where
+        F: FnOnce() -> Option<R>,
+        R: ToString,
+    {
+        self.set_opt_attr(attr, value())
+    }
+
+    /// Sets an empty attribute if the closure returns an attr
+    pub fn maybe_set_empty_attr<F, R>(self, attr: F) -> Self
+    where
+        F: FnOnce() -> Option<R>,
+        R: ToString,
+    {
+        self.set_opt_empty_attr(attr())
+    }
+
     pub fn have_attrs(&self) -> bool {
         !(self.attrs.is_empty() && self.empty_attrs.is_empty())
     }
@@ -343,5 +377,15 @@ mod test {
             .add_body_child(div().add_child(p().inner("Some content...")))
             .render();
         println!("{}", page);
+    }
+
+    #[test]
+    fn render_with_maybe_sets() {
+        let content = div()
+            .maybe_set_attr("class", || Some("mx-4"))
+            .maybe_set_empty_attr(|| Some("hidden"))
+            .maybe_set_empty_attr(|| -> Option<String> { None })
+            .render();
+        println!("{}", content);
     }
 }
