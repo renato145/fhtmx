@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/renato145/fhtmx/compare/v0.4.0...v0.5.0) (2025-04-27)
+
+
+### Features
+
+* add optional add child functions ([c80c5f2](https://github.com/renato145/fhtmx/commit/c80c5f2ad4df0cc854164ec2fef749250178a47a))
+
 ## [0.4.0](https://github.com/renato145/fhtmx/compare/v0.3.0...v0.4.0) (2025-04-27)
 
 
