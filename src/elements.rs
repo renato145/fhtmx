@@ -20,6 +20,8 @@ pub struct HtmlScriptElement;
 #[derive(Debug, Clone, Copy)]
 pub struct HtmlStyleElement;
 #[derive(Debug, Clone, Copy)]
+pub struct HtmlImgElement;
+#[derive(Debug, Clone, Copy)]
 pub struct HtmlInputElement;
 
 pub trait HtmlRender: DynClone + Debug {
@@ -233,7 +235,7 @@ create_web_element!(
 );
 
 create_web_element!(
-    HtmlTagWrap::Void => area, base, br, col, embed, hr, img, input:HtmlInputElement, link:HtmlLinkElement, meta,
+    HtmlTagWrap::Void => area, base, br, col, embed, hr, img:HtmlImgElement, input:HtmlInputElement, link:HtmlLinkElement, meta,
     param, source, track, wbr
 );
 
@@ -322,6 +324,10 @@ impl<T> HtmlElement<T, HtmlStyleElement> {
 impl<T> HtmlElement<T, HtmlInputElement> {
     set_attr!(name, placeholder, r#type, value);
     set_empty_attr!(autofocus, required);
+}
+
+impl<T> HtmlElement<T, HtmlImgElement> {
+    set_attr!(alt, decoding, loading, sizes, src, srcset, height, width);
 }
 
 #[cfg(test)]
