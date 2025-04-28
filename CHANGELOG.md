@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0](https://github.com/renato145/fhtmx/compare/v0.6.0...v0.7.0) (2025-04-28)
+
+
+### Features
+
+* add attributes for svg elements ([57aaaf5](https://github.com/renato145/fhtmx/commit/57aaaf58fabfaf715e7f9a93c12b838ce2a44f04))
+* add attrs for option and select ([1f5ed6a](https://github.com/renato145/fhtmx/commit/1f5ed6a72317b4fc3d57622a068467aab2657a0f))
+
 ## [0.6.0](https://github.com/renato145/fhtmx/compare/v0.5.0...v0.6.0) (2025-04-28)
 
 
