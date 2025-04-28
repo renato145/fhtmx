@@ -34,6 +34,12 @@ pub trait HtmlRender: DynClone + Debug {
     }
 
     fn render_with_indent(&self, indent: usize) -> String;
+
+    fn render_sorted(&self) -> String {
+        self.render_sorted_with_indent(0)
+    }
+
+    fn render_sorted_with_indent(&self, indent: usize) -> String;
 }
 
 dyn_clone::clone_trait_object!(HtmlRender);
@@ -45,6 +51,13 @@ impl HtmlRender for HtmlElements {
     fn render_with_indent(&self, indent: usize) -> String {
         self.iter()
             .map(|o| o.render_with_indent(indent))
+            .collect::<Vec<_>>()
+            .join("\n")
+    }
+
+    fn render_sorted_with_indent(&self, indent: usize) -> String {
+        self.iter()
+            .map(|o| o.render_sorted_with_indent(indent))
             .collect::<Vec<_>>()
             .join("\n")
     }
@@ -221,23 +234,33 @@ impl<T, G> HtmlElement<T, G> {
             .join(" ");
         format!(" {}", attrs)
     }
-}
 
-impl<T: AsRef<str> + Debug + Clone + 'static, G: Clone + 'static> HtmlElement<T, G> {
-    pub fn boxed(self) -> HtmlSingleElement {
-        Box::new(self)
+    pub fn render_sorted_attrs(&self) -> String {
+        if !self.have_attrs() {
+            return String::new();
+        }
+        let mut attrs = self
+            .attrs
+            .iter()
+            .map(|(k, v)| format!("{}={:?}", k, v))
+            .chain(self.empty_attrs.iter().cloned())
+            .collect::<Vec<_>>();
+        attrs.sort();
+        format!(" {}", attrs.join(" "))
     }
 }
 
-impl<T: AsRef<str> + Debug + Clone, G: Clone> HtmlRender for HtmlElement<T, G> {
-    fn render_with_indent(&self, indent: usize) -> String {
+impl<T: AsRef<str>, G> HtmlElement<T, G> {
+    fn _render(&self, indent: usize, sorted: bool) -> String {
         let tag = self.tag_name.as_ref();
+        let attrs_str = if sorted {
+            self.render_sorted_attrs()
+        } else {
+            self.render_attrs()
+        };
         let (tag_start, tag_end) = match self.wrap_options {
-            HtmlTagWrap::Wrap => (
-                format!("<{}{}>", tag, self.render_attrs()),
-                format!("</{}>", tag),
-            ),
-            HtmlTagWrap::NoWrap => (format!("<{}{} />", tag, self.render_attrs()), String::new()),
+            HtmlTagWrap::Wrap => (format!("<{}{}>", tag, attrs_str), format!("</{}>", tag)),
+            HtmlTagWrap::NoWrap => (format!("<{}{} />", tag, attrs_str), String::new()),
         };
         let indent_str = "  ".repeat(indent);
         if self.children.is_empty() {
@@ -252,7 +275,16 @@ impl<T: AsRef<str> + Debug + Clone, G: Clone> HtmlRender for HtmlElement<T, G> {
             let mut children = self
                 .children
                 .iter()
-                .map(|(i, o)| (*i, o.render_with_indent(indent + 1)))
+                .map(|(i, o)| {
+                    (
+                        *i,
+                        if sorted {
+                            o.render_sorted_with_indent(indent + 1)
+                        } else {
+                            o.render_with_indent(indent + 1)
+                        },
+                    )
+                })
                 .chain(
                     self.inner_text
                         .iter()
@@ -270,6 +302,22 @@ impl<T: AsRef<str> + Debug + Clone, G: Clone> HtmlRender for HtmlElement<T, G> {
                 indent_str, tag_start, inner, indent_str, tag_end
             )
         }
+    }
+}
+
+impl<T: AsRef<str> + Debug + Clone + 'static, G: Clone + 'static> HtmlElement<T, G> {
+    pub fn boxed(self) -> HtmlSingleElement {
+        Box::new(self)
+    }
+}
+
+impl<T: AsRef<str> + Debug + Clone, G: Clone> HtmlRender for HtmlElement<T, G> {
+    fn render_with_indent(&self, indent: usize) -> String {
+        self._render(indent, false)
+    }
+
+    fn render_sorted_with_indent(&self, indent: usize) -> String {
+        self._render(indent, true)
     }
 }
 
@@ -449,9 +497,9 @@ mod test {
             .description("Some test page")
             .add_body_child(h1().inner("A nice title"))
             .add_body_child(div().add_child(p().inner("Some content...")))
-            .render();
+            .render_sorted();
         println!("{}", page);
-        // TODO: assert results
+        insta::assert_yaml_snapshot!(page);
     }
 
     #[test]
@@ -461,8 +509,9 @@ mod test {
             .maybe_set_empty_attr(|| Some("hidden"))
             .maybe_set_empty_attr(|| -> Option<String> { None })
             .maybe_add_child(|| Some(p().inner("yay")))
-            .render();
+            .render_sorted();
         println!("{}", content);
+        insta::assert_yaml_snapshot!(content);
     }
 
     #[test]
@@ -474,7 +523,7 @@ mod test {
             .inner("four")
             .add_child(span().inner("five"))
             .inner("six")
-            .render();
+            .render_sorted();
         println!("{}", content);
         insta::assert_yaml_snapshot!(content);
     }

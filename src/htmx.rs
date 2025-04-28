@@ -138,7 +138,8 @@ mod test {
         let res = p()
             .hx_get("/some_route")
             .hx_swap(HXSwap::OuterHTML)
-            .render();
+            .render_sorted();
         println!("{}", res);
+        insta::assert_yaml_snapshot!(res);
     }
 }

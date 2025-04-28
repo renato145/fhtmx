@@ -1,5 +1,6 @@
 use crate::elements::*;
 
+#[derive(Clone, Debug)]
 pub struct HtmlPage {
     doctype: bool,
     custom_html_node: Option<HtmlElement<&'static str, HtmlGenericElement>>,
@@ -69,7 +70,7 @@ impl HtmlPage {
         self
     }
 
-    pub fn render(self) -> String {
+    pub fn html_elements(self) -> HtmlElements {
         let mut elements = Vec::new();
         if self.doctype {
             elements.push(doctype_html().boxed());
@@ -103,7 +104,15 @@ impl HtmlPage {
             body = body.add_children(children);
         }
         elements.push(html_node.add_child(header).add_child(body).boxed());
-        elements.render()
+        elements
+    }
+
+    pub fn render(self) -> String {
+        self.html_elements().render()
+    }
+
+    pub fn render_sorted(self) -> String {
+        self.html_elements().render_sorted()
     }
 }
 

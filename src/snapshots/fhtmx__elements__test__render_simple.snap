@@ -1,0 +1,5 @@
+---
+source: src/elements.rs
+expression: page
+---
+"<!doctype html />\n<html>\n  <head>\n    <title>My page title</title>\n    <meta charset=\"UTF-8\" />\n    <meta content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0\" name=\"viewport\" />\n    <meta content=\"Some test page\" name=\"description\" />\n  </head>\n  <body>\n    <h1>A nice title</h1>\n    <div>\n      <p>Some content...</p>\n    </div>\n  </body>\n</html>"

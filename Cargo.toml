@@ -7,7 +7,13 @@ documentation = "https://docs.rs/fhtmx"
 keywords = ["html", "htmx"]
 license = "MIT OR Apache-2.0"
 edition = "2024"
-include = ["/src/**/*", "/LICENSE", "/README.md", "/CHANGELOG.md"]
+include = [
+  "/src/**/*",
+  "!/src/**/snapshots/*",
+  "/LICENSE",
+  "/README.md",
+  "/CHANGELOG.md",
+]
 repository = "https://github.com/renato145/fhtmx"
 
 [dependencies]

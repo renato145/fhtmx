@@ -1,0 +1,5 @@
+---
+source: src/svg.rs
+expression: res
+---
+"<svg xmlns=\"http://www.w3.org/2000/svg\">\n  <rect fill=\"green\" height=\"20\" stroke-width=\"2\" stroke=\"black\" width=\"100\" />\n</svg>"

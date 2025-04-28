@@ -1,0 +1,5 @@
+---
+source: src/elements.rs
+expression: content
+---
+"<div class=\"mx-4\" hidden>\n  <p>yay</p>\n</div>"

@@ -94,7 +94,8 @@ mod test {
                     .stroke("black")
                     .stroke_width(2),
             )
-            .render();
+            .render_sorted();
         println!("{}", res);
+        insta::assert_yaml_snapshot!(res);
     }
 }

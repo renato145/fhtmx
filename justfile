@@ -18,3 +18,6 @@ examples-watch:
 
 run-example name:
   bacon ex -- {{name}}
+
+insta-review:
+  cargo insta test --review
