@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/renato145/fhtmx/compare/v0.8.0...v0.8.1) (2025-04-28)
+
+
+### Reverts
+
+* void removal ([4abc959](https://github.com/renato145/fhtmx/commit/4abc959e921613787d2c9fe7312c942ba35f46a7))
+
 ## [0.8.0](https://github.com/renato145/fhtmx/compare/v0.7.1...v0.8.0) (2025-04-28)
 
 
