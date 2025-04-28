@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.0](https://github.com/renato145/fhtmx/compare/v0.7.1...v0.8.0) (2025-04-28)
+
+
+### Features
+
+* add insta test snapshots ([df55738](https://github.com/renato145/fhtmx/commit/df557380ada179a945ecdfaefa98e613374a0934))
+* allow multiple inner content ([e71d9e8](https://github.com/renato145/fhtmx/commit/e71d9e84b9990c32c4e97bf18e84522c0d4c3158))
+
 ## [0.7.1](https://github.com/renato145/fhtmx/compare/v0.7.0...v0.7.1) (2025-04-28)
 
 
