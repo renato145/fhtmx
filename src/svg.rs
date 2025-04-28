@@ -3,34 +3,20 @@ use paste::paste;
 
 #[derive(Debug, Clone, Copy)]
 pub struct HtmlSvgElement;
-#[derive(Debug, Clone, Copy)]
-pub struct HtmlSvgCircleElement;
-#[derive(Debug, Clone, Copy)]
-pub struct HtmlSvgEllipseElement;
-#[derive(Debug, Clone, Copy)]
-pub struct HtmlSvgLineElement;
-#[derive(Debug, Clone, Copy)]
-pub struct HtmlSvgPathElement;
-#[derive(Debug, Clone, Copy)]
-pub struct HtmlSvgPolygonElement;
-#[derive(Debug, Clone, Copy)]
-pub struct HtmlSvgRectElement;
-#[derive(Debug, Clone, Copy)]
-pub struct HtmlSvgTextElement;
 
 macro_rules! create_svg_web_element {
-    ($wrap:expr => $name:ident:$group:expr) => {
+    ($wrap:expr => $name:ident) => {
         paste! {
             #[doc = "Creates a `" $name "` svg element."]
-            pub fn [<svg_ $name>]() -> HtmlElement<&'static str, $group> {
+            pub fn [<svg_ $name>]() -> HtmlElement<&'static str, HtmlSvgElement> {
                 HtmlElement::new(stringify!($name), $wrap)
             }
         }
     };
 
-    ($wrap:expr => $name:ident:$group:expr, $($rest:ident:$group_rest:expr),+) => {
-        create_svg_web_element!($wrap => $name:$group);
-        create_svg_web_element!($wrap => $($rest:$group_rest),+);
+    ($wrap:expr => $name:ident, $($rest:ident),+) => {
+        create_svg_web_element!($wrap => $name);
+        create_svg_web_element!($wrap => $($rest),+);
     };
 }
 
@@ -39,49 +25,54 @@ pub fn svg() -> HtmlElement<&'static str, HtmlSvgElement> {
 }
 
 create_svg_web_element!(
-    HtmlTagWrap::NoWrap => circle:HtmlSvgCircleElement, ellipse:HtmlSvgEllipseElement,
-    line:HtmlSvgLineElement, path:HtmlSvgPathElement, polygon:HtmlSvgPolygonElement,
-    polyline:HtmlSvgPolygonElement, rect:HtmlSvgRectElement, text:HtmlSvgTextElement
+    HtmlTagWrap::NoWrap => circle, ellipse, line, path, polygon, polyline, rect, text
 );
 
-// TODO: stroke_width should be set as stroke-width
-
-impl<T> HtmlElement<T, HtmlSvgCircleElement> {
-    set_attr!(r, cx, cy, fill, stroke, stroke_width);
-}
-
-impl<T> HtmlElement<T, HtmlSvgEllipseElement> {
-    set_attr!(rx, ry, cx, cy, fill, stroke, stroke_width);
-}
-
-impl<T> HtmlElement<T, HtmlSvgLineElement> {
-    set_attr!(x1, y1, x2, y2, stroke, w, stroke_width);
-}
-
-impl<T> HtmlElement<T, HtmlSvgPathElement> {
-    set_attr!(d, fill, stroke, stroke_width);
-}
-
-impl<T> HtmlElement<T, HtmlSvgPolygonElement> {
-    set_attr!(points, fill, stroke, stroke_width);
-}
-
-impl<T> HtmlElement<T, HtmlSvgRectElement> {
-    set_attr!(width, height, x, y, fill, stroke, stroke_width, rx, ry);
-}
-
-impl<T> HtmlElement<T, HtmlSvgTextElement> {
+impl<T> HtmlElement<T, HtmlSvgElement> {
     set_attr!(
-        x,
-        y,
-        font_family,
-        font_size,
+        color,
+        cx,
+        cy,
+        d,
+        dominant_baseline = "dominant-baseline",
+        dx,
+        dy,
         fill,
-        text_anchor,
-        dominant_baseline,
-        font_weight,
-        font_style,
-        text_decoration
+        fill_opacity = "fill-opacity",
+        font_family = "font-family",
+        font_size = "font-size",
+        font_style = "font-style",
+        font_variant = "font-variant",
+        font_weight = "font-weight",
+        height,
+        opacity,
+        path,
+        points,
+        r,
+        radius,
+        rx,
+        ry,
+        rotate,
+        scale,
+        stroke,
+        stroke_dasharray = "stroke-dasharray",
+        stroke_dashoffset = "stroke-dashoffset",
+        stroke_linecap = "stroke-linecap",
+        stroke_linejoin = "stroke-linejoin",
+        stroke_opacity = "stroke-opacity",
+        stroke_width = "stroke-width",
+        text_anchor = "text-anchor",
+        text_decoration = "text-decoration",
+        transform,
+        view_box = "viewBox",
+        width,
+        x,
+        x1,
+        x2,
+        y,
+        y1,
+        y2,
+        z
     );
 }
 
