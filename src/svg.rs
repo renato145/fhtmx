@@ -44,6 +44,8 @@ create_svg_web_element!(
     polyline:HtmlSvgPolygonElement, rect:HtmlSvgRectElement, text:HtmlSvgTextElement
 );
 
+// TODO: stroke_width should be set as stroke-width
+
 impl<T> HtmlElement<T, HtmlSvgCircleElement> {
     set_attr!(r, cx, cy, fill, stroke, stroke_width);
 }

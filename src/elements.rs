@@ -296,9 +296,9 @@ create_web_element!(
     HtmlTagWrap::Wrap => a:HtmlAnchorElement, article, aside, audio, b, body, button, canvas,
     caption, code, colgroup, dd, details, div, dl, dt, em, fieldset, figcaption, figure, footer,
     form, h1, h2, h3, h4, h5, h6, head, header, html, i, iframe, label, legend, li, mark, math,
-    nav, noscript, object, ol, option, p, pre, s, script:HtmlScriptElement, section, select, slot,
-    small, span, strike, strong, style:HtmlStyleElement, sub, summary, sup, table, tbody, td,
-    template, textarea, tfoot, th, thead, title, tr, u, ul, video
+    nav, noscript, object, ol, option, p, pre, s, script:HtmlScriptElement, section,
+    select:HtmlInputElement, slot, small, span, strike, strong, style:HtmlStyleElement, sub,
+    summary, sup, table, tbody, td, template, textarea, tfoot, th, thead, title, tr, u, ul, video
 );
 
 create_web_element!(
@@ -410,7 +410,7 @@ mod test {
             .add_body_child(div().add_child(p().inner("Some content...")))
             .render();
         println!("{}", page);
-        // TODO: 1 assert results
+        // TODO: assert results
     }
 
     #[test]
