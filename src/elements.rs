@@ -53,9 +53,8 @@ impl HtmlRender for HtmlElements {
 #[derive(Debug, Clone, Copy)]
 pub enum HtmlTagWrap {
     Wrap,
-    NoWrap,
     /// https://developer.mozilla.org/en-US/docs/Glossary/Void_element
-    Void,
+    NoWrap,
 }
 
 #[derive(Clone)]
@@ -250,7 +249,6 @@ impl<T: AsRef<str> + Debug + Clone, G: Clone> HtmlRender for HtmlElement<T, G> {
                 format!("</{}>", tag),
             ),
             HtmlTagWrap::NoWrap => (format!("<{}{} />", tag, self.render_attrs()), String::new()),
-            HtmlTagWrap::Void => (format!("<{}{}>", tag, self.render_attrs()), String::new()),
         };
         let indent_str = "  ".repeat(indent);
         let inner = self.inner_text.clone().unwrap_or_default();
@@ -307,7 +305,7 @@ create_web_element!(
 );
 
 create_web_element!(
-    HtmlTagWrap::Void => area, base, br, col, embed, hr, img:HtmlImgElement, input:HtmlInputElement, link:HtmlLinkElement, meta,
+    HtmlTagWrap::NoWrap => area, base, br, col, embed, hr, img:HtmlImgElement, input:HtmlInputElement, link:HtmlLinkElement, meta,
     param, source, track, wbr
 );
 
@@ -316,7 +314,7 @@ pub fn main_tag() -> HtmlElement<&'static str, HtmlGenericElement> {
 }
 
 pub fn doctype_html() -> HtmlElement<&'static str, HtmlEmptyElement> {
-    HtmlElement::new("!doctype", HtmlTagWrap::Void).set_empty_attr("html")
+    HtmlElement::new("!doctype", HtmlTagWrap::NoWrap).set_empty_attr("html")
 }
 
 macro_rules! set_attr {
