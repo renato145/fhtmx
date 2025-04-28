@@ -63,8 +63,9 @@ pub struct HtmlElement<T, G> {
     pub attrs: HashMap<String, String>,
     pub empty_attrs: HashSet<String>,
     pub wrap_options: HtmlTagWrap,
-    pub inner_text: Option<String>,
-    pub children: Option<HtmlElements>,
+    pub inner_text: Vec<(usize, String)>,
+    pub children: Vec<(usize, HtmlSingleElement)>,
+    content_idx: usize,
     group: PhantomData<G>,
 }
 
@@ -89,33 +90,29 @@ impl<T, G> HtmlElement<T, G> {
             attrs: HashMap::new(),
             empty_attrs: HashSet::new(),
             wrap_options,
-            inner_text: None,
-            children: None,
+            inner_text: Vec::new(),
+            children: Vec::new(),
+            content_idx: 0,
             group: PhantomData,
         }
     }
 
     /// Sets the inner text (html encoded) of the element
-    pub fn inner(mut self, inner_text: &str) -> Self {
-        self.inner_text = Some(htmlescape::encode_minimal(inner_text));
-        self
+    pub fn inner(self, inner_text: &str) -> Self {
+        self.inner_unsafe(htmlescape::encode_minimal(inner_text))
     }
 
     /// Sets the inner text (not html encoded) of the element
     pub fn inner_unsafe(mut self, inner_text: impl ToString) -> Self {
-        self.inner_text = Some(inner_text.to_string());
+        self.inner_text
+            .push((self.content_idx, inner_text.to_string()));
+        self.content_idx += 1;
         self
     }
 
     pub fn add_child<C: HtmlRender + 'static>(mut self, child: C) -> Self {
-        match self.children.as_mut() {
-            Some(children) => {
-                children.push(Box::new(child));
-            }
-            None => {
-                self.children = Some(vec![Box::new(child)]);
-            }
-        }
+        self.children.push((self.content_idx, Box::new(child)));
+        self.content_idx += 1;
         self
     }
 
@@ -136,15 +133,14 @@ impl<T, G> HtmlElement<T, G> {
         self.add_opt_child(child())
     }
 
-    pub fn add_children(mut self, mut children: HtmlElements) -> Self {
-        match self.children.as_mut() {
-            Some(current_children) => {
-                current_children.append(&mut children);
-            }
-            None => {
-                self.children = Some(children);
-            }
-        }
+    pub fn add_children(mut self, children: HtmlElements) -> Self {
+        let mut children = children
+            .into_iter()
+            .enumerate()
+            .map(|(i, o)| (i + self.content_idx, o))
+            .collect::<Vec<_>>();
+        self.children.append(&mut children);
+        self.content_idx += 1;
         self
     }
 
@@ -225,13 +221,6 @@ impl<T, G> HtmlElement<T, G> {
             .join(" ");
         format!(" {}", attrs)
     }
-
-    pub fn render_children(&self) -> String {
-        match &self.children {
-            Some(children) => children.render(),
-            None => String::new(),
-        }
-    }
 }
 
 impl<T: AsRef<str> + Debug + Clone + 'static, G: Clone + 'static> HtmlElement<T, G> {
@@ -251,25 +240,35 @@ impl<T: AsRef<str> + Debug + Clone, G: Clone> HtmlRender for HtmlElement<T, G> {
             HtmlTagWrap::NoWrap => (format!("<{}{} />", tag, self.render_attrs()), String::new()),
         };
         let indent_str = "  ".repeat(indent);
-        let inner = self.inner_text.clone().unwrap_or_default();
-        match &self.children {
-            Some(children) => {
-                let inner = if inner.is_empty() {
-                    inner
-                } else {
-                    format!("\n  {}{}", indent_str, inner)
-                };
-                format!(
-                    "{}{}{}\n{}\n{}{}",
-                    indent_str,
-                    tag_start,
-                    inner,
-                    children.render_with_indent(indent + 1),
-                    indent_str,
-                    tag_end
+        if self.children.is_empty() {
+            let inner = self
+                .inner_text
+                .iter()
+                .map(|(_, o)| o.clone())
+                .collect::<Vec<_>>()
+                .join(" ");
+            format!("{}{}{}{}", indent_str, tag_start, inner, tag_end)
+        } else {
+            let mut children = self
+                .children
+                .iter()
+                .map(|(i, o)| (*i, o.render_with_indent(indent + 1)))
+                .chain(
+                    self.inner_text
+                        .iter()
+                        .map(|(i, o)| (*i, format!("{}{}", "  ".repeat(indent + 1), o))),
                 )
-            }
-            None => format!("{}{}{}{}", indent_str, tag_start, inner, tag_end),
+                .collect::<Vec<_>>();
+            children.sort_by_key(|o| o.0);
+            let inner = children
+                .into_iter()
+                .map(|o| o.1)
+                .collect::<Vec<_>>()
+                .join("\n");
+            format!(
+                "{}{}\n{}\n{}{}",
+                indent_str, tag_start, inner, indent_str, tag_end
+            )
         }
     }
 }
@@ -464,5 +463,19 @@ mod test {
             .maybe_add_child(|| Some(p().inner("yay")))
             .render();
         println!("{}", content);
+    }
+
+    #[test]
+    fn render_multiple_inner() {
+        let content = p()
+            .inner("one")
+            .add_child(span().inner("two"))
+            .add_child(span().inner("three"))
+            .inner("four")
+            .add_child(span().inner("five"))
+            .inner("six")
+            .render();
+        println!("{}", content);
+        insta::assert_yaml_snapshot!(content);
     }
 }
