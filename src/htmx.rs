@@ -1,4 +1,4 @@
-use crate::elements::HtmlElement;
+use crate::{elements::HtmlElement, prelude::set_attr};
 use paste::paste;
 
 /// The hx-swap attribute allows you to specify how the response will be swapped in relative to the
@@ -90,25 +90,9 @@ impl std::fmt::Display for HXTarget<'_> {
     }
 }
 
-macro_rules! set_htmx_attr {
-    ($attr:ident = $name:expr) => {
-        paste! {
-            #[doc = "Sets the `" $name "` attribute."]
-            pub fn $attr(self, value: impl ToString) -> Self {
-                self.set_attr($name, value)
-            }
-        }
-    };
-
-    ($attr:ident = $name:expr, $($rest:ident = $rest_names:expr),+) => {
-        set_htmx_attr!($attr = $name);
-        set_htmx_attr!($($rest = $rest_names),+);
-    };
-}
-
 // TODO: add documentation for each attr
 impl<T, G> HtmlElement<T, G> {
-    set_htmx_attr!(
+    set_attr!(
         hx_confirm = "hx-confirm",
         hx_delete = "hx-delete",
         hx_disable = "hx-disable",

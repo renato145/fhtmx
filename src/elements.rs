@@ -23,6 +23,10 @@ pub struct HtmlStyleElement;
 pub struct HtmlImgElement;
 #[derive(Debug, Clone, Copy)]
 pub struct HtmlInputElement;
+#[derive(Debug, Clone, Copy)]
+pub struct HtmlSelectElement;
+#[derive(Debug, Clone, Copy)]
+pub struct HtmlOptionElement;
 
 pub trait HtmlRender: DynClone + Debug {
     fn render(&self) -> String {
@@ -296,9 +300,10 @@ create_web_element!(
     HtmlTagWrap::Wrap => a:HtmlAnchorElement, article, aside, audio, b, body, button, canvas,
     caption, code, colgroup, dd, details, div, dl, dt, em, fieldset, figcaption, figure, footer,
     form, h1, h2, h3, h4, h5, h6, head, header, html, i, iframe, label, legend, li, mark, math,
-    nav, noscript, object, ol, option, p, pre, s, script:HtmlScriptElement, section,
-    select:HtmlInputElement, slot, small, span, strike, strong, style:HtmlStyleElement, sub,
-    summary, sup, table, tbody, td, template, textarea, tfoot, th, thead, title, tr, u, ul, video
+    nav, noscript, object, ol, option:HtmlOptionElement, p, pre, s, script:HtmlScriptElement,
+    section, select:HtmlSelectElement, slot, small, span, strike, strong, style:HtmlStyleElement,
+    sub, summary, sup, table, tbody, td, template, textarea, tfoot, th, thead, title, tr, u, ul,
+    video
 );
 
 create_web_element!(
@@ -315,6 +320,15 @@ pub fn doctype_html() -> HtmlElement<&'static str, HtmlEmptyElement> {
 }
 
 macro_rules! set_attr {
+    ($attr:ident = $name:expr) => {
+        paste! {
+            #[doc = "Sets the `" $name "` attribute."]
+            pub fn $attr(self, value: impl ToString) -> Self {
+                self.set_attr($name, value)
+            }
+        }
+    };
+
     ($attr:ident) => {
         paste! {
             #[doc = "Sets the `" $attr "` attribute."]
@@ -324,15 +338,24 @@ macro_rules! set_attr {
         }
     };
 
-    ($attr:ident, $($rest:ident),+) => {
-        set_attr!($attr);
-        set_attr!($($rest),+);
+    ($attr:ident$(=$name:expr)?, $($rest:ident$(=$name_rest:expr)?),+) => {
+        set_attr!($attr$(=$name)?);
+        set_attr!($($rest$(=$name_rest)?),+);
     };
 }
 
 pub(crate) use set_attr;
 
 macro_rules! set_empty_attr {
+    ($attr:ident = $name:expr) => {
+        paste! {
+            #[doc = "Sets the `" $name "` empty attribute."]
+            pub fn $attr(self) -> Self {
+                self.set_empty_attr($name)
+            }
+        }
+    };
+
     ($attr:ident) => {
         paste! {
             #[doc = "Sets the `" $attr "` empty attribute."]
@@ -342,9 +365,9 @@ macro_rules! set_empty_attr {
         }
     };
 
-    ($attr:ident, $($rest:ident),+) => {
-        set_empty_attr!($attr);
-        set_empty_attr!($($rest),+);
+    ($attr:ident$(=$name:expr)?, $($rest:ident$(=$name_rest:expr)?),+) => {
+        set_empty_attr!($attr$(=$name)?);
+        set_empty_attr!($($rest$(=$name_rest)?),+);
     };
 }
 
@@ -388,13 +411,34 @@ impl<T> HtmlElement<T, HtmlStyleElement> {
     set_empty_attr!(blocking);
 }
 
-impl<T> HtmlElement<T, HtmlInputElement> {
-    set_attr!(name, placeholder, r#type, value);
-    set_empty_attr!(autofocus, required);
-}
-
 impl<T> HtmlElement<T, HtmlImgElement> {
     set_attr!(alt, decoding, loading, sizes, src, srcset, height, width);
+}
+
+impl<T> HtmlElement<T, HtmlInputElement> {
+    set_attr!(
+        name,
+        min,
+        max,
+        maxlength,
+        min_length,
+        pattern,
+        placeholder,
+        step,
+        r#type,
+        value
+    );
+    set_empty_attr!(autofocus, checked, disabled, readonly, required);
+}
+
+impl<T> HtmlElement<T, HtmlSelectElement> {
+    set_attr!(name, placeholder, r#type, value);
+    set_empty_attr!(autofocus, disabled, multiple, required);
+}
+
+impl<T> HtmlElement<T, HtmlOptionElement> {
+    set_attr!(value);
+    set_empty_attr!(disabled, selected);
 }
 
 #[cfg(test)]
