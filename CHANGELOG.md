@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/renato145/fhtmx/compare/v0.7.0...v0.7.1) (2025-04-28)
+
+
+### Bug Fixes
+
+* remove Void ([f92a2ab](https://github.com/renato145/fhtmx/commit/f92a2ab4f0b533c8a68d0a503ce7df89bac5aa2c))
+
 ## [0.7.0](https://github.com/renato145/fhtmx/compare/v0.6.0...v0.7.0) (2025-04-28)
 
 
