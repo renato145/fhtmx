@@ -218,6 +218,42 @@ impl<T, G> HtmlElement<T, G> {
         self.set_opt_empty_attr(attr())
     }
 
+    pub fn have_class(&self, class: &str) -> bool {
+        self.attrs
+            .get("class")
+            .map(|x| x.split_whitespace().any(|o| o == class))
+            .unwrap_or_default()
+    }
+
+    pub fn add_class(mut self, class: &str) -> Self {
+        if !self.have_class(class) {
+            self.attrs
+                .entry("class".to_string())
+                .and_modify(|x| x.push_str(&format!(" {}", class)))
+                .or_insert_with(|| class.to_string());
+        }
+        self
+    }
+
+    pub fn remove_class(mut self, class: &str) -> Self {
+        if let Some(x) = self.attrs.get_mut("class") {
+            *x = x
+                .split_whitespace()
+                .filter(|&o| o != class)
+                .collect::<Vec<_>>()
+                .join(" ");
+        }
+        self
+    }
+
+    pub fn toogle_class(self, class: &str) -> Self {
+        if self.have_class(class) {
+            self.remove_class(class)
+        } else {
+            self.add_class(class)
+        }
+    }
+
     pub fn have_attrs(&self) -> bool {
         !(self.attrs.is_empty() && self.empty_attrs.is_empty())
     }
@@ -525,6 +561,20 @@ mod test {
             .inner("four")
             .add_child(span().inner("five"))
             .inner("six")
+            .render_sorted();
+        println!("{}", content);
+        insta::assert_yaml_snapshot!(content);
+    }
+
+    #[test]
+    fn add_remove_class_works() {
+        let content = div()
+            .class("flex mt-4")
+            .add_class("grid")
+            .add_class("flex-col")
+            .remove_class("grid")
+            .toogle_class("p-2")
+            .toogle_class("mt-4")
             .render_sorted();
         println!("{}", content);
         insta::assert_yaml_snapshot!(content);

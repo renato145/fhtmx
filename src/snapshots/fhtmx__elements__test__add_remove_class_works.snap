@@ -1,0 +1,5 @@
+---
+source: src/elements.rs
+expression: content
+---
+"<div class=\"flex flex-col p-2\"></div>"
