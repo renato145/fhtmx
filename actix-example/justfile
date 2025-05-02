@@ -10,7 +10,7 @@ checks:
 clippy-pedantic:
   cargo clippy --workspace -- -W clippy::pedantic
 
-run:
+watch-run:
   bacon run-long
 
 browser-sync:

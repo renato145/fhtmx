@@ -35,6 +35,8 @@ async fn main() -> anyhow::Result<()> {
             .route("/todo/{id}/form", web::get().to(todo_form))
             .route("/todo/{id}", web::get().to(get_todo))
             .route("/todo/{id}", web::put().to(update_todo))
+            .route("/todo/sort", web::post().to(sort_todo))
+            .route("/todo/clear", web::post().to(clear_todo))
             .app_data(state.clone())
     })
     .bind(("127.0.0.1", 8000))?
@@ -177,12 +179,51 @@ fn todo_list_description(n: usize) -> HtmlElement<&'static str, HtmlGenericEleme
     p().id("todo-list-description").inner(&inner)
 }
 
+fn sort_list_btn(n: usize) -> HtmlElement<&'static str, HtmlGenericElement> {
+    if n == 0 {
+        div().id("sort-btn").hidden()
+    } else {
+        div()
+            .id("sort-btn")
+            .class("flex gap-x-2")
+            .add_child(
+                button()
+                    .hx_post("/todo/sort")
+                    .hx_target("#todo-list")
+                    .class("self-start btn btn-primary btn-sm")
+                    .inner("Sort items"),
+            )
+            .add_child(
+                button()
+                    .hx_post("/todo/clear")
+                    .hx_target("#todo-list")
+                    .hx_confirm("Are you sure?")
+                    .class("self-start btn btn-error btn-sm")
+                    .inner("Clear todo"),
+            )
+    }
+}
+
+trait HtmlActixRender: HtmlRender {
+    fn render_response(&self) -> HttpResponse;
+}
+
+impl<T: ?Sized + HtmlRender> HtmlActixRender for T {
+    fn render_response(&self) -> HttpResponse {
+        let html_body = self.render();
+        HttpResponse::Ok()
+            .content_type(ContentType::html())
+            .body(html_body)
+    }
+}
+
 #[tracing::instrument(skip_all)]
 async fn index(state: web::Data<State>) -> HttpResponse {
     let items = state.read_todo_list();
     let mut todo_list = div()
-        .class("mt-8 p-4")
-        .add_child(todo_list_description(items.len()));
+        .class("mt-8 p-4 flex flex-col gap-y-2")
+        .add_child(todo_list_description(items.len()))
+        .add_child(sort_list_btn(items.len()));
     todo_list = todo_list.add_child(
         ul().id("todo-list")
             .class("mt-2 list-inside list-disc")
@@ -196,12 +237,13 @@ async fn index(state: web::Data<State>) -> HttpResponse {
                 .hx_target("#todo-list")
                 .hx_swap(HXSwap::BeforeEnd)
                 .set_attr("hx-on::after-request", "this.reset()")
+                .class("flex items-center gap-x-2")
                 .add_child(
                     label()
                         .class("flex items-center")
                         .add_child(
                             span()
-                                .class("text-lg font-medium")
+                                .class("text-nowrap text-lg font-medium")
                                 .inner("Add items to the TODO list"),
                         )
                         .add_child(
@@ -213,7 +255,8 @@ async fn index(state: web::Data<State>) -> HttpResponse {
                                 .autofocus()
                                 .required(),
                         ),
-                ),
+                )
+                .add_child(button().class("btn btn-primary").inner("Add")),
         )
         .add_child(todo_list);
     page_layout("Actix demo", page)
@@ -232,16 +275,16 @@ async fn add_todo(
     let new_item = TodoListItem::new(params.content);
     let mut todo_list = state.todo_list.lock().unwrap();
     todo_list.push(new_item.clone());
-    let html_body = vec![
+    let mut html_body = vec![
         new_item.html(),
         todo_list_description(todo_list.len())
             .hx_swap_oob("true")
             .boxed(),
-    ]
-    .render();
-    HttpResponse::Ok()
-        .content_type(ContentType::html())
-        .body(html_body)
+    ];
+    if todo_list.len() == 1 {
+        html_body.push(sort_list_btn(1).hx_swap_oob("true").boxed());
+    }
+    html_body.render_response()
 }
 
 #[tracing::instrument(skip(state))]
@@ -256,12 +299,15 @@ async fn rm_todo(
         .position(|o| o.id == id)
         .ok_or_else(|| ErrorBadRequest("id not found."))?;
     todo_list.remove(idx);
-    let html_body = todo_list_description(todo_list.len())
-        .hx_swap_oob("true")
-        .render();
-    Ok(HttpResponse::Ok()
-        .content_type(ContentType::html())
-        .body(html_body))
+    let mut html_body = vec![
+        todo_list_description(todo_list.len())
+            .hx_swap_oob("true")
+            .boxed(),
+    ];
+    if todo_list.is_empty() {
+        html_body.push(sort_list_btn(0).hx_swap_oob("true").boxed());
+    }
+    Ok(html_body.render_response())
 }
 
 #[tracing::instrument(skip(state))]
@@ -270,14 +316,12 @@ async fn todo_form(
     state: web::Data<State>,
 ) -> Result<HttpResponse, actix_web::Error> {
     let id = Uuid::from_str(&id).map_err(ErrorInternalServerError)?;
-    let html_body = state
+    let response = state
         .get_item(id)
         .ok_or_else(|| ErrorBadRequest("id not found."))?
         .html_form()
-        .render();
-    Ok(HttpResponse::Ok()
-        .content_type(ContentType::html())
-        .body(html_body))
+        .render_response();
+    Ok(response)
 }
 
 #[tracing::instrument(skip(state))]
@@ -286,14 +330,12 @@ async fn get_todo(
     state: web::Data<State>,
 ) -> Result<HttpResponse, actix_web::Error> {
     let id = Uuid::from_str(&id).map_err(ErrorInternalServerError)?;
-    let html_body = state
+    let response = state
         .get_item(id)
         .ok_or_else(|| ErrorBadRequest("id not found."))?
         .html()
-        .render();
-    Ok(HttpResponse::Ok()
-        .content_type(ContentType::html())
-        .body(html_body))
+        .render_response();
+    Ok(response)
 }
 
 #[tracing::instrument(skip(state))]
@@ -309,8 +351,26 @@ async fn update_todo(
         .find(|o| o.id == id)
         .ok_or_else(|| ErrorBadRequest("id not found."))?;
     item.value = params.content;
-    let html_body = item.html().render();
-    Ok(HttpResponse::Ok()
-        .content_type(ContentType::html())
-        .body(html_body))
+    Ok(item.html().render_response())
+}
+
+#[tracing::instrument(skip(state))]
+async fn sort_todo(state: web::Data<State>) -> HttpResponse {
+    let mut todo_list = state.todo_list.lock().unwrap();
+    todo_list.sort_by_key(|o| o.value.clone());
+    todo_list
+        .iter()
+        .map(|o| o.html())
+        .collect::<Vec<_>>()
+        .render_response()
+}
+
+#[tracing::instrument(skip(state))]
+async fn clear_todo(state: web::Data<State>) -> HttpResponse {
+    state.todo_list.lock().unwrap().clear();
+    vec![
+        todo_list_description(0).hx_swap_oob("true").boxed(),
+        sort_list_btn(0).hx_swap_oob("true").boxed(),
+    ]
+    .render_response()
 }
