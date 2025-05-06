@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.9.0](https://github.com/renato145/fhtmx/compare/v0.8.1...v0.9.0) (2025-05-06)
+
+
+### Features
+
+* add/remove class utilities ([74d10c3](https://github.com/renato145/fhtmx/commit/74d10c357d52dc998aa843f1ee076748630fbea3))
+
+
+### Bug Fixes
+
+* attr name ([9ceaae5](https://github.com/renato145/fhtmx/commit/9ceaae548aa1def606446e4c2b522bb746ce56c5))
+
 ## [0.8.1](https://github.com/renato145/fhtmx/compare/v0.8.0...v0.8.1) (2025-04-28)
 
 
