@@ -1,6 +1,6 @@
 [package]
 name = "fhtmx"
-version = "0.9.0"
+version = "0.9.1"
 authors = ["Renato Hermoza <rhermoza145@gmail.com>"]
 description = "Create html with rust."
 documentation = "https://docs.rs/fhtmx"
