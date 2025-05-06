@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html data-theme="dark" lang="en">
   <head>
     <title>daisyui form</title>
     <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
-    <link type="text/css" href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" type="text/css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   </head>
   <body>
@@ -14,9 +14,9 @@
         <fieldset class="fieldset w-xs bg-base-300 p-4 rounded-box">
           <legend class="fieldset-legend">Personal data</legend>
           <label class="fieldset-label">Name</label>
-          <input class="input" type="text" placeholder="Your name here">
+          <input class="input" placeholder="Your name here" type="text">
           <label class="fieldset-label">Last name</label>
-          <input placeholder="Your last name here" class="input" type="text">
+          <input type="text" class="input" placeholder="Your last name here">
           <label class="fieldset-label">Name</label>
           <input placeholder="Your name here" type="text" class="input">
           <button class="btn btn-primary mt-4">Register</button>
@@ -24,9 +24,9 @@
         <fieldset class="fieldset w-xs bg-base-300 p-4 rounded-box">
           <legend class="fieldset-legend">Professional data</legend>
           <label class="fieldset-label">Profession</label>
-          <input type="text" placeholder="Your profession" class="input">
+          <input placeholder="Your profession" type="text" class="input">
           <label class="fieldset-label">Experience</label>
-          <input placeholder="Number of years" class="input" type="number">
+          <input type="number" placeholder="Number of years" class="input">
           <label class="fieldset-label">Currently working?</label>
           <select class="select">
             <option>Yes</option>

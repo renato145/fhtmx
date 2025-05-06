@@ -97,6 +97,15 @@ impl<T: Debug, G> Debug for HtmlElement<T, G> {
     }
 }
 
+fn render_attr(k: &str, v: &str) -> String {
+    let vv = if v.contains('"') {
+        format!("'{}'", v)
+    } else {
+        format!("\"{}\"", v)
+    };
+    format!("{}={}", k, vv)
+}
+
 impl<T, G> HtmlElement<T, G> {
     pub fn new(tag_name: T, wrap_options: HtmlTagWrap) -> Self {
         HtmlElement {
@@ -265,7 +274,7 @@ impl<T, G> HtmlElement<T, G> {
         let attrs = self
             .attrs
             .iter()
-            .map(|(k, v)| format!("{}={:?}", k, v))
+            .map(|(k, v)| render_attr(k, v))
             .chain(self.empty_attrs.iter().cloned())
             .collect::<Vec<_>>()
             .join(" ");
@@ -279,7 +288,7 @@ impl<T, G> HtmlElement<T, G> {
         let mut attrs = self
             .attrs
             .iter()
-            .map(|(k, v)| format!("{}={:?}", k, v))
+            .map(|(k, v)| render_attr(k, v))
             .chain(self.empty_attrs.iter().cloned())
             .collect::<Vec<_>>();
         attrs.sort();

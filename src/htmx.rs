@@ -135,9 +135,11 @@ mod test {
 
     #[test]
     fn hx_attr_works() {
+        let token = "asdoiu12309usad";
         let res = p()
             .hx_get("/some_route")
             .hx_swap(HXSwap::OuterHTML)
+            .hx_headers(format!(r#"{{"Authorization": "Bearer {}"}}"#, token))
             .render_sorted();
         println!("{}", res);
         insta::assert_yaml_snapshot!(res);
