@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://github.com/renato145/fhtmx/compare/v0.9.0...v0.9.1) (2025-05-06)
+
+
+### Bug Fixes
+
+* attr rendering ([453f974](https://github.com/renato145/fhtmx/commit/453f97452fee428d0a751fc42dbfcc565f8614e7))
+
 ## [0.9.0](https://github.com/renato145/fhtmx/compare/v0.8.1...v0.9.0) (2025-05-06)
 
 
