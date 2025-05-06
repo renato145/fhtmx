@@ -504,7 +504,7 @@ impl<T> HtmlElement<T, HtmlInputElement> {
         min,
         max,
         maxlength,
-        min_length,
+        minlength,
         pattern,
         placeholder,
         step,
