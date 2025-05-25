@@ -130,7 +130,7 @@ impl<T, G> HtmlElement<T, G> {
 mod test {
     use crate::{
         htmx::HXSwap,
-        prelude::{HtmlRender, p},
+        prelude::{HtmlRender, div, p},
     };
 
     #[test]
@@ -141,6 +141,13 @@ mod test {
             .hx_swap(HXSwap::OuterHTML)
             .hx_headers(format!(r#"{{"Authorization": "Bearer {}"}}"#, token))
             .render_sorted();
+        println!("{}", res);
+        insta::assert_yaml_snapshot!(res);
+    }
+
+    #[test]
+    fn hx_vals_works() {
+        let res = div().hx_vals(r#"{"myVal": "My Value"}"#).render_sorted();
         println!("{}", res);
         insta::assert_yaml_snapshot!(res);
     }
