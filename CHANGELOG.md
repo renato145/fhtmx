@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/renato145/fhtmx/compare/v0.9.1...v0.10.0) (2025-06-05)
+
+
+### Features
+
+* add time html element ([08dc881](https://github.com/renato145/fhtmx/commit/08dc881e95240b42fdc302dee9255a9215c79ab0))
+
 ## [0.9.1](https://github.com/renato145/fhtmx/compare/v0.9.0...v0.9.1) (2025-05-06)
 
 
