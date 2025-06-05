@@ -2,4 +2,4 @@
 
 Create html with rust.
 
-TODO
+TODO: fill documentation
