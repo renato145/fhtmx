@@ -394,8 +394,8 @@ create_web_element!(
     form, h1, h2, h3, h4, h5, h6, head, header, html, i, iframe, label, legend, li, mark, math,
     nav, noscript, object, ol, option:HtmlOptionElement, p, pre, s, script:HtmlScriptElement,
     section, select:HtmlSelectElement, slot, small, span, strike, strong, style:HtmlStyleElement,
-    sub, summary, sup, table, tbody, td, template, textarea, tfoot, th, thead, time, title, tr, u,
-    ul, video
+    sub, summary, sup, table, tbody, td, template, textarea:HtmlInputElement, tfoot, th, thead,
+    time, title, tr, u, ul, video
 );
 
 create_web_element!(
