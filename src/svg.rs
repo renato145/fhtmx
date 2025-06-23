@@ -25,7 +25,7 @@ pub fn svg() -> HtmlElement<&'static str, HtmlSvgElement> {
 }
 
 create_svg_web_element!(
-    HtmlTagWrap::NoWrap => circle, ellipse, line, path, polygon, polyline, rect, text
+    HtmlTagWrap::NoWrap => circle, ellipse, g, line, path, polygon, polyline, rect, text
 );
 
 impl<T> HtmlElement<T, HtmlSvgElement> {
