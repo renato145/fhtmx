@@ -45,6 +45,17 @@ pub trait HtmlRender: DynClone + Debug {
 dyn_clone::clone_trait_object!(HtmlRender);
 
 pub type HtmlSingleElement = Box<dyn HtmlRender>;
+
+impl HtmlRender for HtmlSingleElement {
+    fn render_with_indent(&self, indent: usize) -> String {
+        (**self).render_with_indent(indent)
+    }
+
+    fn render_sorted_with_indent(&self, indent: usize) -> String {
+        (**self).render_sorted_with_indent(indent)
+    }
+}
+
 pub type HtmlElements = Vec<HtmlSingleElement>;
 
 impl HtmlRender for HtmlElements {
