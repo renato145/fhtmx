@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/renato145/fhtmx/compare/v0.11.0...v0.12.0) (2025-06-23)
+
+
+### Features
+
+* add svg g element ([14b09c4](https://github.com/renato145/fhtmx/commit/14b09c402b91c467b6898a89a08b811ad030f5b7))
+
 ## [0.11.0](https://github.com/renato145/fhtmx/compare/v0.10.0...v0.11.0) (2025-06-23)
 
 
