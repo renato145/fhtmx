@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.11.0](https://github.com/renato145/fhtmx/compare/v0.10.0...v0.11.0) (2025-06-23)
+
+
+### Features
+
+* impl HtmlRender for HtmlSingleElement ([703515d](https://github.com/renato145/fhtmx/commit/703515dc76b4c0be69885aa938da774d95f71b40))
+
+
+### Bug Fixes
+
+* add input attrs to textarea ([1feaff8](https://github.com/renato145/fhtmx/commit/1feaff8727f9bbaf036eaa919e8adea0d81c6f21))
+
 ## [0.10.0](https://github.com/renato145/fhtmx/compare/v0.9.1...v0.10.0) (2025-06-05)
 
 
