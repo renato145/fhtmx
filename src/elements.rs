@@ -150,6 +150,13 @@ impl<T, G> HtmlElement<T, G> {
         self
     }
 
+    pub fn add_child_if<C: HtmlRender + 'static>(self, cond: bool, child: C) -> Self {
+        if cond {
+            return self.add_child(child);
+        }
+        self
+    }
+
     /// Adds child if it contains a value
     pub fn add_opt_child<C: HtmlRender + 'static>(self, child: Option<C>) -> Self {
         if let Some(child) = child {
@@ -178,6 +185,13 @@ impl<T, G> HtmlElement<T, G> {
         self
     }
 
+    pub fn add_children_if(self, cond: bool, children: HtmlElements) -> Self {
+        if cond {
+            return self.add_children(children);
+        }
+        self
+    }
+
     /// Adds children if it contains a value
     pub fn add_opt_children(self, children: Option<HtmlElements>) -> Self {
         if let Some(children) = children {
@@ -196,6 +210,13 @@ impl<T, G> HtmlElement<T, G> {
 
     pub fn set_attr(mut self, attr: impl ToString, value: impl ToString) -> Self {
         self.attrs.insert(attr.to_string(), value.to_string());
+        self
+    }
+
+    pub fn set_attr_if(self, cond: bool, attr: impl ToString, value: impl ToString) -> Self {
+        if cond {
+            return self.set_attr(attr, value);
+        }
         self
     }
 
@@ -218,6 +239,13 @@ impl<T, G> HtmlElement<T, G> {
 
     pub fn set_empty_attr(mut self, attr: impl ToString) -> Self {
         self.empty_attrs.insert(attr.to_string());
+        self
+    }
+
+    pub fn set_empty_attr_if(self, cond: bool, attr: impl ToString) -> Self {
+        if cond {
+            return self.set_empty_attr(attr);
+        }
         self
     }
 
