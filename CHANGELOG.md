@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/renato145/fhtmx/compare/v0.12.0...v0.13.0) (2025-07-15)
+
+
+### Features
+
+* add if methods ([f606882](https://github.com/renato145/fhtmx/commit/f606882a17c1b2e89690b5af7113311218275fa5))
+
 ## [0.12.0](https://github.com/renato145/fhtmx/compare/v0.11.0...v0.12.0) (2025-06-23)
 
 
