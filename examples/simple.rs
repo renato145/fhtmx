@@ -7,7 +7,7 @@ fn main() {
                 .class(
                     "h-24 flex items-center justify-center rounded-md bg-linear-to-r from-emerald-400 to-emerald-700 border-2 border-black",
                 )
-                .add_child(p().inner(&format!("Box: {}", i)).class("text-lg font-bold text-shadow-lg/30"))
+                .add_child(p().inner(format!("Box: {i}")).class("text-lg font-bold text-shadow-lg/30"))
                 .boxed()
         })
         .collect::<Vec<_>>();

@@ -132,8 +132,8 @@ impl<T, G> HtmlElement<T, G> {
     }
 
     /// Sets the inner text (html encoded) of the element
-    pub fn inner(self, inner_text: &str) -> Self {
-        self.inner_unsafe(htmlescape::encode_minimal(inner_text))
+    pub fn inner(self, inner_text: impl AsRef<str>) -> Self {
+        self.inner_unsafe(htmlescape::encode_minimal(inner_text.as_ref()))
     }
 
     /// Sets the inner text (not html encoded) of the element
@@ -266,36 +266,37 @@ impl<T, G> HtmlElement<T, G> {
         self.set_opt_empty_attr(attr())
     }
 
-    pub fn have_class(&self, class: &str) -> bool {
+    pub fn have_class(&self, class: impl AsRef<str>) -> bool {
+        let class = class.as_ref();
         self.attrs
             .get("class")
             .map(|x| x.split_whitespace().any(|o| o == class))
             .unwrap_or_default()
     }
 
-    pub fn add_class(mut self, class: &str) -> Self {
-        if !self.have_class(class) {
+    pub fn add_class<C: AsRef<str> + ToString>(mut self, class: C) -> Self {
+        if !self.have_class(&class) {
             self.attrs
                 .entry("class".to_string())
-                .and_modify(|x| x.push_str(&format!(" {}", class)))
+                .and_modify(|x| x.push_str(&format!(" {}", class.as_ref())))
                 .or_insert_with(|| class.to_string());
         }
         self
     }
 
-    pub fn remove_class(mut self, class: &str) -> Self {
+    pub fn remove_class(mut self, class: impl AsRef<str>) -> Self {
         if let Some(x) = self.attrs.get_mut("class") {
             *x = x
                 .split_whitespace()
-                .filter(|&o| o != class)
+                .filter(|&o| o != class.as_ref())
                 .collect::<Vec<_>>()
                 .join(" ");
         }
         self
     }
 
-    pub fn toogle_class(self, class: &str) -> Self {
-        if self.have_class(class) {
+    pub fn toogle_class<C: AsRef<str> + ToString>(self, class: C) -> Self {
+        if self.have_class(&class) {
             self.remove_class(class)
         } else {
             self.add_class(class)
