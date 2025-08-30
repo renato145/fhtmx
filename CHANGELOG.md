@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0](https://github.com/renato145/fhtmx/compare/v0.13.0...v0.14.0) (2025-08-30)
+
+
+### Features
+
+* change types to be more generic ([9f90aca](https://github.com/renato145/fhtmx/commit/9f90acaf1f446d24e27ff69532f2785357139442))
+
 ## [0.13.0](https://github.com/renato145/fhtmx/compare/v0.12.0...v0.13.0) (2025-07-15)
 
 
