@@ -1,5 +1,0 @@
----
-source: src/htmx.rs
-expression: res
----
-"<div hx-vals='{\"myVal\": \"My Value\"}'></div>"

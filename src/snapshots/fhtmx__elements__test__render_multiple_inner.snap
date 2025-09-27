@@ -1,5 +1,0 @@
----
-source: src/elements.rs
-expression: content
----
-"<p>\n  one\n  <span>two</span>\n  <span>three</span>\n  four\n  <span>five</span>\n  six\n</p>"

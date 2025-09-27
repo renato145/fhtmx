@@ -93,6 +93,7 @@ impl std::fmt::Display for HXTarget<'_> {
 // TODO: add documentation for each attr
 impl<T, G> HtmlElement<T, G> {
     set_attr!(
+        hx_boost = "hx-boost"; eg=r#"a().hx_boost("true")"#,
         hx_confirm = "hx-confirm",
         hx_delete = "hx-delete",
         hx_disable = "hx-disable",
@@ -116,13 +117,13 @@ impl<T, G> HtmlElement<T, G> {
         hx_request = "hx-request",
         hx_select = "hx-select",
         hx_select_oob = "hx-select-oob",
-        hx_swap = "hx-swap",
+        hx_swap = "hx-swap"; eg="div().hx_swap(HXSwap::OuterHTML)",
         hx_swap_oob = "hx-swap-oob",
         hx_sync = "hx-sync",
-        hx_target = "hx-target",
+        hx_target = "hx-target"; eg=r#"div().hx_target(HXTarget::Closest("form"))"#,
         hx_trigger = "hx-trigger",
         hx_validate = "hx-validate",
-        hx_vals = "hx-vals"
+        hx_vals = "hx-vals"; eg=r##"div().hx_vals(format!(r#"{{"key": "{x}"}}"#))"##
     );
 }
 
@@ -141,14 +142,12 @@ mod test {
             .hx_swap(HXSwap::OuterHTML)
             .hx_headers(format!(r#"{{"Authorization": "Bearer {}"}}"#, token))
             .render_sorted();
-        println!("{}", res);
-        insta::assert_yaml_snapshot!(res);
+        insta::assert_snapshot!(res, @r#"<p hx-get="/some_route" hx-headers='{"Authorization": "Bearer asdoiu12309usad"}' hx-swap="outerHTML"></p>"#);
     }
 
     #[test]
     fn hx_vals_works() {
         let res = div().hx_vals(r#"{"myVal": "My Value"}"#).render_sorted();
-        println!("{}", res);
-        insta::assert_yaml_snapshot!(res);
+        insta::assert_snapshot!(res, @r#"<div hx-vals='{"myVal": "My Value"}'></div>"#);
     }
 }

@@ -95,7 +95,10 @@ mod test {
                     .stroke_width(2),
             )
             .render_sorted();
-        println!("{}", res);
-        insta::assert_yaml_snapshot!(res);
+        insta::assert_snapshot!(res, @r#"
+        <svg xmlns="http://www.w3.org/2000/svg">
+          <rect fill="green" height="20" stroke-width="2" stroke="black" width="100" />
+        </svg>
+        "#);
     }
 }

@@ -452,6 +452,15 @@ pub fn doctype_html() -> HtmlElement<&'static str, HtmlEmptyElement> {
 }
 
 macro_rules! set_attr {
+    ($attr:ident = $name:expr; eg = $eg:expr) => {
+        paste! {
+            #[doc = "Sets the `" $name "` attribute.\nExample: `" $eg "`"]
+            pub fn $attr(self, value: impl ToString) -> Self {
+                self.set_attr($name, value)
+            }
+        }
+    };
+
     ($attr:ident = $name:expr) => {
         paste! {
             #[doc = "Sets the `" $name "` attribute."]
@@ -470,9 +479,9 @@ macro_rules! set_attr {
         }
     };
 
-    ($attr:ident$(=$name:expr)?, $($rest:ident$(=$name_rest:expr)?),+) => {
-        set_attr!($attr$(=$name)?);
-        set_attr!($($rest$(=$name_rest)?),+);
+    ($attr:ident$(=$name:expr)?$(;eg=$eg:expr)?, $($rest:ident$(=$name_rest:expr)?$(;eg=$eg_rest:expr)?),+) => {
+        set_attr!($attr$(=$name)?$(;eg=$eg)?);
+        set_attr!($($rest$(=$name_rest)?$(;eg=$eg_rest)?),+);
     };
 }
 
@@ -585,8 +594,23 @@ mod test {
             .add_body_child(h1().inner("A nice title"))
             .add_body_child(div().add_child(p().inner("Some content...")))
             .render_sorted();
-        println!("{}", page);
-        insta::assert_yaml_snapshot!(page);
+        insta::assert_snapshot!(page, @r#"
+        <!doctype html>
+        <html>
+          <head>
+            <title>My page title</title>
+            <meta charset="UTF-8">
+            <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
+            <meta content="Some test page" name="description">
+          </head>
+          <body>
+            <h1>A nice title</h1>
+            <div>
+              <p>Some content...</p>
+            </div>
+          </body>
+        </html>
+        "#);
     }
 
     #[test]
@@ -597,8 +621,11 @@ mod test {
             .maybe_set_empty_attr(|| -> Option<String> { None })
             .maybe_add_child(|| Some(p().inner("yay")))
             .render_sorted();
-        println!("{}", content);
-        insta::assert_yaml_snapshot!(content);
+        insta::assert_snapshot!(content, @r#"
+        <div class="mx-4" hidden>
+          <p>yay</p>
+        </div>
+        "#);
     }
 
     #[test]
@@ -611,8 +638,16 @@ mod test {
             .add_child(span().inner("five"))
             .inner("six")
             .render_sorted();
-        println!("{}", content);
-        insta::assert_yaml_snapshot!(content);
+        insta::assert_snapshot!(content, @r"
+        <p>
+          one
+          <span>two</span>
+          <span>three</span>
+          four
+          <span>five</span>
+          six
+        </p>
+        ");
     }
 
     #[test]
@@ -625,7 +660,6 @@ mod test {
             .toogle_class("p-2")
             .toogle_class("mt-4")
             .render_sorted();
-        println!("{}", content);
-        insta::assert_yaml_snapshot!(content);
+        insta::assert_snapshot!(content, @r#"<div class="flex flex-col p-2"></div>"#);
     }
 }

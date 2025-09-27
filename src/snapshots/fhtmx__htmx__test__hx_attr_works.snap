@@ -1,5 +1,0 @@
----
-source: src/htmx.rs
-expression: res
----
-"<p hx-get=\"/some_route\" hx-headers='{\"Authorization\": \"Bearer asdoiu12309usad\"}' hx-swap=\"outerHTML\"></p>"
