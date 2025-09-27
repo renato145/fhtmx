@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://github.com/renato145/fhtmx/compare/v0.14.0...v0.15.0) (2025-09-27)
+
+
+### Features
+
+* add hx-boost ([c6e1b02](https://github.com/renato145/fhtmx/commit/c6e1b02a77b08e2660b7b255713830e51ac5aa14))
+
 ## [0.14.0](https://github.com/renato145/fhtmx/compare/v0.13.0...v0.14.0) (2025-08-30)
 
 
