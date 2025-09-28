@@ -175,13 +175,13 @@ impl<T, G> HtmlElement<T, G> {
     }
 
     pub fn add_children(mut self, children: HtmlElements) -> Self {
+        self.content_idx += children.len();
         let mut children = children
             .into_iter()
             .enumerate()
             .map(|(i, o)| (i + self.content_idx, o))
             .collect::<Vec<_>>();
         self.children.append(&mut children);
-        self.content_idx += 1;
         self
     }
 
@@ -661,5 +661,33 @@ mod test {
             .toogle_class("mt-4")
             .render_sorted();
         insta::assert_snapshot!(content, @r#"<div class="flex flex-col p-2"></div>"#);
+    }
+
+    #[test]
+    fn add_children_works() {
+        let content = div()
+            .add_children(
+                (0..4)
+                    .map(|o| p().inner(o.to_string()).boxed())
+                    .collect::<Vec<_>>(),
+            )
+            .add_children(
+                (4..8)
+                    .map(|o| p().inner(o.to_string()).boxed())
+                    .collect::<Vec<_>>(),
+            )
+            .render_sorted();
+        insta::assert_snapshot!(content, @r"
+        <div>
+          <p>0</p>
+          <p>1</p>
+          <p>2</p>
+          <p>3</p>
+          <p>4</p>
+          <p>5</p>
+          <p>6</p>
+          <p>7</p>
+        </div>
+        ");
     }
 }
