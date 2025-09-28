@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.1](https://github.com/renato145/fhtmx/compare/v0.15.0...v0.15.1) (2025-09-28)
+
+
+### Bug Fixes
+
+* add_children correctly adds content_idx ([cdddb79](https://github.com/renato145/fhtmx/commit/cdddb790322d338c70b15d09348e6b8d48efda4e))
+
 ## [0.15.0](https://github.com/renato145/fhtmx/compare/v0.14.0...v0.15.0) (2025-09-27)
 
 
