@@ -37,6 +37,7 @@ async fn main() -> anyhow::Result<()> {
             .route("/todo/{id}", web::put().to(update_todo))
             .route("/todo/sort", web::post().to(sort_todo))
             .route("/todo/clear", web::post().to(clear_todo))
+            .route("/js_invoke", web::post().to(js_invoke))
             .app_data(state.clone())
     })
     .bind(("127.0.0.1", 8000))?
@@ -200,6 +201,14 @@ fn sort_list_btn(n: usize) -> HtmlElement<&'static str, HtmlGenericElement> {
                     .hx_confirm("Are you sure?")
                     .class("self-start btn btn-error btn-sm")
                     .inner("Clear todo"),
+            )
+            .add_child(
+                button()
+                    .hx_post("/js_invoke")
+                    .hx_target("body")
+                    .hx_swap(HXSwap::BeforeEnd)
+                    .class("self-start btn btn-info btn-sm")
+                    .inner("Call js"),
             )
     }
 }
@@ -373,4 +382,10 @@ async fn clear_todo(state: web::Data<State>) -> HttpResponse {
         sort_list_btn(0).hx_swap_oob("true").boxed(),
     ]
     .render_response()
+}
+
+#[tracing::instrument(skip(state))]
+async fn js_invoke(state: web::Data<State>) -> HttpResponse {
+    let n = state.todo_list.lock().unwrap().len();
+    iife(format!(r#"alert("Your list got {n} items.");"#)).render_response()
 }

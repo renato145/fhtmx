@@ -15,3 +15,11 @@ watch-run:
 
 browser-sync:
   npm run browser-sync
+
+tmux-run:
+  #!/usr/bin/env bash
+  tmux new-window
+  tmux split-window -v -p 25
+  tmux select-pane -t 0; tmux send-keys "just watch-run" C-m
+  tmux select-pane -t 1; tmux send-keys "just browser-sync" C-m
+  tmux select-pane -t 0
