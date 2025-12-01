@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.0](https://github.com/renato145/fhtmx/compare/v0.15.1...v0.16.0) (2025-12-01)
+
+
+### Features
+
+* add iife ([4aaba4d](https://github.com/renato145/fhtmx/commit/4aaba4d926b99691a4a69c9f2daf71e7aa9c6957))
+
 ## [0.15.1](https://github.com/renato145/fhtmx/compare/v0.15.0...v0.15.1) (2025-09-28)
 
 
