@@ -1,5 +1,7 @@
 use crate::{
-    html::{HtmlAttribute, HtmlElement, HtmlNode, VOID_ELEMENTS},
+    attribute::AttributeValue,
+    element::{HtmlElement, VOID_ELEMENTS},
+    node::HtmlNode,
     utils::{escape_html_to, escape_html_to_with_indent},
 };
 
@@ -30,7 +32,7 @@ impl Render for HtmlElement {
         for (k, v) in &self.attrs {
             buf.push(' ');
             buf.push_str(k);
-            if let HtmlAttribute::Value(v) = v {
+            if let AttributeValue::Value(v) = v {
                 buf.push_str("=\"");
                 escape_html_to(v, buf);
                 buf.push('"');
@@ -125,13 +127,13 @@ impl Render for HtmlNode {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::html::*;
+    use crate::element::*;
     use googletest::prelude::*;
 
     #[test]
     fn simple_render() {
-        let x = p().add_child("some text").render();
-        assert_that!(x, eq("<p>some text</p>"));
+        let x = p().class("bg-red-500").add_child("some text").render();
+        assert_that!(x, eq("<p class=\"bg-red-500\">some text</p>"));
     }
 
     #[gtest]
@@ -163,4 +165,31 @@ mod tests {
             eq("<div>\n  <p>one</p>\n  <p>two</p>\n  <p>three</p>\n  <p>A paragraph</p>\n</div>")
         );
     }
+
+    // #[test]
+    // fn render_page() {
+    //     let page = HtmlPage::new()
+    //         .title("My page title")
+    //         .description("Some test page")
+    //         .add_body_child(h1().inner("A nice title"))
+    //         .add_body_child(div().add_child(p().inner("Some content...")))
+    //         .render_sorted();
+    //     insta::assert_snapshot!(page, @r#"
+    //     <!doctype html>
+    //     <html>
+    //       <head>
+    //         <title>My page title</title>
+    //         <meta charset="UTF-8">
+    //         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
+    //         <meta content="Some test page" name="description">
+    //       </head>
+    //       <body>
+    //         <h1>A nice title</h1>
+    //         <div>
+    //           <p>Some content...</p>
+    //         </div>
+    //       </body>
+    //     </html>
+    //     "#);
+    // }
 }
