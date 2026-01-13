@@ -1,6 +1,6 @@
 use crate::{
     html::{HtmlElement, HtmlNode, VOID_ELEMENTS},
-    utils::escape_html_to,
+    utils::{escape_html_to, escape_html_to_with_indent},
 };
 
 /// Renders to HTML strings
@@ -17,33 +17,6 @@ pub trait Render {
         buf
     }
 }
-
-// impl Render for Node {
-//     fn render_to(&self, buf: &mut String, indent: usize) {
-//         match self {
-//             Node::Text(s) => escape_html_to(s, buf),
-//             Node::Raw(s) => buf.push_str(s),
-//             Node::Fragment(nodes) => {
-//                 for node in nodes {
-//                     node.render_to(buf, indent);
-//                     buf.push('\n');
-//                 }
-//             }
-//             Node::Doctype => buf.push_str("<!DOCTYPE html>"),
-//             Node::Element(el) => el.render_to(buf, indent),
-//         }
-//     }
-//
-//     fn size_hint(&self) -> usize {
-//         match self {
-//             Node::Text(s) => s.len(),
-//             Node::Raw(s) => s.len(),
-//             Node::Fragment(nodes) => nodes.iter().map(|n| n.size_hint()).sum(),
-//             Node::Doctype => 15,
-//             Node::Element(el) => el.size_hint(),
-//         }
-//     }
-// }
 
 impl Render for HtmlElement {
     fn render_to(&self, buf: &mut String, indent: usize) {
@@ -72,23 +45,23 @@ impl Render for HtmlElement {
             return;
         }
 
-        // if self.has_inline_content() {
-        //     buf.push('>');
-        //     self.children.iter().for_each(|c| c.render_to(buf, 0));
-        //     buf.push_str("</");
-        //     buf.push_str(self.tag);
-        //     buf.push('>');
-        // } else {
-        //     buf.push_str(">\n");
-        //     for c in &self.children {
-        //         c.render_to(buf, indent + 1);
-        //         buf.push('\n');
-        //     }
-        //     buf.push_str(&pad);
-        //     buf.push_str("</");
-        //     buf.push_str(self.tag);
-        //     buf.push('>');
-        // }
+        if self.has_inline_content() {
+            buf.push('>');
+            self.children.iter().for_each(|c| c.render_to(buf, 0));
+            buf.push_str("</");
+            buf.push_str(self.tag);
+            buf.push('>');
+        } else {
+            buf.push_str(">\n");
+            for c in &self.children {
+                c.render_to(buf, indent + 1);
+                buf.push('\n');
+            }
+            buf.push_str(&pad);
+            buf.push_str("</");
+            buf.push_str(self.tag);
+            buf.push('>');
+        }
     }
 
     fn size_hint(&self) -> usize {
@@ -98,15 +71,50 @@ impl Render for HtmlElement {
             .iter()
             .map(|(k, v)| k.len() + v.len() + 4)
             .sum::<usize>();
-        // let children_len = self.children.iter().map(|c| c.size_hint()).sum::<usize>();
-        // tag_len + attrs_len + children_len
-        tag_len + attrs_len
+        let children_len = self.children.iter().map(|c| c.size_hint()).sum::<usize>();
+        tag_len + attrs_len + children_len
+    }
+}
+
+#[inline]
+fn push_str_with_indent(s: &str, buf: &mut String, indent: usize) {
+    if indent == 0 {
+        buf.push_str(s);
+    } else {
+        let pad = "  ".repeat(indent);
+        s.lines().for_each(|o| {
+            buf.push_str(&pad);
+            buf.push_str(o);
+            buf.push('\n');
+        });
+        buf.pop();
+    }
+}
+
+impl Render for HtmlNode {
+    fn render_to(&self, buf: &mut String, indent: usize) {
+        match self {
+            HtmlNode::Doctype => push_str_with_indent("<!DOCTYPE html>", buf, indent),
+            HtmlNode::Raw(s) => push_str_with_indent(s, buf, indent),
+            HtmlNode::Text(s) => escape_html_to_with_indent(s, buf, indent),
+            HtmlNode::Element(el) => el.render_to(buf, indent),
+            HtmlNode::Fragment(nodes) => {
+                for node in nodes {
+                    node.render_to(buf, indent);
+                    buf.push('\n');
+                }
+                buf.pop();
+            }
+        }
     }
 
-    fn render(&self) -> String {
-        let mut buf = String::with_capacity(self.size_hint());
-        self.render_to(&mut buf, 0);
-        buf
+    fn size_hint(&self) -> usize {
+        match self {
+            HtmlNode::Doctype => 15,
+            HtmlNode::Raw(s) | HtmlNode::Text(s) => s.len(),
+            HtmlNode::Element(el) => el.size_hint(),
+            HtmlNode::Fragment(nodes) => nodes.iter().map(|n| n.size_hint()).sum(),
+        }
     }
 }
 
@@ -118,7 +126,37 @@ mod tests {
 
     #[test]
     fn simple_render() {
-        let x = p().render();
-        assert_that!(x, eq("<p></p>"))
+        let x = p().add_child("some text").render();
+        assert_that!(x, eq("<p>some text</p>"));
+    }
+
+    #[gtest]
+    fn inline_content() {
+        let x = div()
+            .add_child("Some intro text")
+            .add_child(p().add_child("A paragraph"))
+            .render();
+        expect_that!(
+            x,
+            eq("<div>\n  Some intro text\n  <p>A paragraph</p>\n</div>")
+        );
+
+        let x = div()
+            .add_child("Some intro text\nwith multiple\nlines")
+            .add_child(p().add_child("A paragraph"))
+            .render();
+        expect_that!(
+            x,
+            eq("<div>\n  Some intro text\n  with multiple\n  lines\n  <p>A paragraph</p>\n</div>")
+        );
+
+        let x = div()
+            .add_raw("<p>one</p>\n<p>two</p>\n<p>three</p>")
+            .add_child(p().add_child("A paragraph"))
+            .render();
+        expect_that!(
+            x,
+            eq("<div>\n  <p>one</p>\n  <p>two</p>\n  <p>three</p>\n  <p>A paragraph</p>\n</div>")
+        );
     }
 }

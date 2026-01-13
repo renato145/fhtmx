@@ -28,32 +28,64 @@ impl HtmlElement {
         }
     }
 
+    pub fn is_void_tag(&self) -> bool {
+        VOID_ELEMENTS.contains(&self.tag)
+    }
+
+    pub fn is_inline_tag(&self) -> bool {
+        INLINE_ELEMENTS.contains(&self.tag)
+    }
+
     pub fn has_inline_content(&self) -> bool {
-        let has_block = self
-            .children
-            .iter()
-            .any(|c| matches!(c, HtmlNode::Element(el) if !INLINE_ELEMENTS.contains(&el.tag)));
+        let has_block = self.children.iter().any(|o| match o {
+            HtmlNode::Element(x) => !x.is_inline_tag(),
+            _ => false,
+        });
 
         if has_block {
-            // Has block elements, so treat as block layout even if text is present
             false
         } else {
             // Only text and/or inline elements
-            self.children.iter().any(|c| {
-                matches!(c, HtmlNode::Text(_))
-                    || matches!(c, HtmlNode::Element(el) if INLINE_ELEMENTS.contains(&el.tag))
-            })
+            // self.children.iter().any(|c| {
+            //     matches!(c, HtmlNode::Text(_))
+            //         || matches!(c, HtmlNode::Element(el) if INLINE_ELEMENTS.contains(&el.tag))
+            // })
+            true
         }
+    }
+
+    /// Adds a child
+    pub fn add_child(mut self, node: impl IntoNode) -> Self {
+        self.children.push(node.into_node());
+        self
+    }
+
+    /// Adds a raw html child
+    pub fn add_raw(mut self, raw: impl ToString) -> Self {
+        self.children.push(HtmlNode::raw(raw));
+        self
     }
 }
 
 /// Types of nodes that can go inside an `Element`
 pub enum HtmlNode {
     Doctype,
-    Text(String),
     Raw(String),
+    Text(String),
     Element(HtmlElement),
     Fragment(Vec<HtmlNode>),
+}
+
+impl HtmlNode {
+    #[inline]
+    pub fn raw(raw: impl ToString) -> Self {
+        Self::Raw(raw.to_string())
+    }
+
+    #[inline]
+    pub fn text(raw: impl ToString) -> Self {
+        Self::Text(raw.to_string())
+    }
 }
 
 macro_rules! create_tag_fn {
@@ -70,6 +102,28 @@ macro_rules! create_tag_fn {
         create_tag_fn!($name);
         create_tag_fn!($($rest),+);
     };
+}
+
+pub trait IntoNode {
+    fn into_node(self) -> HtmlNode;
+}
+
+impl IntoNode for HtmlElement {
+    fn into_node(self) -> HtmlNode {
+        HtmlNode::Element(self)
+    }
+}
+
+impl IntoNode for HtmlNode {
+    fn into_node(self) -> HtmlNode {
+        self
+    }
+}
+
+impl<T: ToString> IntoNode for T {
+    fn into_node(self) -> HtmlNode {
+        HtmlNode::Text(self.to_string())
+    }
 }
 
 create_tag_fn!(
