@@ -20,6 +20,8 @@ pub trait Render {
 
 impl Render for HtmlElement {
     fn render_to(&self, buf: &mut String, indent: usize) {
+        // TODO: Convert recursion to iteration using an explicit stack:
+
         let pad = "  ".repeat(indent);
 
         buf.push_str(&pad);

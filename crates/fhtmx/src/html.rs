@@ -1,5 +1,6 @@
+use indexmap::IndexMap;
 use paste::paste;
-use std::{borrow::Cow, collections::HashMap};
+use std::borrow::Cow;
 
 pub const VOID_ELEMENTS: &[&str] = &[
     "area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source",
@@ -15,7 +16,7 @@ pub const INLINE_ELEMENTS: &[&str] = &[
 /// Represents a HTML element
 pub struct HtmlElement {
     pub tag: &'static str,
-    pub attrs: HashMap<Cow<'static, str>, HtmlAttribute>,
+    pub attrs: IndexMap<Cow<'static, str>, HtmlAttribute>,
     pub children: Vec<HtmlNode>,
 }
 
@@ -23,7 +24,7 @@ impl HtmlElement {
     pub fn new(tag: &'static str) -> Self {
         Self {
             tag,
-            attrs: HashMap::new(),
+            attrs: IndexMap::new(),
             children: Vec::new(),
         }
     }
@@ -200,7 +201,7 @@ impl IntoAttribute for bool {
     }
 }
 
-// TODO: macro to implement for all numerics
+// TODO: macro to implement for all numerics types
 impl IntoAttribute for i32 {
     fn into_attr(self) -> Option<HtmlAttribute> {
         Some(HtmlAttribute::Value(self.to_string()))
