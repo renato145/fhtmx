@@ -1,0 +1,8 @@
+{
+  "release-type": "rust",
+  "include-component-in-tag": true,
+  "plugins": ["cargo-workspace"],
+  "packages": {
+    "crates/fhtmx": {}
+  }
+}
