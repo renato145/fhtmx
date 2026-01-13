@@ -1,5 +1,5 @@
 use crate::{
-    html::{HtmlElement, HtmlNode, VOID_ELEMENTS},
+    html::{HtmlAttribute, HtmlElement, HtmlNode, VOID_ELEMENTS},
     utils::{escape_html_to, escape_html_to_with_indent},
 };
 
@@ -28,9 +28,11 @@ impl Render for HtmlElement {
         for (k, v) in &self.attrs {
             buf.push(' ');
             buf.push_str(k);
-            buf.push_str("=\"");
-            escape_html_to(v, buf);
-            buf.push('"');
+            if let HtmlAttribute::Value(v) = v {
+                buf.push_str("=\"");
+                escape_html_to(v, buf);
+                buf.push('"');
+            }
         }
 
         if VOID_ELEMENTS.contains(&self.tag) {
@@ -69,7 +71,7 @@ impl Render for HtmlElement {
         let attrs_len = self
             .attrs
             .iter()
-            .map(|(k, v)| k.len() + v.len() + 4)
+            .map(|(k, v)| k.len() + v.size_hint())
             .sum::<usize>();
         let children_len = self.children.iter().map(|c| c.size_hint()).sum::<usize>();
         tag_len + attrs_len + children_len

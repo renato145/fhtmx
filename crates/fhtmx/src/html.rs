@@ -1,5 +1,5 @@
 use paste::paste;
-use std::borrow::Cow;
+use std::{borrow::Cow, collections::HashMap};
 
 pub const VOID_ELEMENTS: &[&str] = &[
     "area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source",
@@ -15,7 +15,7 @@ pub const INLINE_ELEMENTS: &[&str] = &[
 /// Represents a HTML element
 pub struct HtmlElement {
     pub tag: &'static str,
-    pub attrs: Vec<(Cow<'static, str>, String)>,
+    pub attrs: HashMap<Cow<'static, str>, HtmlAttribute>,
     pub children: Vec<HtmlNode>,
 }
 
@@ -23,7 +23,7 @@ impl HtmlElement {
     pub fn new(tag: &'static str) -> Self {
         Self {
             tag,
-            attrs: Vec::new(),
+            attrs: HashMap::new(),
             children: Vec::new(),
         }
     }
@@ -54,17 +54,49 @@ impl HtmlElement {
         }
     }
 
-    /// Adds a child
-    pub fn add_child(mut self, node: impl IntoNode) -> Self {
-        self.children.push(node.into_node());
-        self
-    }
-
     /// Adds a raw html child
     pub fn add_raw(mut self, raw: impl ToString) -> Self {
         self.children.push(HtmlNode::raw(raw));
         self
     }
+
+    /// Adds a child
+    pub fn add_child(mut self, node: impl IntoNode) -> Self {
+        let node = node.into_node();
+        match node {
+            HtmlNode::Fragment(mut x) => {
+                self.children.append(&mut x);
+            }
+            x => self.children.push(x),
+        }
+        self
+    }
+
+    // TODO: implement
+
+    // pub fn add_child_if<C: HtmlRender + 'static>(self, cond: bool, child: C) -> Self {
+    //     if cond {
+    //         return self.add_child(child);
+    //     }
+    //     self
+    // }
+    //
+    // /// Adds child if it contains a value
+    // pub fn add_opt_child<C: HtmlRender + 'static>(self, child: Option<C>) -> Self {
+    //     if let Some(child) = child {
+    //         return self.add_child(child);
+    //     }
+    //     self
+    // }
+    //
+    // /// Adds child if the closure returns a value
+    // pub fn maybe_add_child<F, C>(self, child: F) -> Self
+    // where
+    //     F: FnOnce() -> Option<C>,
+    //     C: HtmlRender + 'static,
+    // {
+    //     self.add_opt_child(child())
+    // }
 }
 
 /// Types of nodes that can go inside an `Element`
@@ -105,6 +137,7 @@ macro_rules! create_tag_fn {
 }
 
 pub trait IntoNode {
+    /// Transforms into a `HtmlNode`
     fn into_node(self) -> HtmlNode;
 }
 
@@ -123,6 +156,54 @@ impl IntoNode for HtmlNode {
 impl<T: ToString> IntoNode for T {
     fn into_node(self) -> HtmlNode {
         HtmlNode::Text(self.to_string())
+    }
+}
+
+pub enum HtmlAttribute {
+    Empty,
+    Value(String),
+}
+
+impl HtmlAttribute {
+    pub fn size_hint(&self) -> usize {
+        match self {
+            HtmlAttribute::Empty => 0,
+            HtmlAttribute::Value(x) => x.len() + 4,
+        }
+    }
+}
+
+pub trait IntoAttribute {
+    /// Transforms into a html attribute string
+    fn into_attr(self) -> Option<HtmlAttribute>;
+}
+
+impl IntoAttribute for &str {
+    fn into_attr(self) -> Option<HtmlAttribute> {
+        Some(HtmlAttribute::Value(self.to_string()))
+    }
+}
+
+impl IntoAttribute for String {
+    fn into_attr(self) -> Option<HtmlAttribute> {
+        Some(HtmlAttribute::Value(self))
+    }
+}
+
+impl IntoAttribute for bool {
+    fn into_attr(self) -> Option<HtmlAttribute> {
+        if self {
+            Some(HtmlAttribute::Empty)
+        } else {
+            None
+        }
+    }
+}
+
+// TODO: macro to implement for all numerics
+impl IntoAttribute for i32 {
+    fn into_attr(self) -> Option<HtmlAttribute> {
+        Some(HtmlAttribute::Value(self.to_string()))
     }
 }
 
