@@ -18,6 +18,12 @@ pub trait IntoAttributeValue {
     fn into_attr(self) -> Option<AttributeValue>;
 }
 
+impl IntoAttributeValue for AttributeValue {
+    fn into_attr(self) -> Option<AttributeValue> {
+        Some(self)
+    }
+}
+
 impl IntoAttributeValue for &str {
     fn into_attr(self) -> Option<AttributeValue> {
         Some(AttributeValue::Value(self.to_string()))

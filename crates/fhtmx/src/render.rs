@@ -165,31 +165,4 @@ mod tests {
             eq("<div>\n  <p>one</p>\n  <p>two</p>\n  <p>three</p>\n  <p>A paragraph</p>\n</div>")
         );
     }
-
-    // #[test]
-    // fn render_page() {
-    //     let page = HtmlPage::new()
-    //         .title("My page title")
-    //         .description("Some test page")
-    //         .add_body_child(h1().inner("A nice title"))
-    //         .add_body_child(div().add_child(p().inner("Some content...")))
-    //         .render_sorted();
-    //     insta::assert_snapshot!(page, @r#"
-    //     <!doctype html>
-    //     <html>
-    //       <head>
-    //         <title>My page title</title>
-    //         <meta charset="UTF-8">
-    //         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
-    //         <meta content="Some test page" name="description">
-    //       </head>
-    //       <body>
-    //         <h1>A nice title</h1>
-    //         <div>
-    //           <p>Some content...</p>
-    //         </div>
-    //       </body>
-    //     </html>
-    //     "#);
-    // }
 }

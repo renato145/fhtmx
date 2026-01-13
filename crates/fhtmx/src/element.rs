@@ -103,6 +103,36 @@ impl HtmlElement {
     //     self.add_opt_child(child())
     // }
 
+    /// Add children
+    pub fn add_children(mut self, nodes: impl IntoIterator<Item = impl IntoNode>) -> Self {
+        self.children
+            .extend(nodes.into_iter().map(|n| n.into_node()));
+        self
+    }
+
+    // pub fn add_children_if(self, cond: bool, children: HtmlElements) -> Self {
+    //     if cond {
+    //         return self.add_children(children);
+    //     }
+    //     self
+    // }
+    //
+    // /// Adds children if it contains a value
+    // pub fn add_opt_children(self, children: Option<HtmlElements>) -> Self {
+    //     if let Some(children) = children {
+    //         return self.add_children(children);
+    //     }
+    //     self
+    // }
+    //
+    // /// Adds children if the closure returns a value
+    // pub fn maybe_add_children<F>(self, children: F) -> Self
+    // where
+    //     F: FnOnce() -> Option<HtmlElements>,
+    // {
+    //     self.add_opt_children(children())
+    // }
+
     pub fn set_attr<K, V>(mut self, attr: K, value: V) -> Self
     where
         K: Into<Cow<'static, str>>,
