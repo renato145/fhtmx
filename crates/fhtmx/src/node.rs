@@ -1,4 +1,4 @@
-use crate::element::HtmlElement;
+use crate::{element::HtmlElement, svg::SvgElement};
 
 /// Types of nodes that can go inside an `Element`
 #[derive(Clone, Debug)]
@@ -7,6 +7,7 @@ pub enum HtmlNode {
     Raw(String),
     Text(String),
     Element(HtmlElement),
+    SvgElement(SvgElement),
     Fragment(Vec<HtmlNode>),
 }
 
@@ -30,6 +31,12 @@ pub trait IntoNode {
 impl IntoNode for HtmlElement {
     fn into_node(self) -> HtmlNode {
         HtmlNode::Element(self)
+    }
+}
+
+impl IntoNode for SvgElement {
+    fn into_node(self) -> HtmlNode {
+        HtmlNode::SvgElement(self)
     }
 }
 

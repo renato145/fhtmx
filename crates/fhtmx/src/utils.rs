@@ -19,7 +19,7 @@ pub fn escape_html_to(s: &str, buf: &mut String) {
 
 pub fn escape_html_to_with_indent(s: &str, buf: &mut String, indent: usize) {
     if indent == 0 {
-        escape_html_to(s, buf)
+        escape_html_to(s, buf);
     } else {
         let pad = "  ".repeat(indent);
         s.lines().for_each(|o| {

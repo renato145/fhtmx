@@ -1,5 +1,5 @@
 use crate::{
-    element::HtmlElement,
+    element::{Element, HtmlElement},
     prelude::{AttributeValue, IntoAttributeValue},
 };
 use paste::paste;
