@@ -55,7 +55,7 @@ fn main() {
                 .rel("stylesheet")
                 .typ("text/css"),
         )
-        .add_header_node(script().src("https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"))
+        .add_header_node(source_tailwind())
         .add_body_node(body)
         .render();
     std::fs::write("examples/daisyui.html", page).unwrap();

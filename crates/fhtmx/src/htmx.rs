@@ -1,6 +1,6 @@
 use crate::{
-    element::{Element, HtmlElement},
-    prelude::{AttributeValue, IntoAttributeValue},
+    attribute::{AttributeValue, IntoAttributeValue},
+    element::*,
 };
 use paste::paste;
 
@@ -183,7 +183,7 @@ impl HtmlElement {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::{element::*, render::Render};
+    use crate::render::Render;
 
     #[test]
     fn hx_attr_works() {

@@ -3,3 +3,4 @@ resolver = "3"
 members = ["crates/*"]
 
 [workspace.dependencies]
+insta = { version = "1.46", features = ["yaml", "redactions"] }

@@ -23,7 +23,7 @@ fn main() {
         );
     let page = HtmlPage::new()
         .title("simple")
-        .add_header_node(script().src("https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"))
+        .add_header_node(source_tailwind())
         .add_header_node(
             style()
                 .typ("text/tailwindcss")

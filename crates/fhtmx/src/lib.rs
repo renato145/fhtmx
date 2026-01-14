@@ -5,6 +5,7 @@ pub mod htmx;
 pub mod js;
 pub mod node;
 pub mod render;
+pub mod sources;
 pub mod svg;
 pub mod utils;
 
@@ -18,6 +19,7 @@ pub mod prelude {
     pub use crate::node;
     pub use crate::node::*;
     pub use crate::render::*;
+    pub use crate::sources::*;
     pub use crate::svg::*;
     pub use crate::utils::*;
 }
