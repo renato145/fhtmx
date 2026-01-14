@@ -1,8 +1,7 @@
 use crate::{
-    attribute::AttributeValue,
     element::{HtmlElement, VOID_ELEMENTS},
     node::HtmlNode,
-    utils::{escape_html_to, escape_html_to_with_indent},
+    utils::escape_html_to_with_indent,
 };
 
 /// Renders to HTML strings
@@ -32,11 +31,7 @@ impl Render for HtmlElement {
         for (k, v) in &self.attrs {
             buf.push(' ');
             buf.push_str(k);
-            if let AttributeValue::Value(v) = v {
-                buf.push_str("=\"");
-                escape_html_to(v, buf);
-                buf.push('"');
-            }
+            v.render_to(buf);
         }
 
         if VOID_ELEMENTS.contains(&self.tag) {
@@ -128,41 +123,50 @@ impl Render for HtmlNode {
 mod tests {
     use super::*;
     use crate::element::*;
-    use googletest::prelude::*;
 
     #[test]
     fn simple_render() {
-        let x = p().class("bg-red-500").add_child("some text").render();
-        assert_that!(x, eq("<p class=\"bg-red-500\">some text</p>"));
+        let res = p().class("bg-red-500").add_child("some text").render();
+        insta::assert_snapshot!(res, @r#"<p class="bg-red-500">some text</p>"#);
     }
 
-    #[gtest]
+    #[test]
     fn inline_content() {
-        let x = div()
+        let res = div()
             .add_child("Some intro text")
             .add_child(p().add_child("A paragraph"))
             .render();
-        expect_that!(
-            x,
-            eq("<div>\n  Some intro text\n  <p>A paragraph</p>\n</div>")
-        );
+        insta::assert_snapshot!(res, @r"
+        <div>
+          Some intro text
+          <p>A paragraph</p>
+        </div>
+        ");
 
-        let x = div()
+        let res = div()
             .add_child("Some intro text\nwith multiple\nlines")
             .add_child(p().add_child("A paragraph"))
             .render();
-        expect_that!(
-            x,
-            eq("<div>\n  Some intro text\n  with multiple\n  lines\n  <p>A paragraph</p>\n</div>")
-        );
+        insta::assert_snapshot!(res, @r"
+        <div>
+          Some intro text
+          with multiple
+          lines
+          <p>A paragraph</p>
+        </div>
+        ");
 
-        let x = div()
+        let res = div()
             .add_raw("<p>one</p>\n<p>two</p>\n<p>three</p>")
             .add_child(p().add_child("A paragraph"))
             .render();
-        expect_that!(
-            x,
-            eq("<div>\n  <p>one</p>\n  <p>two</p>\n  <p>three</p>\n  <p>A paragraph</p>\n</div>")
-        );
+        insta::assert_snapshot!(res, @r"
+        <div>
+          <p>one</p>
+          <p>two</p>
+          <p>three</p>
+          <p>A paragraph</p>
+        </div>
+        ");
     }
 }

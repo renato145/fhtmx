@@ -144,6 +144,17 @@ impl HtmlElement {
         self
     }
 
+    pub fn set_raw_attr<K, V>(mut self, attr: K, value: V) -> Self
+    where
+        K: Into<Cow<'static, str>>,
+        V: IntoAttributeValue,
+    {
+        if let Some(v) = value.into_raw_attr() {
+            self.attrs.insert(attr.into(), v);
+        }
+        self
+    }
+
     // pub fn set_attr_if(self, cond: bool, attr: impl ToString, value: impl ToString) -> Self {
     //     if cond {
     //         return self.set_attr(attr, value);
@@ -308,8 +319,6 @@ macro_rules! set_attr {
     };
 }
 
-// pub(crate) use set_attr;
-
 macro_rules! set_empty_attr {
     ($attr:ident = $name:expr) => {
         paste! {
@@ -334,8 +343,6 @@ macro_rules! set_empty_attr {
         set_empty_attr!($($rest$(=$name_rest)?),+);
     };
 }
-
-// pub(crate) use set_empty_attr;
 
 impl HtmlElement {
     set_attr!(

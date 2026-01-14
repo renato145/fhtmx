@@ -1,4 +1,7 @@
-use crate::{elements::HtmlElement, prelude::set_attr};
+use crate::{
+    element::HtmlElement,
+    prelude::{AttributeValue, IntoAttributeValue},
+};
 use paste::paste;
 
 /// The hx-swap attribute allows you to specify how the response will be swapped in relative to the
@@ -40,6 +43,12 @@ impl std::fmt::Display for HXSwap {
             HXSwap::None => "none",
         };
         write!(f, "{}", s)
+    }
+}
+
+impl IntoAttributeValue for HXSwap {
+    fn into_attr(self) -> Option<AttributeValue> {
+        Some(AttributeValue::Value(self.to_string()))
     }
 }
 
@@ -90,9 +99,49 @@ impl std::fmt::Display for HXTarget<'_> {
     }
 }
 
+impl IntoAttributeValue for HXTarget<'_> {
+    fn into_attr(self) -> Option<AttributeValue> {
+        Some(AttributeValue::Value(self.to_string()))
+    }
+}
+
+macro_rules! set_htmx_attr {
+    ($attr:ident = $name:expr; eg = $eg:expr) => {
+        paste! {
+            #[doc = "Sets the `" $name "` attribute.\nExample: `" $eg "`"]
+            pub fn $attr(self, value: impl IntoAttributeValue) -> Self {
+                self.set_raw_attr($name, value)
+            }
+        }
+    };
+
+    ($attr:ident = $name:expr) => {
+        paste! {
+            #[doc = "Sets the `" $name "` attribute."]
+            pub fn $attr(self, value: impl IntoAttributeValue) -> Self {
+                self.set_raw_attr($name, value)
+            }
+        }
+    };
+
+    ($attr:ident) => {
+        paste! {
+            #[doc = "Sets the `" $attr "` attribute."]
+            pub fn $attr(self, value: impl IntoAttributeValue) -> Self {
+                self.set_raw_attr(stringify!([< $attr:lower >]), value)
+            }
+        }
+    };
+
+    ($attr:ident$(=$name:expr)?$(;eg=$eg:expr)?, $($rest:ident$(=$name_rest:expr)?$(;eg=$eg_rest:expr)?),+) => {
+        set_htmx_attr!($attr$(=$name)?$(;eg=$eg)?);
+        set_htmx_attr!($($rest$(=$name_rest)?$(;eg=$eg_rest)?),+);
+    };
+}
+
 // TODO: add documentation for each attr
-impl<T, G> HtmlElement<T, G> {
-    set_attr!(
+impl HtmlElement {
+    set_htmx_attr!(
         hx_boost = "hx-boost"; eg=r#"a().hx_boost("true")"#,
         hx_confirm = "hx-confirm",
         hx_delete = "hx-delete",
@@ -123,16 +172,18 @@ impl<T, G> HtmlElement<T, G> {
         hx_target = "hx-target"; eg=r#"div().hx_target(HXTarget::Closest("form"))"#,
         hx_trigger = "hx-trigger",
         hx_validate = "hx-validate",
-        hx_vals = "hx-vals"; eg=r##"div().hx_vals(format!(r#"{{"key": "{x}"}}"#))"##
+        hx_vals = "hx-vals"; eg=r##"div().hx_vals(format!(r#"{{"key": "{x}"}}"#))"##,
+        sse_connect = "sse-connect",
+        sse_swap = "sse-swap",
+        ws_connect = "ws-connect",
+        ws_send = "ws-send"
     );
 }
 
 #[cfg(test)]
 mod test {
-    use crate::{
-        htmx::HXSwap,
-        prelude::{HtmlRender, div, p},
-    };
+    use super::*;
+    use crate::{element::*, render::Render};
 
     #[test]
     fn hx_attr_works() {
@@ -141,13 +192,13 @@ mod test {
             .hx_get("/some_route")
             .hx_swap(HXSwap::OuterHTML)
             .hx_headers(format!(r#"{{"Authorization": "Bearer {}"}}"#, token))
-            .render_sorted();
-        insta::assert_snapshot!(res, @r#"<p hx-get="/some_route" hx-headers='{"Authorization": "Bearer asdoiu12309usad"}' hx-swap="outerHTML"></p>"#);
+            .render();
+        insta::assert_snapshot!(res, @r#"<p hx-get="/some_route" hx-swap="outerHTML" hx-headers='{"Authorization": "Bearer asdoiu12309usad"}'></p>"#);
     }
 
     #[test]
     fn hx_vals_works() {
-        let res = div().hx_vals(r#"{"myVal": "My Value"}"#).render_sorted();
+        let res = div().hx_vals(r#"{"myVal": "My Value"}"#).render();
         insta::assert_snapshot!(res, @r#"<div hx-vals='{"myVal": "My Value"}'></div>"#);
     }
 }
