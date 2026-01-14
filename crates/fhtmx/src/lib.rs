@@ -10,11 +10,13 @@ pub mod utils;
 
 pub mod prelude {
     pub use crate::attribute::*;
+    pub use crate::children;
     pub use crate::element::*;
     pub use crate::html_page::*;
     pub use crate::htmx::*;
     pub use crate::js::*;
     pub use crate::node;
+    pub use crate::node::*;
     pub use crate::render::*;
     pub use crate::svg::*;
     pub use crate::utils::*;

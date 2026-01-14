@@ -1,7 +1,7 @@
 use crate::{
     attribute::{AttributeValue, IntoAttributeValue},
     element::{Element, set_attr},
-    node::{HtmlNode, IntoNode},
+    node::{HtmlNode, IntoNode, raw_node},
 };
 use indexmap::IndexMap;
 use paste::paste;
@@ -54,7 +54,7 @@ impl Element for SvgElement {
     }
 
     fn add_raw(mut self, raw: impl ToString) -> Self {
-        self.children.push(HtmlNode::raw(raw));
+        self.children.push(raw_node(raw));
         self
     }
 

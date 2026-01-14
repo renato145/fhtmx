@@ -11,16 +11,16 @@ pub enum HtmlNode {
     Fragment(Vec<HtmlNode>),
 }
 
-impl HtmlNode {
-    #[inline]
-    pub fn raw(raw: impl ToString) -> Self {
-        Self::Raw(raw.to_string())
-    }
+/// Creates a `HtmlNode::Raw` node
+#[inline]
+pub fn raw_node(raw: impl ToString) -> HtmlNode {
+    HtmlNode::Raw(raw.to_string())
+}
 
-    #[inline]
-    pub fn text(raw: impl ToString) -> Self {
-        Self::Text(raw.to_string())
-    }
+/// Creates a `HtmlNode::Fragment` node
+#[inline]
+pub fn fragment(nodes: impl IntoIterator<Item = impl IntoNode>) -> HtmlNode {
+    HtmlNode::Fragment(nodes.into_iter().map(|n| n.into_node()).collect())
 }
 
 pub trait IntoNode {

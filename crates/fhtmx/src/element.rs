@@ -1,6 +1,6 @@
 use crate::{
     attribute::{AttributeValue, IntoAttributeValue},
-    node::{HtmlNode, IntoNode},
+    node::{HtmlNode, IntoNode, raw_node},
 };
 use indexmap::IndexMap;
 use paste::paste;
@@ -255,7 +255,7 @@ impl Element for HtmlElement {
     }
 
     fn add_raw(mut self, raw: impl ToString) -> Self {
-        self.children.push(HtmlNode::raw(raw));
+        self.children.push(raw_node(raw));
         self
     }
 
@@ -534,112 +534,147 @@ impl HtmlElement {
     );
 }
 
-// #[cfg(test)]
-// mod test {
-//     use crate::{elements::*, html_page::HtmlPage};
-//
-//     #[test]
-//     fn render_simple() {
-//         let page = HtmlPage::new()
-//             .title("My page title")
-//             .description("Some test page")
-//             .add_body_child(h1().inner("A nice title"))
-//             .add_body_child(div().add_child(p().inner("Some content...")))
-//             .render_sorted();
-//         insta::assert_snapshot!(page, @r#"
-//         <!doctype html>
-//         <html>
-//           <head>
-//             <title>My page title</title>
-//             <meta charset="UTF-8">
-//             <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
-//             <meta content="Some test page" name="description">
-//           </head>
-//           <body>
-//             <h1>A nice title</h1>
-//             <div>
-//               <p>Some content...</p>
-//             </div>
-//           </body>
-//         </html>
-//         "#);
-//     }
-//
-//     #[test]
-//     fn render_with_maybe_sets() {
-//         let content = div()
-//             .maybe_set_attr("class", || Some("mx-4"))
-//             .maybe_set_empty_attr(|| Some("hidden"))
-//             .maybe_set_empty_attr(|| -> Option<String> { None })
-//             .maybe_add_child(|| Some(p().inner("yay")))
-//             .render_sorted();
-//         insta::assert_snapshot!(content, @r#"
-//         <div class="mx-4" hidden>
-//           <p>yay</p>
-//         </div>
-//         "#);
-//     }
-//
-//     #[test]
-//     fn render_multiple_inner() {
-//         let content = p()
-//             .inner("one")
-//             .add_child(span().inner("two"))
-//             .add_child(span().inner("three"))
-//             .inner("four")
-//             .add_child(span().inner("five"))
-//             .inner("six")
-//             .render_sorted();
-//         insta::assert_snapshot!(content, @r"
-//         <p>
-//           one
-//           <span>two</span>
-//           <span>three</span>
-//           four
-//           <span>five</span>
-//           six
-//         </p>
-//         ");
-//     }
-//
-//     #[test]
-//     fn add_remove_class_works() {
-//         let content = div()
-//             .class("flex mt-4")
-//             .add_class("grid")
-//             .add_class("flex-col")
-//             .remove_class("grid")
-//             .toogle_class("p-2")
-//             .toogle_class("mt-4")
-//             .render_sorted();
-//         insta::assert_snapshot!(content, @r#"<div class="flex flex-col p-2"></div>"#);
-//     }
-//
-//     #[test]
-//     fn add_children_works() {
-//         let content = div()
-//             .add_children(
-//                 (0..4)
-//                     .map(|o| p().inner(o.to_string()).boxed())
-//                     .collect::<Vec<_>>(),
-//             )
-//             .add_children(
-//                 (4..8)
-//                     .map(|o| p().inner(o.to_string()).boxed())
-//                     .collect::<Vec<_>>(),
-//             )
-//             .render_sorted();
-//         insta::assert_snapshot!(content, @r"
-//         <div>
-//           <p>0</p>
-//           <p>1</p>
-//           <p>2</p>
-//           <p>3</p>
-//           <p>4</p>
-//           <p>5</p>
-//           <p>6</p>
-//           <p>7</p>
-//         </div>
-//         ");
-//     }
-// }
+/// Build a list of nodes with mixed types.
+///
+///
+/// # Example
+///
+/// ```
+/// # use fhtmx::prelude::*;
+/// let nodes = children!["text", p()];
+/// ```
+#[macro_export]
+macro_rules! children {
+    () => {
+        Vec::<HtmlNode>::new()
+    };
+
+    ($($child:expr),* $(,)?) => {
+        vec![$($child.into_node()),*]
+    };
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::render::Render;
+
+    #[test]
+    fn children_macro() {
+        let res = div()
+            .add_children(children!["Some text", p().add_child("inner text"), 123456])
+            .render();
+        insta::assert_snapshot!(res, @r"
+        <div>
+          Some text
+          <p>inner text</p>
+          123456
+        </div>
+        ");
+    }
+
+    //     #[test]
+    //     fn render_simple() {
+    //         let page = HtmlPage::new()
+    //             .title("My page title")
+    //             .description("Some test page")
+    //             .add_body_child(h1().inner("A nice title"))
+    //             .add_body_child(div().add_child(p().inner("Some content...")))
+    //             .render_sorted();
+    //         insta::assert_snapshot!(page, @r#"
+    //         <!doctype html>
+    //         <html>
+    //           <head>
+    //             <title>My page title</title>
+    //             <meta charset="UTF-8">
+    //             <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
+    //             <meta content="Some test page" name="description">
+    //           </head>
+    //           <body>
+    //             <h1>A nice title</h1>
+    //             <div>
+    //               <p>Some content...</p>
+    //             </div>
+    //           </body>
+    //         </html>
+    //         "#);
+    //     }
+    //
+    //     #[test]
+    //     fn render_with_maybe_sets() {
+    //         let content = div()
+    //             .maybe_set_attr("class", || Some("mx-4"))
+    //             .maybe_set_empty_attr(|| Some("hidden"))
+    //             .maybe_set_empty_attr(|| -> Option<String> { None })
+    //             .maybe_add_child(|| Some(p().inner("yay")))
+    //             .render_sorted();
+    //         insta::assert_snapshot!(content, @r#"
+    //         <div class="mx-4" hidden>
+    //           <p>yay</p>
+    //         </div>
+    //         "#);
+    //     }
+    //
+    //     #[test]
+    //     fn render_multiple_inner() {
+    //         let content = p()
+    //             .inner("one")
+    //             .add_child(span().inner("two"))
+    //             .add_child(span().inner("three"))
+    //             .inner("four")
+    //             .add_child(span().inner("five"))
+    //             .inner("six")
+    //             .render_sorted();
+    //         insta::assert_snapshot!(content, @r"
+    //         <p>
+    //           one
+    //           <span>two</span>
+    //           <span>three</span>
+    //           four
+    //           <span>five</span>
+    //           six
+    //         </p>
+    //         ");
+    //     }
+    //
+    //     #[test]
+    //     fn add_remove_class_works() {
+    //         let content = div()
+    //             .class("flex mt-4")
+    //             .add_class("grid")
+    //             .add_class("flex-col")
+    //             .remove_class("grid")
+    //             .toogle_class("p-2")
+    //             .toogle_class("mt-4")
+    //             .render_sorted();
+    //         insta::assert_snapshot!(content, @r#"<div class="flex flex-col p-2"></div>"#);
+    //     }
+    //
+    //     #[test]
+    //     fn add_children_works() {
+    //         let content = div()
+    //             .add_children(
+    //                 (0..4)
+    //                     .map(|o| p().inner(o.to_string()).boxed())
+    //                     .collect::<Vec<_>>(),
+    //             )
+    //             .add_children(
+    //                 (4..8)
+    //                     .map(|o| p().inner(o.to_string()).boxed())
+    //                     .collect::<Vec<_>>(),
+    //             )
+    //             .render_sorted();
+    //         insta::assert_snapshot!(content, @r"
+    //         <div>
+    //           <p>0</p>
+    //           <p>1</p>
+    //           <p>2</p>
+    //           <p>3</p>
+    //           <p>4</p>
+    //           <p>5</p>
+    //           <p>6</p>
+    //           <p>7</p>
+    //         </div>
+    //         ");
+    //     }
+}
