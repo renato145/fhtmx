@@ -7,14 +7,13 @@ fn main() {
                 .class(
                     "h-24 flex items-center justify-center rounded-md bg-linear-to-r from-emerald-400 to-emerald-700 border-2 border-black",
                 )
-                .add_child(p().inner(format!("Box: {i}")).class("text-lg font-bold text-shadow-lg/30"))
-                .boxed()
+                .add_child(p().add_child(format!("Box: {i}")).class("text-lg font-bold text-shadow-lg/30"))
         })
         .collect::<Vec<_>>();
     let body = main_tag()
         .class("container mx-auto mt-4")
         .add_child(
-            h1().inner("Example with tailwind")
+            h1().add_child("Example with tailwind")
                 .class("text-2xl font-bold text-center"),
         )
         .add_child(
@@ -24,14 +23,14 @@ fn main() {
         );
     let page = HtmlPage::new()
         .title("simple")
-        .add_header_child(script().src("https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"))
-        .add_header_child(
+        .add_header_node(script().src("https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"))
+        .add_header_node(
             style()
-                .r#type("text/tailwindcss")
-                .inner("body { @apply bg-sky-950 text-slate-100; }"),
+                .typ("text/tailwindcss")
+                .add_child("body { @apply bg-sky-950 text-slate-100; }"),
         )
-        .add_body_child(body)
+        .add_body_node(body)
         .render();
-    std::fs::write("examples_outputs/simple.html", page).unwrap();
+    std::fs::write("examples/simple.html", page).unwrap();
     println!("Done!");
 }
