@@ -185,18 +185,7 @@ pub trait Element: Sized {
             HtmlNode::SvgElement(x) => !x.is_inline_tag(),
             _ => false,
         });
-
-        if has_block {
-            false
-        } else {
-            // TODO:
-            // Only text and/or inline elements
-            // self.children.iter().any(|c| {
-            //     matches!(c, HtmlNode::Text(_))
-            //         || matches!(c, HtmlNode::Element(el) if INLINE_ELEMENTS.contains(&el.tag))
-            // })
-            true
-        }
+        !has_block
     }
 
     /// Adds a raw html child

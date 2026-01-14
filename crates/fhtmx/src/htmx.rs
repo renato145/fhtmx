@@ -106,7 +106,7 @@ impl IntoAttributeValue for HXTarget<'_> {
 }
 
 macro_rules! set_htmx_attr {
-    ($attr:ident = $name:expr; eg = $eg:expr) => {
+    ($attr:ident = $name:expr; $eg:expr) => {
         paste! {
             #[doc = "Sets the `" $name "` attribute.\nExample: `" $eg "`"]
             pub fn $attr(self, value: impl IntoAttributeValue) -> Self {
@@ -133,16 +133,16 @@ macro_rules! set_htmx_attr {
         }
     };
 
-    ($attr:ident$(=$name:expr)?$(;eg=$eg:expr)?, $($rest:ident$(=$name_rest:expr)?$(;eg=$eg_rest:expr)?),+) => {
-        set_htmx_attr!($attr$(=$name)?$(;eg=$eg)?);
-        set_htmx_attr!($($rest$(=$name_rest)?$(;eg=$eg_rest)?),+);
+    ($attr:ident$(=$name:expr)?$(;$eg:expr)?, $($rest:ident$(=$name_rest:expr)?$(;$eg_rest:expr)?),+) => {
+        set_htmx_attr!($attr$(=$name)?$(;$eg)?);
+        set_htmx_attr!($($rest$(=$name_rest)?$(;$eg_rest)?),+);
     };
 }
 
 // TODO: add documentation for each attr
 impl HtmlElement {
     set_htmx_attr!(
-        hx_boost = "hx-boost"; eg=r#"a().hx_boost("true")"#,
+        hx_boost = "hx-boost"; r#"a().hx_boost("true")"#,
         hx_confirm = "hx-confirm",
         hx_delete = "hx-delete",
         hx_disable = "hx-disable",
@@ -166,13 +166,13 @@ impl HtmlElement {
         hx_request = "hx-request",
         hx_select = "hx-select",
         hx_select_oob = "hx-select-oob",
-        hx_swap = "hx-swap"; eg="div().hx_swap(HXSwap::OuterHTML)",
+        hx_swap = "hx-swap"; "div().hx_swap(HXSwap::OuterHTML)",
         hx_swap_oob = "hx-swap-oob",
         hx_sync = "hx-sync",
-        hx_target = "hx-target"; eg=r#"div().hx_target(HXTarget::Closest("form"))"#,
+        hx_target = "hx-target"; r#"div().hx_target(HXTarget::Closest("form"))"#,
         hx_trigger = "hx-trigger",
         hx_validate = "hx-validate",
-        hx_vals = "hx-vals"; eg=r##"div().hx_vals(format!(r#"{{"key": "{x}"}}"#))"##,
+        hx_vals = "hx-vals"; r##"div().hx_vals(format!(r#"{{"key": "{x}"}}"#))"##,
         sse_connect = "sse-connect",
         sse_swap = "sse-swap",
         ws_connect = "ws-connect",
