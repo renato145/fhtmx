@@ -33,18 +33,13 @@ pub fn escape_html_to_with_indent(s: &str, buf: &mut String, indent: usize) {
 
 #[cfg(test)]
 mod test {
-    use crate::utils::escape_html;
-    use googletest::prelude::*;
+    use super::*;
 
-    #[gtest]
+    #[test]
     fn escape_html_works() {
-        expect_that!(
-            escape_html("<a>\"hello\"</a>"),
-            eq("&lt;a&gt;&quot;hello&quot;&lt;/a&gt;")
-        );
-        expect_that!(
-            escape_html("<a>'he \\& llo'</a>"),
-            eq("&lt;a&gt;&#x27;he \\&amp; llo&#x27;&lt;/a&gt;")
-        );
+        let res = escape_html("<a>\"hello\"</a>");
+        insta::assert_snapshot!(res, @"&lt;a&gt;&quot;hello&quot;&lt;/a&gt;");
+        let res = escape_html("<a>'he \\& llo'</a>");
+        insta::assert_snapshot!(res, @r"&lt;a&gt;&#x27;he \&amp; llo&#x27;&lt;/a&gt;");
     }
 }
