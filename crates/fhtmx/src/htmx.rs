@@ -105,6 +105,7 @@ impl IntoAttributeValue for HXTarget<'_> {
     }
 }
 
+// TODO: simplify
 macro_rules! set_htmx_attr {
     ($attr:ident = $name:expr; $eg:expr) => {
         paste! {

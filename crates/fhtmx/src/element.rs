@@ -282,6 +282,7 @@ impl Element for HtmlElement {
     }
 }
 
+// TODO: simplify
 macro_rules! create_tag_fn {
     ($name:ident) => {
         paste! {
@@ -427,6 +428,7 @@ pub fn main_tag() -> HtmlElement {
     HtmlElement::new("main")
 }
 
+// TODO: simplify
 macro_rules! set_attr {
     ($attr:ident = $name:expr; eg = $eg:expr) => {
         paste! {
@@ -463,6 +465,7 @@ macro_rules! set_attr {
 
 pub(crate) use set_attr;
 
+// TODO: simplify
 macro_rules! set_empty_attr {
     ($attr:ident = $name:expr) => {
         paste! {

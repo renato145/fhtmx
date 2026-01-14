@@ -4,3 +4,5 @@ members = ["crates/*"]
 
 [workspace.dependencies]
 insta = { version = "1.46", features = ["yaml", "redactions"] }
+indexmap = "2.13"
+paste = "1.0"

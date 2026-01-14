@@ -13,6 +13,8 @@ repository = "https://github.com/renato145/fhtmx"
 
 [dependencies]
 fhtmx = { path = "../fhtmx" }
+indexmap = { workspace = true }
+paste = { workspace = true }
 
 [dev-dependencies]
 insta = { workspace = true }

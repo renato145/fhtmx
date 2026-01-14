@@ -81,6 +81,7 @@ impl Element for SvgElement {
     }
 }
 
+// TODO: simplify
 macro_rules! create_svg_fn {
     ($name:ident) => {
         paste! {
