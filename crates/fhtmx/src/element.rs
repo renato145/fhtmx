@@ -495,6 +495,7 @@ impl HtmlElement {
         class,
         contenteditable,
         decoding,
+        data_tip = "data-tip",
         dir,
         draggable,
         enterkeyhint,
