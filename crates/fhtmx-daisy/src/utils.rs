@@ -1,0 +1,9 @@
+use fhtmx::prelude::*;
+
+/// Link tag to import daisyui styles
+pub fn daisy_link() -> HtmlElement {
+    link()
+        .href("https://cdn.jsdelivr.net/npm/daisyui@5")
+        .rel("stylesheet")
+        .typ("text/css")
+}

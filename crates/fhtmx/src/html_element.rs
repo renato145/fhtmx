@@ -281,7 +281,7 @@ impl HtmlElement {
     );
 
     set_empty_attr!(
-        autofocus, blocking, checked, defer, disabled, hidden, inert, multiple, nomodule, popover,
-        r#async, readonly, required, selected
+        autofocus, blocking, checked, defer, disabled, hidden, inert, multiple, nomodule, open,
+        popover, r#async, readonly, required, selected
     );
 }
