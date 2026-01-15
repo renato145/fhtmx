@@ -76,16 +76,16 @@ impl HtmlPage {
         let html_node = html();
         let mut header = head();
         if let Some(page_title) = self.title {
-            header = header.add_child(title().add_child(page_title));
+            header = header.add(title().add(page_title));
         }
         if let Some(description) = self.description {
-            header = header.add_child(meta().name("description").set_attr("content", description));
+            header = header.add(meta().name("description").set_attr("content", description));
         }
         if let Some(charset) = self.meta_charset {
-            header = header.add_child(meta().set_attr("charset", charset));
+            header = header.add(meta().set_attr("charset", charset));
         }
         if let Some(viewport) = self.meta_viewport {
-            header = header.add_child(
+            header = header.add(
                 meta()
                     .set_attr("name", "viewport")
                     .set_attr("content", viewport),
@@ -93,8 +93,8 @@ impl HtmlPage {
         }
         nodes.push(
             html_node
-                .add_child(header.add_children(self.header_nodes))
-                .add_child(body().add_children(self.body_nodes))
+                .add(header.add_children(self.header_nodes))
+                .add(body().add_children(self.body_nodes))
                 .into_node(),
         );
         HtmlNode::Fragment(nodes)
@@ -103,43 +103,6 @@ impl HtmlPage {
     pub fn render(self) -> String {
         self.html_nodes().render()
     }
-
-    // pub fn html_elements(self) -> HtmlElements {
-    //     let mut elements = Vec::new();
-    //     if self.doctype {
-    //         elements.push(doctype_html().boxed());
-    //     }
-    //     let html_node = self.custom_html_node.unwrap_or_else(html);
-    //     let mut header = head();
-    //     if let Some(page_title) = self.title {
-    //         header = header.add_child(title().inner(&page_title));
-    //     }
-    //     if self.meta_charset {
-    //         header = header.add_child(meta().set_attr("charset", "UTF-8"));
-    //     }
-    //     if self.meta_viewport {
-    //         header = header.add_child(meta().set_attr("name", "viewport").set_attr(
-    //             "content",
-    //             "width=device-width, initial-scale=1.0, maximum-scale=1.0",
-    //         ));
-    //     }
-    //     if let Some(description) = self.description {
-    //         header = header.add_child(
-    //             meta()
-    //                 .set_attr("name", "description")
-    //                 .set_attr("content", description),
-    //         );
-    //     }
-    //     if let Some(children) = self.header_children {
-    //         header = header.add_children(children);
-    //     }
-    //     let mut body = body();
-    //     if let Some(children) = self.body_children {
-    //         body = body.add_children(children);
-    //     }
-    //     elements.push(html_node.add_child(header).add_child(body).boxed());
-    //     elements
-    // }
 }
 
 impl Default for HtmlPage {
@@ -157,8 +120,8 @@ mod test {
         let page = HtmlPage::new()
             .title("My page title")
             .description("Some test page")
-            .add_body_node(h1().add_child("A nice title"))
-            .add_body_node(div().add_child(p().add_child("Some content...")))
+            .add_body_node(h1().add("A nice title"))
+            .add_body_node(div().add(p().add("Some content...")))
             .render();
         insta::assert_snapshot!(page, @r#"
         <!DOCTYPE html>

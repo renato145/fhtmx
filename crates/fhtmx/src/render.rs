@@ -125,15 +125,15 @@ mod tests {
 
     #[test]
     fn simple_render() {
-        let res = p().class("bg-red-500").add_child("some text").render();
+        let res = p().class("bg-red-500").add("some text").render();
         insta::assert_snapshot!(res, @r#"<p class="bg-red-500">some text</p>"#);
     }
 
     #[test]
     fn inline_content() {
         let res = div()
-            .add_child("Some intro text")
-            .add_child(p().add_child("A paragraph"))
+            .add("Some intro text")
+            .add(p().add("A paragraph"))
             .render();
         insta::assert_snapshot!(res, @r"
         <div>
@@ -145,10 +145,7 @@ mod tests {
 
     #[test]
     fn inline_content_no_text() {
-        let res = div()
-            .add_child(p().add_child(span()))
-            .add_child(span())
-            .render();
+        let res = div().add(p().add(span())).add(span()).render();
         insta::assert_snapshot!(res, @r"
         <div>
           <p><span></span></p>
@@ -160,8 +157,8 @@ mod tests {
     #[test]
     fn inline_content_multiline_text() {
         let res = div()
-            .add_child("Some intro text\nwith multiple\nlines")
-            .add_child(p().add_child("A paragraph"))
+            .add("Some intro text\nwith multiple\nlines")
+            .add(p().add("A paragraph"))
             .render();
         insta::assert_snapshot!(res, @r"
         <div>
@@ -177,7 +174,7 @@ mod tests {
     fn inline_content_raw() {
         let res = div()
             .add_raw("<p>one</p>\n<p>two</p>\n<p>three</p>")
-            .add_child(p().add_child("A paragraph"))
+            .add(p().add("A paragraph"))
             .render();
         insta::assert_snapshot!(res, @r"
         <div>

@@ -7,16 +7,16 @@ fn main() {
                 .class(
                     "h-24 flex items-center justify-center rounded-md bg-linear-to-r from-emerald-400 to-emerald-700 border-2 border-black",
                 )
-                .add_child(p().add_child(format!("Box: {i}")).class("text-lg font-bold text-shadow-lg/30"))
+                .add(p().add(format!("Box: {i}")).class("text-lg font-bold text-shadow-lg/30"))
         })
         .collect::<Vec<_>>();
     let body = main_tag()
         .class("container mx-auto mt-4")
-        .add_child(
-            h1().add_child("Example with tailwind")
+        .add(
+            h1().add("Example with tailwind")
                 .class("text-2xl font-bold text-center"),
         )
-        .add_child(
+        .add(
             div()
                 .class("mt-4 p-4 grid grid-cols-4 gap-4")
                 .add_children(squares),
@@ -27,7 +27,7 @@ fn main() {
         .add_header_node(
             style()
                 .typ("text/tailwindcss")
-                .add_child("body { @apply bg-sky-950 text-slate-100; }"),
+                .add("body { @apply bg-sky-950 text-slate-100; }"),
         )
         .add_body_node(body)
         .render();

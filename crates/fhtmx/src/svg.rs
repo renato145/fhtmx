@@ -284,7 +284,7 @@ mod test {
     #[test]
     fn svg_attrs_works() {
         let res = svg()
-            .add_child(
+            .add(
                 svg_rect()
                     .width(100)
                     .height(20)
@@ -303,11 +303,7 @@ mod test {
     #[test]
     fn svg_inline_tags() {
         let res = svg()
-            .add_child(
-                svg_text()
-                    .add_child("Hello")
-                    .add_child(svg_tspan().add_child("world")),
-            )
+            .add(svg_text().add("Hello").add(svg_tspan().add("world")))
             .render();
         insta::assert_snapshot!(res, @r#"<svg xmlns="http://www.w3.org/2000/svg"><text>Hello<tspan>world</tspan></text></svg>"#);
     }

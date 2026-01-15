@@ -29,7 +29,7 @@ mod tests {
         let res = ds_dropdown()
             .dropdown_left()
             .html()
-            .add_child(ds_dropdown_content())
+            .add(ds_dropdown_content())
             .render();
         insta::assert_snapshot!(res, @r#"
         <details class="dropdown dropdown-left">

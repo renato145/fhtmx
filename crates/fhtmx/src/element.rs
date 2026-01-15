@@ -194,6 +194,12 @@ pub trait Element: Sized {
     /// Adds a child
     fn add_child(self, node: impl IntoNode) -> Self;
 
+    /// Alias for `add_child`
+    #[inline]
+    fn add(self, node: impl IntoNode) -> Self {
+        self.add_child(node)
+    }
+
     /// Add children
     fn add_children(self, nodes: impl IntoIterator<Item = impl IntoNode>) -> Self;
 
@@ -566,7 +572,7 @@ mod test {
     #[test]
     fn children_macro() {
         let res = div()
-            .add_children(children!["Some text", p().add_child("inner text"), 123456])
+            .add_children(children!["Some text", p().add("inner text"), 123456])
             .render();
         insta::assert_snapshot!(res, @r"
         <div>
