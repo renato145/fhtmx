@@ -1,4 +1,5 @@
 pub mod accordion;
+pub mod avatar;
 pub mod button;
 pub mod dropdown;
 pub mod fab;
