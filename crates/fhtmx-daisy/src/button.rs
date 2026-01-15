@@ -2,7 +2,7 @@ use crate::macros::{daisy_class, daisy_component};
 use fhtmx::prelude::*;
 
 daisy_component!(
-    Button = button(); "btn";
+    Button = button().class("btn");
     "Buttons allow the user to take actions or make choices."
 );
 
@@ -50,7 +50,7 @@ mod tests {
 
     #[test]
     fn button_works() {
-        let res = ds_button().primary().xs().add_class("px-2").render();
+        let res = dc_button().primary().xs().html().add_class("px-2").render();
         insta::assert_snapshot!(res, @r#"<button class="btn btn-primary btn-xs px-2"></button>"#);
     }
 }

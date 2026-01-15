@@ -1,5 +1,5 @@
 macro_rules! daisy_component {
-    ($name:ident = $tag:expr; $cls:literal; $desc:literal) => {
+    ($name:ident = $tag:expr; $desc:literal) => {
         paste::paste! {
             #[doc = "Daisy " $name " component.\n" $desc]
             pub struct $name {
@@ -10,32 +10,15 @@ macro_rules! daisy_component {
                 #[doc = "Creates a new Daisy " $name " component.\n" $desc]
                 pub fn new() -> Self {
                     Self {
-                        classes: indexmap::indexset! {$cls.into()},
+                        classes: indexmap::IndexSet::new(),
                     }
                 }
 
-                pub fn add_class(mut self, value: impl Into<std::borrow::Cow<'static, str>>) -> Self {
-                    self.classes.insert(value.into());
-                    self
-                }
-
-                pub fn remove_class(mut self, value: &str) -> Self {
-                    self.classes.shift_remove(value);
-                    self
-                }
-
-                pub fn class(&self) -> String {
-                    self.classes.iter().fold(String::new(), |mut acc, s| {
-                        if !acc.is_empty() {
-                            acc.push(' ');
-                        }
-                        acc.push_str(s);
-                        acc
-                    })
-                }
-
-                pub fn html(self) -> fhtmx::element::HtmlElement {
-                    $tag.class(self.class())
+                #[doc = "Converts into a `HtmlElement`"]
+                pub fn html(mut self) -> fhtmx::html_element::HtmlElement {
+                    let mut x = $tag;
+                    x.classes.append(&mut self.classes);
+                    x
                 }
 
                 pub fn render(self) -> String {
@@ -57,7 +40,7 @@ macro_rules! daisy_component {
             }
 
             #[doc = "Creates a new Daisy " $name " component.\n" $desc]
-            pub fn [< ds_ $name:snake >]() -> $name {
+            pub fn [< dc_ $name:snake >]() -> $name {
                 $name::new()
             }
         }

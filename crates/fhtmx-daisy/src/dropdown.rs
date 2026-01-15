@@ -2,7 +2,7 @@ use crate::macros::{daisy_class, daisy_component};
 use fhtmx::prelude::*;
 
 daisy_component!(
-    Dropdown = details(); "dropdown";
+    Dropdown = details().class("dropdown");
     "Dropdown can open a menu or any other element when the button is clicked."
 );
 
@@ -26,7 +26,10 @@ impl Dropdown {
     );
 }
 
-daisy_component!(DropdownContent = ul(); "dropdown-content"; "Content part of a dropdown.");
+daisy_component!(
+    DropdownContent = ul().class("dropdown-content");
+    "Content part of a dropdown."
+);
 
 // TODO: assemble utility
 
@@ -36,14 +39,24 @@ mod tests {
 
     #[test]
     fn dropdown_works() {
-        let res = ds_dropdown()
-            .left()
+        let res = dc_dropdown()
             .html()
-            .add(ds_dropdown_content())
+            .add(summary().class("btn m-1").add("open or close"))
+            .add(
+                dc_dropdown_content()
+                    .html()
+                    .add_class("menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm")
+                    .add(li().add(a().add("Item 1")))
+                    .add(li().add(a().add("Item 2"))),
+            )
             .render();
         insta::assert_snapshot!(res, @r#"
-        <details class="dropdown dropdown-left">
-          <ul class="dropdown-content"></ul>
+        <details class="dropdown">
+          <summary class="btn m-1">open or close</summary>
+          <ul class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+            <li><a>Item 1</a></li>
+            <li><a>Item 2</a></li>
+          </ul>
         </details>
         "#);
     }
