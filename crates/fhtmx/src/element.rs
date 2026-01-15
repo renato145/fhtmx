@@ -523,6 +523,7 @@ impl HtmlElement {
         pattern,
         placeholder,
         rel,
+        role,
         sizes,
         spellcheck,
         src,

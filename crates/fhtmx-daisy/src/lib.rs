@@ -1,5 +1,6 @@
 pub mod button;
 pub mod dropdown;
+pub mod fab;
 pub mod macros;
 
 // /// Link tag to import daisyui styles

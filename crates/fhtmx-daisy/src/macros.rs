@@ -1,13 +1,13 @@
 macro_rules! daisy_component {
-    ($name:ident = $tag:expr; $cls:literal) => {
+    ($name:ident = $tag:expr; $cls:literal; $desc:literal) => {
         paste::paste! {
-            #[doc = "Daisy " $name " component"]
+            #[doc = "Daisy " $name " component.\n" $desc]
             pub struct $name {
                 pub classes: indexmap::IndexSet<std::borrow::Cow<'static, str>>,
             }
 
             impl $name {
-                #[doc = "Creates a new Daisy " $name " component"]
+                #[doc = "Creates a new Daisy " $name " component.\n" $desc]
                 pub fn new() -> Self {
                     Self {
                         classes: indexmap::indexset! {$cls.into()},
@@ -56,7 +56,7 @@ macro_rules! daisy_component {
                 }
             }
 
-            #[doc = "Creates a new Daisy " $name " component"]
+            #[doc = "Creates a new Daisy " $name " component.\n" $desc]
             pub fn [< ds_ $name:snake >]() -> $name {
                 $name::new()
             }
@@ -67,16 +67,14 @@ macro_rules! daisy_component {
 pub(crate) use daisy_component;
 
 macro_rules! daisy_class {
-    ($name:ident($($method:ident = $class:literal; $doc:literal),* $(,)?)) => {
-        impl $name {
-            $(
-                #[doc = $doc]
-                pub fn $method(mut self) -> Self {
-                    self.classes.insert($class.into());
-                    self
-                }
-            )*
-        }
+    ($($method:ident = $class:literal; $doc:literal),* $(,)?) => {
+        $(
+            #[doc = $doc]
+            pub fn $method(mut self) -> Self {
+                self.classes.insert($class.into());
+                self
+            }
+        )*
     };
 }
 
