@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.17.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.16.0...fhtmx-v0.17.0) (2026-01-15)
+
+
+### Features
+
+* add accordion component ([b00b369](https://github.com/renato145/fhtmx/commit/b00b3693b1282bef09e882468259aa32d153641c))
+* add attribute ([decae45](https://github.com/renato145/fhtmx/commit/decae454eed7326abdaa178bfa14b7eb8d367d9b))
+* add attribute macros ([fb0f230](https://github.com/renato145/fhtmx/commit/fb0f230416f02fbb72b89f4f51a3b607284f9029))
+* add children macro ([fa29a7b](https://github.com/renato145/fhtmx/commit/fa29a7b9abdc79700a50bed0f39850d516208f3f))
+* add class utilities ([a8636d6](https://github.com/renato145/fhtmx/commit/a8636d6ccfba8f4c59633043f74d24b167420cae))
+* add daisy button and dropdown ([8cf994c](https://github.com/renato145/fhtmx/commit/8cf994c074476805d47989f3fba90b0b27b42b56))
+* add fab ([3ddcef7](https://github.com/renato145/fhtmx/commit/3ddcef7c1cd5883e9ff7a41a8084e198bccfef99))
+* add html_page ([c327a9b](https://github.com/renato145/fhtmx/commit/c327a9bb375bdf400651c5a0a47e49bd457101a1))
+* add HtmlAttribute ([977a0ca](https://github.com/renato145/fhtmx/commit/977a0ca2bcf0d8a9810a701eb4a8fafc88093976))
+* add htmx ([62ae2f3](https://github.com/renato145/fhtmx/commit/62ae2f3d5e18777a576240fa5809a40c67f5dbaa))
+* add js ([d746436](https://github.com/renato145/fhtmx/commit/d746436c499891a2c5589780e623d9da8117f499))
+* add sources ([0d115ec](https://github.com/renato145/fhtmx/commit/0d115eceb7effba60fd26988444afa2c4f9df8f2))
+* add svg ([79b4254](https://github.com/renato145/fhtmx/commit/79b4254692f3aeed0b13cc6eb2456d94bca6b26a))
+* alias for add_child, add ([bb6358e](https://github.com/renato145/fhtmx/commit/bb6358ec2cbb08af682aac462ebc16dd8c2e887d))
+* render impl ([0b22870](https://github.com/renato145/fhtmx/commit/0b2287011fb5deb62de789f45aa4c1f3271a2c77))
+* start HtmlElement rework ([7ea365a](https://github.com/renato145/fhtmx/commit/7ea365a8cb5428c316f2139f5a36886b47e68932))
+* user IndexMap ([70db3ab](https://github.com/renato145/fhtmx/commit/70db3ab2c9692a75e41a19b1cbfb439e04656e0f))
+
 ## [0.16.0](https://github.com/renato145/fhtmx/compare/v0.15.1...v0.16.0) (2025-12-01)
 
 
