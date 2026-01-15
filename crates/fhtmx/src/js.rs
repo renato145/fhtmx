@@ -1,4 +1,4 @@
-use crate::element::*;
+use crate::{element::Element, html_element::*};
 
 /// IIFE, or Immediately Invoked Function Expression, is a JavaScript pattern where a function runs
 /// as soon as it is defined.

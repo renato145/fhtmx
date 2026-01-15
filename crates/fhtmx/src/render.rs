@@ -1,4 +1,8 @@
-use crate::{element::Element, node::HtmlNode, utils::escape_html_to_with_indent};
+use crate::{
+    element::Element,
+    node::HtmlNode,
+    utils::{escape_html_to, escape_html_to_with_indent},
+};
 
 /// Renders to HTML strings
 pub trait Render {
@@ -25,6 +29,17 @@ impl<T: Element> Render for T {
         buf.push_str(&pad);
         buf.push('<');
         buf.push_str(tag);
+
+        if !self.classes().is_empty() {
+            buf.push_str(" class=\"");
+            for o in self.classes() {
+                escape_html_to(o, buf);
+                buf.push(' ');
+            }
+            buf.pop();
+            buf.push('"');
+        }
+
         for (k, v) in self.attrs() {
             buf.push(' ');
             buf.push_str(k);
@@ -121,12 +136,12 @@ impl Render for HtmlNode {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::element::*;
+    use crate::html_element::*;
 
     #[test]
     fn simple_render() {
-        let res = p().class("bg-red-500").add("some text").render();
-        insta::assert_snapshot!(res, @r#"<p class="bg-red-500">some text</p>"#);
+        let res = p().class("bg-red-500 text-xl").add("some text").render();
+        insta::assert_snapshot!(res, @r#"<p class="bg-red-500 text-xl">some text</p>"#);
     }
 
     #[test]

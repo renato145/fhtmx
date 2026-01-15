@@ -1,5 +1,6 @@
 pub mod attribute;
 pub mod element;
+pub mod html_element;
 pub mod html_page;
 pub mod htmx;
 pub mod js;
@@ -13,6 +14,7 @@ pub mod prelude {
     pub use crate::attribute::*;
     pub use crate::children;
     pub use crate::element::*;
+    pub use crate::html_element::*;
     pub use crate::html_page::*;
     pub use crate::htmx::*;
     pub use crate::js::*;

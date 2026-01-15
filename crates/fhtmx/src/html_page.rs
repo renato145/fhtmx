@@ -1,5 +1,6 @@
 use crate::{
-    element::*,
+    element::Element,
+    html_element::*,
     node::{HtmlNode, IntoNode},
     prelude::{AttributeValue, IntoAttributeValue},
     render::Render,

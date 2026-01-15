@@ -1,4 +1,4 @@
-use crate::element::*;
+use crate::{element::Element, html_element::*};
 
 /// Script tag with source for htmx
 pub fn source_htmx() -> HtmlElement {

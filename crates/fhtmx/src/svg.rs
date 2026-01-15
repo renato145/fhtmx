@@ -1,9 +1,9 @@
 use crate::{
     attribute::{AttributeValue, IntoAttributeValue},
     element::{Element, set_attr},
-    node::{HtmlNode, IntoNode, raw_node},
+    node::HtmlNode,
 };
-use indexmap::IndexMap;
+use indexmap::{IndexMap, IndexSet};
 use paste::paste;
 use std::borrow::Cow;
 
@@ -14,6 +14,7 @@ pub const SVG_INLINE_ELEMENTS: &[&str] = &["text", "tspan"];
 pub struct SvgElement {
     pub tag: &'static str,
     pub attrs: IndexMap<Cow<'static, str>, AttributeValue>,
+    pub classes: IndexSet<Cow<'static, str>>,
     pub children: Vec<HtmlNode>,
 }
 
@@ -22,6 +23,7 @@ impl SvgElement {
         Self {
             tag,
             attrs: IndexMap::new(),
+            classes: IndexSet::new(),
             children: Vec::new(),
         }
     }
@@ -39,8 +41,28 @@ impl Element for SvgElement {
     }
 
     #[inline]
+    fn attrs_mut(&mut self) -> &mut IndexMap<Cow<'static, str>, AttributeValue> {
+        &mut self.attrs
+    }
+
+    #[inline]
+    fn classes(&self) -> &IndexSet<Cow<'static, str>> {
+        &self.classes
+    }
+
+    #[inline]
+    fn classes_mut(&mut self) -> &mut IndexSet<Cow<'static, str>> {
+        &mut self.classes
+    }
+
+    #[inline]
     fn children(&self) -> &[HtmlNode] {
         &self.children
+    }
+
+    #[inline]
+    fn children_mut(&mut self) -> &mut Vec<HtmlNode> {
+        &mut self.children
     }
 
     #[inline]
@@ -51,33 +73,6 @@ impl Element for SvgElement {
     #[inline]
     fn is_inline_tag(&self) -> bool {
         SVG_INLINE_ELEMENTS.contains(&self.tag())
-    }
-
-    fn add_raw(mut self, raw: impl ToString) -> Self {
-        self.children.push(raw_node(raw));
-        self
-    }
-
-    fn add_child(mut self, node: impl IntoNode) -> Self {
-        let node = node.into_node();
-        match node {
-            HtmlNode::Fragment(mut x) => {
-                self.children.append(&mut x);
-            }
-            x => self.children.push(x),
-        }
-        self
-    }
-
-    fn add_children(mut self, nodes: impl IntoIterator<Item = impl IntoNode>) -> Self {
-        self.children
-            .extend(nodes.into_iter().map(|n| n.into_node()));
-        self
-    }
-
-    fn insert_attr(mut self, attr: impl Into<Cow<'static, str>>, value: AttributeValue) -> Self {
-        self.attrs.insert(attr.into(), value);
-        self
     }
 }
 
