@@ -3,7 +3,7 @@ use crate::{
     element::Element,
     html_element::HtmlElement,
 };
-use paste::paste;
+use pastey::paste;
 
 /// The hx-swap attribute allows you to specify how the response will be swapped in relative to the
 /// target of an AJAX request. If you do not specify the option, the default is

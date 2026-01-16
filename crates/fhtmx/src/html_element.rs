@@ -4,7 +4,7 @@ use crate::{
     node::{HtmlNode, IntoNode},
 };
 use indexmap::{IndexMap, IndexSet};
-use paste::paste;
+use pastey::paste;
 use std::borrow::Cow;
 
 pub const VOID_ELEMENTS: &[&str] = &[
@@ -112,7 +112,7 @@ macro_rules! create_tag_fn {
         }
     };
 
-    ($name:ident$(;$eg:expr)?, $($rest:ident$(;$eg_rest:expr)?),+) => {
+    ($name:ident$(;$eg:expr)?, $($rest:ident$(;$eg_rest:expr)?),+ $(,)?) => {
         create_tag_fn!($name$(;$eg)?);
         create_tag_fn!($($rest$(;$eg_rest)?),+);
     };
@@ -229,7 +229,7 @@ create_tag_fn!(
     ul; "Defines an unordered list",
     var; "Defines a variable",
     video; "Defines embedded video content",
-    wbr; "Defines a possible line-break"
+    wbr; "Defines a possible line-break",
 );
 
 /// Creates a `main` html element.

@@ -1,4 +1,5 @@
 pub mod attribute;
+pub mod components;
 pub mod element;
 pub mod html_element;
 pub mod html_page;

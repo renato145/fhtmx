@@ -4,7 +4,7 @@ use crate::{
     node::HtmlNode,
 };
 use indexmap::{IndexMap, IndexSet};
-use paste::paste;
+use pastey::paste;
 use std::borrow::Cow;
 
 pub const SVG_INLINE_ELEMENTS: &[&str] = &["text", "tspan"];
