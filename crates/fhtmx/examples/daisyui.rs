@@ -1,16 +1,15 @@
 use fhtmx::prelude::*;
 
-fn labelled_fieldset(label: &str) -> HtmlElement {
-    fieldset()
-        .class("fieldset w-xs bg-base-300 p-4 rounded-box")
-        .add(legend().class("fieldset-legend").add(label))
-}
-
-fn input_field(input_label: &str, typ: &str, placeholder: &str) -> Vec<HtmlNode> {
-    children![
-        label().class("fieldset-label").add(input_label),
-        input().class("input").typ(typ).placeholder(placeholder),
-    ]
+fn labelled_fieldset(label: &str, inputs: &[(&str, &str, &str)]) -> HtmlElement {
+    dc_fieldset()
+        .add_class("w-xs bg-base-300 p-4 rounded-box")
+        .add(dc_fieldset_legend().add(label))
+        .add_children(inputs.iter().flat_map(|&(lbl, typ, placeholder)| {
+            [
+                dc_label().add(lbl),
+                dc_input().typ(typ).placeholder(placeholder),
+            ]
+        }))
 }
 
 fn main() {
@@ -24,35 +23,35 @@ fn main() {
             div()
                 .class("mt-4 p-4 flex flex-wrap justify-center gap-8 bg-base-100 rounded-box")
                 .add(
-                    labelled_fieldset("Personal data")
-                        .add_children(input_field("Name", "text", "Your name here"))
-                        .add_children(input_field("Last name", "text", "Your last name here"))
-                        .add_children(input_field("Name", "text", "Your name here"))
-                        .add(button().class("btn btn-primary mt-4").add("Register")),
+                    labelled_fieldset(
+                        "Personal data",
+                        &[
+                            ("Name", "text", "Your name here"),
+                            ("Last name", "text", "Your last name here"),
+                            ("Name", "text", "Your name here"),
+                        ],
+                    )
+                    .add(dc_btn().add_class("btn-primary mt-4").add("Register")),
                 )
                 .add(
-                    labelled_fieldset("Professional data")
-                        .add_children(input_field("Profession", "text", "Your profession"))
-                        .add_children(input_field("Experience", "number", "Number of years"))
-                        .add_children(children![
-                            label().class("fieldset-label").add("Currently working?"),
-                            select()
-                                .class("select")
-                                .add(option().add("Yes"))
-                                .add(option().add("No")),
-                        ])
-                        .add(button().class("btn btn-primary mt-4").add("Register")),
+                    labelled_fieldset(
+                        "Professional data",
+                        &[
+                            ("Profession", "text", "Your profession"),
+                            ("Experience", "number", "Number of years"),
+                        ],
+                    )
+                    .add_children(children![
+                        dc_label().add("Currently working?"),
+                        dc_select().add(option().add("Yes")).add(option().add("No")),
+                    ])
+                    .add(dc_btn().add_class("btn-primary mt-4").add("Register")),
                 ),
         );
     let page = HtmlPage::new()
         .custom_html_node(html().set_attr("data-theme", "dark").lang("en"))
         .title("daisyui form")
-        .add_header_node(
-            link()
-                .href("https://cdn.jsdelivr.net/npm/daisyui@5")
-                .rel("stylesheet")
-                .typ("text/css"),
-        )
+        .add_header_node(daisy_link())
         .add_header_node(source_tailwind())
         .add_body_node(body)
         .render();

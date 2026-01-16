@@ -51,3 +51,11 @@ pub fn source_alpinejs_persist() -> HtmlElement {
 pub fn source_tailwind() -> HtmlElement {
     script().src("https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4")
 }
+
+/// Link tag to import daisyui styles
+pub fn daisy_link() -> HtmlElement {
+    link()
+        .href("https://cdn.jsdelivr.net/npm/daisyui@5")
+        .rel("stylesheet")
+        .typ("text/css")
+}

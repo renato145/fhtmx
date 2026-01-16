@@ -9,7 +9,7 @@ use crate::{
 #[derive(Clone, Debug)]
 pub struct HtmlPage {
     doctype: bool,
-    custom_html_node: Option<HtmlNode>,
+    custom_html_node: Option<HtmlElement>,
     title: Option<String>,
     description: Option<String>,
     meta_charset: Option<AttributeValue>,
@@ -32,8 +32,8 @@ impl HtmlPage {
         }
     }
 
-    pub fn custom_html_node(mut self, node: impl IntoNode) -> Self {
-        self.custom_html_node = Some(node.into_node());
+    pub fn custom_html_node(mut self, el: HtmlElement) -> Self {
+        self.custom_html_node = Some(el);
         self
     }
 
@@ -74,7 +74,7 @@ impl HtmlPage {
         if self.doctype {
             nodes.push(HtmlNode::Doctype);
         }
-        let html_node = html();
+        let html_node = self.custom_html_node.unwrap_or_else(html);
         let mut header = head();
         if let Some(page_title) = self.title {
             header = header.add(title().add(page_title));

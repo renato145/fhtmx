@@ -14,6 +14,7 @@ pub mod utils;
 pub mod prelude {
     pub use crate::attribute::*;
     pub use crate::children;
+    pub use crate::components::*;
     pub use crate::element::*;
     pub use crate::html_element::*;
     pub use crate::html_page::*;

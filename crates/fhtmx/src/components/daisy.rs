@@ -215,9 +215,23 @@ mod tests {
 
     #[test]
     fn component_works() {
-        let res = dc_btn().render();
-        println!("{res}");
-        let res = dc_modal_toggle().render();
-        println!("{res}");
+        let res = dc_dropdown()
+            .add(summary().class("btn m-1").add("open or close"))
+            .add(
+                dc_dropdown_content()
+                    .add_class("menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm")
+                    .add(li().add(a().add("Item 1")))
+                    .add(li().add(a().add("Item 2"))),
+            )
+            .render();
+        insta::assert_snapshot!(res, @r#"
+        <details class="dropdown">
+          <summary class="btn m-1">open or close</summary>
+          <ul class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+            <li><a>Item 1</a></li>
+            <li><a>Item 2</a></li>
+          </ul>
+        </details>
+        "#);
     }
 }
