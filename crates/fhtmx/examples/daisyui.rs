@@ -13,8 +13,8 @@ fn labelled_fieldset(label: &str, inputs: &[(&str, &str, &str)]) -> HtmlElement 
 }
 
 fn main() {
-    let body = main_tag()
-        .class("container mx-auto mt-4")
+    let body = main_container()
+        .add_class("mt-4")
         .add(
             h1().add("A Form example with tailwind")
                 .class("text-2xl font-bold text-center"),

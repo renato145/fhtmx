@@ -10,8 +10,8 @@ fn main() {
                 .add(p().add(format!("Box: {i}")).class("text-lg font-bold text-shadow-lg/30"))
         })
         .collect::<Vec<_>>();
-    let body = main_tag()
-        .class("container mx-auto mt-4")
+    let body = main_container()
+        .add_class("mt-4")
         .add(
             h1().add("Example with tailwind")
                 .class("text-2xl font-bold text-center"),
