@@ -76,6 +76,12 @@ impl IntoAttributeValue for String {
     }
 }
 
+impl IntoAttributeValue for &String {
+    fn into_attr(self) -> Option<AttributeValue> {
+        Some(AttributeValue::Value(self.clone()))
+    }
+}
+
 impl IntoAttributeValue for bool {
     fn into_attr(self) -> Option<AttributeValue> {
         if self {

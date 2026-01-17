@@ -169,6 +169,9 @@ pub trait Element: Sized {
 
     fn add_class(mut self, class: impl Into<Cow<'static, str>>) -> Self {
         let class = class.into();
+        if class.is_empty() {
+            return self;
+        }
         if class.contains(' ') {
             class.split_whitespace().for_each(|o| {
                 self.classes_mut().insert(o.to_string().into());
