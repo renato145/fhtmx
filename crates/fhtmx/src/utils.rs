@@ -1,3 +1,5 @@
+use uuid::Uuid;
+
 pub fn escape_html(s: &str) -> String {
     let mut buf = String::with_capacity(s.len());
     escape_html_to(s, &mut buf);
@@ -29,6 +31,12 @@ pub fn escape_html_to_with_indent(s: &str, buf: &mut String, indent: usize) {
         });
         buf.pop();
     }
+}
+
+pub fn random_id(prefix: &str) -> String {
+    let uuid = Uuid::new_v4();
+    // Convert it to a hyphenated string format
+    format!("{}-{}", prefix, uuid.as_hyphenated())
 }
 
 #[cfg(test)]

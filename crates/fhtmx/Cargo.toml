@@ -20,6 +20,7 @@ repository = "https://github.com/renato145/fhtmx"
 [dependencies]
 indexmap = { workspace = true }
 pastey = "0.2"
+uuid = { version = "1.19", features = ["v4"] }
 
 [dev-dependencies]
 insta = { workspace = true }
