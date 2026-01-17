@@ -5,53 +5,6 @@ use crate::{
 use indexmap::{IndexMap, IndexSet};
 use std::borrow::Cow;
 
-// pub fn add_child_if<C: HtmlRender + 'static>(self, cond: bool, child: C) -> Self {
-//     if cond {
-//         return self.add_child(child);
-//     }
-//     self
-// }
-//
-// /// Adds child if it contains a value
-// pub fn add_opt_child<C: HtmlRender + 'static>(self, child: Option<C>) -> Self {
-//     if let Some(child) = child {
-//         return self.add_child(child);
-//     }
-//     self
-// }
-//
-// /// Adds child if the closure returns a value
-// pub fn maybe_add_child<F, C>(self, child: F) -> Self
-// where
-//     F: FnOnce() -> Option<C>,
-//     C: HtmlRender + 'static,
-// {
-//     self.add_opt_child(child())
-// }
-
-// pub fn add_children_if(self, cond: bool, children: HtmlElements) -> Self {
-//     if cond {
-//         return self.add_children(children);
-//     }
-//     self
-// }
-//
-// /// Adds children if it contains a value
-// pub fn add_opt_children(self, children: Option<HtmlElements>) -> Self {
-//     if let Some(children) = children {
-//         return self.add_children(children);
-//     }
-//     self
-// }
-//
-// /// Adds children if the closure returns a value
-// pub fn maybe_add_children<F>(self, children: F) -> Self
-// where
-//     F: FnOnce() -> Option<HtmlElements>,
-// {
-//     self.add_opt_children(children())
-// }
-
 // pub fn set_attr_if(self, cond: bool, attr: impl ToString, value: impl ToString) -> Self {
 //     if cond {
 //         return self.set_attr(attr, value);
@@ -182,6 +135,14 @@ pub trait Element: Sized {
         self
     }
 
+    fn add_opt_class(self, class: Option<impl Into<Cow<'static, str>>>) -> Self {
+        if let Some(class) = class {
+            self.add_class(class)
+        } else {
+            self
+        }
+    }
+
     fn remove_class(mut self, class: &str) -> Self {
         self.classes_mut().shift_remove(class);
         self
@@ -220,10 +181,26 @@ pub trait Element: Sized {
         self.add_child(node)
     }
 
+    /// Adds child if it contains a value
+    fn add_opt_child(self, node: Option<impl IntoNode>) -> Self {
+        if let Some(child) = node {
+            return self.add_child(child);
+        }
+        self
+    }
+
     /// Add children
     fn add_children(mut self, nodes: impl IntoIterator<Item = impl IntoNode>) -> Self {
         self.children_mut()
             .extend(nodes.into_iter().map(|n| n.into_node()));
+        self
+    }
+
+    /// Adds children if it contains a value
+    fn add_opt_children(self, nodes: Option<impl IntoIterator<Item = impl IntoNode>>) -> Self {
+        if let Some(children) = nodes {
+            return self.add_children(children);
+        }
         self
     }
 }
