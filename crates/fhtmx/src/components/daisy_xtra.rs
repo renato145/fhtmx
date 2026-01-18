@@ -56,7 +56,7 @@ where
     dc_swap()
         .add(input().typ("checkbox"))
         .add(dc_swap_on().add(on_txt))
-        .add(dc_swap_on().add(off_txt))
+        .add(dc_swap_off().add(off_txt))
 }
 
 pub fn mk_accordion<I, T, C>(
