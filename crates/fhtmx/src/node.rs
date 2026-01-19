@@ -28,12 +28,6 @@ pub trait IntoNode {
     fn into_node(self) -> HtmlNode;
 }
 
-impl IntoNode for SvgElement {
-    fn into_node(self) -> HtmlNode {
-        HtmlNode::SvgElement(self)
-    }
-}
-
 impl IntoNode for HtmlNode {
     fn into_node(self) -> HtmlNode {
         self

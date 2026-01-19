@@ -144,7 +144,7 @@ mod tests {
         <label class="swap">
           <input type="checkbox" />
           <div class="swap-on">ON</div>
-          <div class="swap-on">OFF</div>
+          <div class="swap-off">OFF</div>
         </label>
         "#);
     }
@@ -164,7 +164,7 @@ mod tests {
         )
         .render();
         insta::assert_snapshot!(res, @r#"
-        <div class="join">
+        <div>
           <div class="collapse bg-base-100 border border-base-300">
             <input type="radio" name="my-accordion" checked />
             <div class="collapse-title font-semibold">Title 1</div>

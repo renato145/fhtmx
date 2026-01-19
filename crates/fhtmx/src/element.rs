@@ -5,58 +5,6 @@ use crate::{
 use indexmap::{IndexMap, IndexSet};
 use std::borrow::Cow;
 
-// pub fn set_attr_if(self, cond: bool, attr: impl ToString, value: impl ToString) -> Self {
-//     if cond {
-//         return self.set_attr(attr, value);
-//     }
-//     self
-// }
-//
-// /// Sets an attribute if contains a value
-// pub fn set_opt_attr(self, attr: impl ToString, value: Option<impl ToString>) -> Self {
-//     if let Some(value) = value {
-//         return self.set_attr(attr, value);
-//     }
-//     self
-// }
-//
-// /// Sets an attribute if the closure returns a value
-// pub fn maybe_set_attr<F, R>(self, attr: impl ToString, value: F) -> Self
-// where
-//     F: FnOnce() -> Option<R>,
-//     R: ToString,
-// {
-//     self.set_opt_attr(attr, value())
-// }
-
-// pub fn set_empty_attr_if(self, cond: bool, attr: impl ToString) -> Self {
-//     if cond {
-//         return self.set_empty_attr(attr);
-//     }
-//     self
-// }
-//
-// /// Sets an empty_attrs if contains an attr
-// pub fn set_opt_empty_attr(self, attr: Option<impl ToString>) -> Self {
-//     if let Some(attr) = attr {
-//         return self.set_empty_attr(attr);
-//     }
-//     self
-// }
-//
-// /// Sets an empty attribute if the closure returns an attr
-// pub fn maybe_set_empty_attr<F, R>(self, attr: F) -> Self
-// where
-//     F: FnOnce() -> Option<R>,
-//     R: ToString,
-// {
-//     self.set_opt_empty_attr(attr())
-// }
-//
-// pub fn have_attrs(&self) -> bool {
-//     !(self.attrs.is_empty() && self.empty_attrs.is_empty())
-// }
-
 pub trait Element: Sized {
     fn tag(&self) -> &'static str;
     fn attrs(&self) -> &IndexMap<Cow<'static, str>, AttributeValue>;
@@ -90,6 +38,18 @@ pub trait Element: Sized {
         }
     }
 
+    /// Sets an attribute if contains a value
+    fn set_opt_attr<K, V>(self, attr: K, value: Option<V>) -> Self
+    where
+        K: Into<Cow<'static, str>>,
+        V: IntoAttributeValue,
+    {
+        if let Some(value) = value {
+            return self.set_attr(attr, value);
+        }
+        self
+    }
+
     fn set_raw_attr<K, V>(mut self, attr: K, value: V) -> Self
     where
         K: Into<Cow<'static, str>>,
@@ -103,8 +63,28 @@ pub trait Element: Sized {
         }
     }
 
+    /// Sets an attribute if contains a value
+    fn set_opt_raw_attr<K, V>(self, attr: K, value: Option<V>) -> Self
+    where
+        K: Into<Cow<'static, str>>,
+        V: IntoAttributeValue,
+    {
+        if let Some(value) = value {
+            return self.set_raw_attr(attr, value);
+        }
+        self
+    }
+
     fn set_empty_attr(mut self, attr: impl Into<Cow<'static, str>>) -> Self {
         self.attrs_mut().insert(attr.into(), AttributeValue::Empty);
+        self
+    }
+
+    /// Sets an empty_attrs if contains an attr
+    fn set_opt_empty_attr(self, attr: Option<impl Into<Cow<'static, str>>>) -> Self {
+        if let Some(attr) = attr {
+            return self.set_empty_attr(attr);
+        }
         self
     }
 
@@ -270,127 +250,38 @@ macro_rules! set_empty_attr {
 
 pub(crate) use set_empty_attr;
 
-// #[cfg(test)]
-// mod test {
-//     use super::*;
-//     use crate::render::Render;
-//
-//     #[test]
-//     fn children_macro() {
-//         let res = div()
-//             .add_children(children!["Some text", p().add("inner text"), 123456])
-//             .render();
-//         insta::assert_snapshot!(res, @r"
-//         <div>
-//           Some text
-//           <p>inner text</p>
-//           123456
-//         </div>
-//         ");
-//     }
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::{html_element::*, render::Render};
 
-//     #[test]
-//     fn render_simple() {
-//         let page = HtmlPage::new()
-//             .title("My page title")
-//             .description("Some test page")
-//             .add_body_child(h1().inner("A nice title"))
-//             .add_body_child(div().add_child(p().inner("Some content...")))
-//             .render_sorted();
-//         insta::assert_snapshot!(page, @r#"
-//         <!doctype html>
-//         <html>
-//           <head>
-//             <title>My page title</title>
-//             <meta charset="UTF-8">
-//             <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
-//             <meta content="Some test page" name="description">
-//           </head>
-//           <body>
-//             <h1>A nice title</h1>
-//             <div>
-//               <p>Some content...</p>
-//             </div>
-//           </body>
-//         </html>
-//         "#);
-//     }
-//
-//     #[test]
-//     fn render_with_maybe_sets() {
-//         let content = div()
-//             .maybe_set_attr("class", || Some("mx-4"))
-//             .maybe_set_empty_attr(|| Some("hidden"))
-//             .maybe_set_empty_attr(|| -> Option<String> { None })
-//             .maybe_add_child(|| Some(p().inner("yay")))
-//             .render_sorted();
-//         insta::assert_snapshot!(content, @r#"
-//         <div class="mx-4" hidden>
-//           <p>yay</p>
-//         </div>
-//         "#);
-//     }
-//
-//     #[test]
-//     fn render_multiple_inner() {
-//         let content = p()
-//             .inner("one")
-//             .add_child(span().inner("two"))
-//             .add_child(span().inner("three"))
-//             .inner("four")
-//             .add_child(span().inner("five"))
-//             .inner("six")
-//             .render_sorted();
-//         insta::assert_snapshot!(content, @r"
-//         <p>
-//           one
-//           <span>two</span>
-//           <span>three</span>
-//           four
-//           <span>five</span>
-//           six
-//         </p>
-//         ");
-//     }
-//
-//     #[test]
-//     fn add_remove_class_works() {
-//         let content = div()
-//             .class("flex mt-4")
-//             .add_class("grid")
-//             .add_class("flex-col")
-//             .remove_class("grid")
-//             .toogle_class("p-2")
-//             .toogle_class("mt-4")
-//             .render_sorted();
-//         insta::assert_snapshot!(content, @r#"<div class="flex flex-col p-2"></div>"#);
-//     }
-//
-//     #[test]
-//     fn add_children_works() {
-//         let content = div()
-//             .add_children(
-//                 (0..4)
-//                     .map(|o| p().inner(o.to_string()).boxed())
-//                     .collect::<Vec<_>>(),
-//             )
-//             .add_children(
-//                 (4..8)
-//                     .map(|o| p().inner(o.to_string()).boxed())
-//                     .collect::<Vec<_>>(),
-//             )
-//             .render_sorted();
-//         insta::assert_snapshot!(content, @r"
-//         <div>
-//           <p>0</p>
-//           <p>1</p>
-//           <p>2</p>
-//           <p>3</p>
-//           <p>4</p>
-//           <p>5</p>
-//           <p>6</p>
-//           <p>7</p>
-//         </div>
-//         ");
-//     }
-// }
+    #[test]
+    fn render_with_maybe_sets() {
+        let content = div()
+            .add_opt_class(Some("mx-4"))
+            .set_opt_empty_attr(Some("hidden"))
+            .set_opt_empty_attr(None::<&str>)
+            .add_opt_child(Some("yay"))
+            .render();
+        insta::assert_snapshot!(content, @r#"<div class="mx-4" hidden>yay</div>"#);
+    }
+
+    #[test]
+    fn add_remove_class_works() {
+        let content = div()
+            .class("flex mt-4")
+            .add_class("grid")
+            .add_class("flex-col")
+            .remove_class("grid")
+            .toogle_class("p-2")
+            .toogle_class("mt-4")
+            .render();
+        insta::assert_snapshot!(content, @r#"<div class="flex flex-col p-2"></div>"#);
+    }
+
+    #[test]
+    fn add_children_works() {
+        let content = div().add_children('a'..'f').render();
+        insta::assert_snapshot!(content, @"<div>abcde</div>");
+    }
+}

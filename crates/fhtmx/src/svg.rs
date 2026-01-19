@@ -1,7 +1,7 @@
 use crate::{
     attribute::{AttributeValue, IntoAttributeValue},
     element::{Element, set_attr},
-    node::HtmlNode,
+    node::{HtmlNode, IntoNode},
 };
 use indexmap::{IndexMap, IndexSet};
 use pastey::paste;
@@ -73,6 +73,12 @@ impl Element for SvgElement {
     #[inline]
     fn is_inline_tag(&self) -> bool {
         SVG_INLINE_ELEMENTS.contains(&self.tag())
+    }
+}
+
+impl IntoNode for SvgElement {
+    fn into_node(self) -> HtmlNode {
+        HtmlNode::SvgElement(self)
     }
 }
 
