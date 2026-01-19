@@ -64,24 +64,6 @@ impl IntoAttributeValue for AttributeValue {
     }
 }
 
-impl IntoAttributeValue for &str {
-    fn into_attr(self) -> Option<AttributeValue> {
-        Some(AttributeValue::Value(self.to_string()))
-    }
-}
-
-impl IntoAttributeValue for String {
-    fn into_attr(self) -> Option<AttributeValue> {
-        Some(AttributeValue::Value(self))
-    }
-}
-
-impl IntoAttributeValue for &String {
-    fn into_attr(self) -> Option<AttributeValue> {
-        Some(AttributeValue::Value(self.clone()))
-    }
-}
-
 impl IntoAttributeValue for bool {
     fn into_attr(self) -> Option<AttributeValue> {
         if self {
@@ -92,9 +74,19 @@ impl IntoAttributeValue for bool {
     }
 }
 
-// TODO: macro to implement for all numerics types
-impl IntoAttributeValue for i32 {
-    fn into_attr(self) -> Option<AttributeValue> {
-        Some(AttributeValue::Value(self.to_string()))
-    }
+macro_rules! implement_for_display {
+    ($($t:ty),* $(,)?) => {
+        $(
+            impl IntoAttributeValue for $t {
+                fn into_attr(self) -> Option<AttributeValue> {
+                    Some(AttributeValue::Value(self.to_string()))
+                }
+            }
+        )*
+    };
 }
+
+implement_for_display!(
+    char, &str, &String, String, i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize,
+    f32, f64
+);

@@ -185,7 +185,6 @@ pub trait Element: Sized {
     }
 }
 
-// TODO: simplify
 macro_rules! set_attr {
     ($attr:ident = $name:expr; eg = $eg:expr) => {
         paste! {

@@ -1,7 +1,7 @@
 use crate::{
     attribute::{AttributeValue, IntoAttributeValue},
     element::{Element, set_attr, set_empty_attr},
-    node::{HtmlNode, IntoNode},
+    node::{HtmlNode, IntoNode, fragment},
 };
 use indexmap::{IndexMap, IndexSet};
 use pastey::paste;
@@ -92,7 +92,12 @@ impl IntoNode for HtmlElement {
     }
 }
 
-// TODO: simplify
+impl<T: IntoNode> IntoNode for Vec<T> {
+    fn into_node(self) -> HtmlNode {
+        fragment(self)
+    }
+}
+
 macro_rules! create_tag_fn {
     ($name:ident) => {
         paste! {

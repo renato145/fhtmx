@@ -34,11 +34,22 @@ impl IntoNode for HtmlNode {
     }
 }
 
-impl<T: ToString> IntoNode for T {
-    fn into_node(self) -> HtmlNode {
-        HtmlNode::Text(self.to_string())
-    }
+macro_rules! implement_for_display {
+    ($($t:ty),* $(,)?) => {
+        $(
+            impl IntoNode for $t {
+                fn into_node(self) -> HtmlNode {
+                    HtmlNode::Text(self.to_string())
+                }
+            }
+        )*
+    };
 }
+
+implement_for_display!(
+    char, &str, &String, String, i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize,
+    f32, f64
+);
 
 /// Build a list of nodes with mixed types.
 ///

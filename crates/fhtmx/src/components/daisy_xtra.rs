@@ -2,6 +2,16 @@ use super::daisy::*;
 use crate::{element::Element, html_element::*, node::*, utils::random_id};
 use std::borrow::Cow;
 
+/// Creates a new Daisy card component.
+/// Cards are used to group and display content
+pub fn mk_card(title: Option<&str>, content: impl IntoNode) -> HtmlElement {
+    dc_card().add(
+        dc_card_body()
+            .add_opt_child(title.map(|x| dc_card_title().add(x)))
+            .add(content),
+    )
+}
+
 /// Creates a new Daisy dropdown component.
 /// Dropdown can open a menu or any other element when the button is clicked
 pub fn mk_dropdown<T, I, Q>(
@@ -98,6 +108,29 @@ where
 mod tests {
     use super::*;
     use crate::render::Render;
+
+    #[test]
+    fn mk_card_works() {
+        let res = mk_card(
+            Some("Card title"),
+            vec![
+                p().add("Some content"),
+                dc_card_actions()
+                    .add_class("justify-end")
+                    .add(dc_btn().add_class("btn-primary").add("Go")),
+            ],
+        )
+        .render();
+        insta::assert_snapshot!(res, @r#"
+        <div class="card">
+          <div class="card-body">
+            <h2 class="card-title">Card title</h2>
+            <p>Some content</p>
+            <div class="card-actions justify-end"><button class="btn btn-primary">Go</button></div>
+          </div>
+        </div>
+        "#);
+    }
 
     #[test]
     fn mk_dropdown_works() {

@@ -1,4 +1,5 @@
 use fhtmx::prelude::*;
+use lipsum::lipsum;
 
 fn wrapper(title: &str, node: impl IntoNode) -> HtmlElement {
     mk_centered_container(Some(DaisyColor::Base300))
@@ -8,6 +9,21 @@ fn wrapper(title: &str, node: impl IntoNode) -> HtmlElement {
 }
 
 fn main() {
+    let cards = div().class("w-full grid grid-cols-3 gap-4").add_children(
+        [
+            ("Xsmall Card", "card-xs"),
+            ("Small Card", "card-sm"),
+            ("Medium Card (default)", ""),
+            ("Large Card", "card-lg"),
+            ("Xlarge Card", "card-xl"),
+        ]
+        .map(|(title, cls)| {
+            mk_card(Some(title), lipsum(10))
+                .add_class(cls)
+                .add_class(DaisyColor::Info.bg_content())
+        }),
+    );
+
     let dropdown = mk_dropdown(
         "open or close",
         ["Item 1", "Item 2"].map(|o| li().add(a().add(o))),
@@ -53,6 +69,7 @@ fn main() {
             h1().add("Components using DaisyUI")
                 .class("text-2xl font-bold text-center"),
         )
+        .add(wrapper("Cards", cards))
         .add(wrapper("Dropdown", dropdown))
         .add(wrapper("FAB (Floating Action Button)", fab))
         .add(wrapper("Swap", swap))
