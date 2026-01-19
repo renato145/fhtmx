@@ -1,10 +1,10 @@
 use crate::utils::escape_html_to;
 
+// TODO: use Cow here when rust gets the specialization feature
 #[derive(Clone, Debug)]
 pub enum AttributeValue {
     Empty,
     Raw(String),
-    // TODO: use Cow here?
     Value(String),
 }
 

@@ -34,6 +34,12 @@ impl IntoNode for HtmlNode {
     }
 }
 
+impl<T: IntoNode> IntoNode for Vec<T> {
+    fn into_node(self) -> HtmlNode {
+        fragment(self)
+    }
+}
+
 macro_rules! implement_for_display {
     ($($t:ty),* $(,)?) => {
         $(

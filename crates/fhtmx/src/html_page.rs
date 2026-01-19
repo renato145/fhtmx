@@ -69,7 +69,19 @@ impl HtmlPage {
         self
     }
 
-    pub fn html_nodes(self) -> HtmlNode {
+    pub fn render(self) -> String {
+        self.into_node().render()
+    }
+}
+
+impl Default for HtmlPage {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl IntoNode for HtmlPage {
+    fn into_node(self) -> HtmlNode {
         let mut nodes = Vec::with_capacity(1);
         if self.doctype {
             nodes.push(HtmlNode::Doctype);
@@ -99,16 +111,6 @@ impl HtmlPage {
                 .into_node(),
         );
         HtmlNode::Fragment(nodes)
-    }
-
-    pub fn render(self) -> String {
-        self.html_nodes().render()
-    }
-}
-
-impl Default for HtmlPage {
-    fn default() -> Self {
-        Self::new()
     }
 }
 

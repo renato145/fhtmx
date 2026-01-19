@@ -2,8 +2,9 @@ use fhtmx::prelude::*;
 use lipsum::lipsum;
 
 fn wrapper(title: &str, node: impl IntoNode) -> HtmlElement {
-    mk_centered_container(Some(DaisyColor::Base300))
+    mk_centered_container()
         .add_class("mt-4 p-4 rounded-box items-start")
+        .add_class(DaisyColor::Base300.bg_content())
         .add(h2().class("text-lg font-semibold mb-4").add(title))
         .add(node)
 }
