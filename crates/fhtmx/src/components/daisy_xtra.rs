@@ -72,7 +72,7 @@ where
     C: IntoNode,
 {
     let name = name.unwrap_or_else(|| random_id("acc"));
-    dc_join().add_children(
+    div().add_children(
         title_contents
             .into_iter()
             .enumerate()

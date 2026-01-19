@@ -1,7 +1,7 @@
-pub mod container;
-pub mod daisy;
-pub mod daisy_colors;
-pub mod daisy_xtra;
+mod container;
+mod daisy;
+mod daisy_colors;
+mod daisy_xtra;
 
 pub use container::*;
 pub use daisy::*;

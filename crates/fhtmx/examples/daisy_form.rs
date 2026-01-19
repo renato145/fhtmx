@@ -16,7 +16,7 @@ fn main() {
     let body = main_container()
         .add_class("mt-4")
         .add(
-            h1().add("A Form example with tailwind")
+            h1().add("A Form example with DaisyUI")
                 .class("text-2xl font-bold text-center"),
         )
         .add(
@@ -55,6 +55,6 @@ fn main() {
         .add_header_node(source_tailwind())
         .add_body_node(body)
         .render();
-    std::fs::write("examples/daisyui.html", page).unwrap();
+    std::fs::write("examples/daisy_form.html", page).unwrap();
     println!("Done!");
 }

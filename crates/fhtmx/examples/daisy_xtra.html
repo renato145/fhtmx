@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="en">
+  <head>
+    <title>daisyui xtra</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body>
+    <main class="container mx-auto mt-4">
+      <h1 class="text-2xl font-bold text-center">Components using DaisyUI</h1>
+      <div class="container flex flex-col bg-base-300 text-base-content mx-auto mt-4 p-4 rounded-box items-start">
+        <h2 class="text-lg font-semibold mb-4">Dropdown</h2>
+        <details class="dropdown">
+          <summary class="btn m-1">open or close</summary>
+          <ul class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+            <li><a>Item 1</a></li>
+            <li><a>Item 2</a></li>
+          </ul>
+        </details>
+      </div>
+      <div class="container flex flex-col bg-base-300 text-base-content mx-auto mt-4 p-4 rounded-box items-start">
+        <h2 class="text-lg font-semibold mb-4">FAB (Floating Action Button)</h2>
+        <div class="relative w-full h-28">
+          <div class="fab absolute">
+            <div class="btn btn-lg btn-circle btn-primary" tabindex="0" role="button">F</div>
+            <button class="btn btn-lg btn-circle">A</button>
+            <button class="btn btn-lg btn-circle">B</button>
+            <button class="btn btn-lg btn-circle">C</button>
+          </div>
+        </div>
+      </div>
+      <div class="container flex flex-col bg-base-300 text-base-content mx-auto mt-4 p-4 rounded-box items-start">
+        <h2 class="text-lg font-semibold mb-4">Swap</h2>
+        <label class="swap">
+          <input type="checkbox" />
+          <div class="swap-on">ON</div>
+          <div class="swap-off">OFF</div>
+        </label>
+      </div>
+      <div class="container flex flex-col bg-base-300 text-base-content mx-auto mt-4 p-4 rounded-box items-start">
+        <h2 class="text-lg font-semibold mb-4">Accordion</h2>
+        <div>
+          <div class="collapse bg-base-100 border border-base-300">
+            <input type="radio" name="my-accordion" checked />
+            <div class="collapse-title font-semibold">How do I create an account?</div>
+            <div class="collapse-content text-sm">Click the &quot;Sign Up&quot; button in the top right corner and follow the registration process</div>
+          </div>
+          <div class="collapse bg-base-100 border border-base-300">
+            <input type="radio" name="my-accordion" />
+            <div class="collapse-title font-semibold">I forgot my password. What should I do?</div>
+            <div class="collapse-content text-sm">Click on &quot;Forgot Password&quot; on the login page and follow the instructions sent to your email.</div>
+          </div>
+          <div class="collapse bg-base-100 border border-base-300">
+            <input type="radio" name="my-accordion" />
+            <div class="collapse-title font-semibold">How do I update my profile information?</div>
+            <div class="collapse-content text-sm">Go to &quot;My Account&quot; settings and select &quot;Edit Profile&quot; to make changes.</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

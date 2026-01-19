@@ -1,15 +1,15 @@
-pub mod attribute;
-pub mod components;
-pub mod element;
-pub mod html_element;
-pub mod html_page;
-pub mod htmx;
-pub mod js;
-pub mod node;
-pub mod render;
-pub mod sources;
-pub mod svg;
-pub mod utils;
+mod attribute;
+mod components;
+mod element;
+mod html_element;
+mod html_page;
+mod htmx;
+mod js;
+mod node;
+mod render;
+mod sources;
+mod svg;
+mod utils;
 
 pub mod prelude {
     pub use crate::attribute::*;
@@ -20,7 +20,6 @@ pub mod prelude {
     pub use crate::html_page::*;
     pub use crate::htmx::*;
     pub use crate::js::*;
-    pub use crate::node;
     pub use crate::node::*;
     pub use crate::render::*;
     pub use crate::sources::*;
