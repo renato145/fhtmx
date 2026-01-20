@@ -1,6 +1,7 @@
 use crate::{
     attribute::{AttributeValue, IntoAttributeValue},
     node::{HtmlNode, IntoNode, raw_node},
+    prelude::HtmlElement,
 };
 use indexmap::{IndexMap, IndexSet};
 use std::borrow::Cow;
@@ -15,6 +16,25 @@ pub trait Element: Sized {
     fn children_mut(&mut self) -> &mut Vec<HtmlNode>;
     fn is_void_tag(&self) -> bool;
     fn is_inline_tag(&self) -> bool;
+
+    #[inline]
+    fn len(&self) -> usize {
+        self.children().len()
+    }
+
+    fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
+    /// Gets the child at position
+    fn get_child(&self, index: usize) -> Option<&HtmlNode> {
+        self.children().get(index)
+    }
+
+    /// Gets the child at position
+    fn get_child_mut(&mut self, index: usize) -> Option<&mut HtmlNode> {
+        self.children_mut().get_mut(index)
+    }
 
     fn has_inline_content(&self) -> bool {
         let has_block = self.children().iter().any(|o| match o {
@@ -169,6 +189,33 @@ pub trait Element: Sized {
         self
     }
 
+    fn insert_child(mut self, index: usize, node: impl IntoNode) -> Self {
+        let node = node.into_node();
+        match node {
+            HtmlNode::Fragment(x) => {
+                self.children_mut().splice(index..index, x);
+            }
+            x => self.children_mut().insert(index, x),
+        }
+        self
+    }
+
+    /// Adds child if it contains a value
+    fn insert_opt_child(self, index: usize, node: Option<impl IntoNode>) -> Self {
+        if let Some(child) = node {
+            return self.insert_child(index, child);
+        }
+        self
+    }
+
+    fn prepend_child(self, node: impl IntoNode) -> Self {
+        self.insert_child(0, node)
+    }
+
+    fn prepend_opt_child(self, node: Option<impl IntoNode>) -> Self {
+        self.insert_opt_child(0, node)
+    }
+
     /// Add children
     fn add_children(mut self, nodes: impl IntoIterator<Item = impl IntoNode>) -> Self {
         self.children_mut()
@@ -182,6 +229,43 @@ pub trait Element: Sized {
             return self.add_children(children);
         }
         self
+    }
+
+    /// Add children
+    fn insert_children(
+        mut self,
+        index: usize,
+        nodes: impl IntoIterator<Item = impl IntoNode>,
+    ) -> Self {
+        self.children_mut()
+            .splice(index..index, nodes.into_iter().map(|o| o.into_node()));
+        self
+    }
+
+    /// Adds child if it contains a value
+    fn insert_opt_children(
+        self,
+        index: usize,
+        nodes: Option<impl IntoIterator<Item = impl IntoNode>>,
+    ) -> Self {
+        if let Some(children) = nodes {
+            return self.insert_children(index, children);
+        }
+        self
+    }
+
+    fn update_html_element<F>(mut self, index: usize, f: F) -> Self
+    where
+        F: FnOnce(HtmlElement) -> HtmlElement,
+    {
+        if index >= self.len() {
+            return self;
+        }
+        let node = match self.children_mut().remove(index) {
+            HtmlNode::Element(el) => f(el).into_node(),
+            x => x,
+        };
+        self.insert_child(index, node)
     }
 }
 
@@ -256,18 +340,18 @@ mod test {
 
     #[test]
     fn render_with_maybe_sets() {
-        let content = div()
+        let res = div()
             .add_opt_class(Some("mx-4"))
             .set_opt_empty_attr(Some("hidden"))
             .set_opt_empty_attr(None::<&str>)
             .add_opt_child(Some("yay"))
             .render();
-        insta::assert_snapshot!(content, @r#"<div class="mx-4" hidden>yay</div>"#);
+        insta::assert_snapshot!(res, @r#"<div class="mx-4" hidden>yay</div>"#);
     }
 
     #[test]
     fn add_remove_class_works() {
-        let content = div()
+        let res = div()
             .class("flex mt-4")
             .add_class("grid")
             .add_class("flex-col")
@@ -275,12 +359,32 @@ mod test {
             .toogle_class("p-2")
             .toogle_class("mt-4")
             .render();
-        insta::assert_snapshot!(content, @r#"<div class="flex flex-col p-2"></div>"#);
+        insta::assert_snapshot!(res, @r#"<div class="flex flex-col p-2"></div>"#);
     }
 
     #[test]
     fn add_children_works() {
-        let content = div().add_children('a'..'f').render();
-        insta::assert_snapshot!(content, @"<div>abcde</div>");
+        let res = div().add_children('a'..'f').render();
+        insta::assert_snapshot!(res, @"<div>abcde</div>");
+    }
+
+    #[test]
+    fn update_html_element_works() {
+        let res = div()
+            .add(div().add(p().add("First")).add(p().add("Third")))
+            .add("Another content");
+        let res = res
+            .update_html_element(0, |x| x.insert_child(1, p().add("Second")))
+            .render();
+        insta::assert_snapshot!(res, @r"
+        <div>
+          <div>
+            <p>First</p>
+            <p>Second</p>
+            <p>Third</p>
+          </div>
+          Another content
+        </div>
+        ");
     }
 }

@@ -10,33 +10,251 @@
   <body>
     <main class="container mx-auto mt-4">
       <h1 class="text-2xl font-bold text-center">Html view example</h1>
-      <div class="mt-4 p-2 flex flex-wrap gap-4">
-        <div class="card bg-base-300 text-base-content">
+      <div class="mt-4 p-2 grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="card bg-info text-info-content">
           <div class="card-body">
-            <h2 class="card-title">Some title</h2>
-            <p>Some content.</p>
-            <div class="card-actions"><button class="btn btn-success btn-sm">Ok</button><button class="btn btn-error btn-sm">Cancel</button></div>
+            <h2 class="card-title">User info - Bret Leffler</h2>
+            <p class="opacity-70 font-semibold text-sm">Some description can go here...</p>
+            <ul class="list">
+              <li class="list-row p-1">
+                <div class="font-bold">name</div>
+                <div>
+                  <p>Bret Leffler</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">description</div>
+                <div>
+                  <p>perspiciatis accusamus quidem doloribus voluptate.</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">salary</div>
+                <div>S/ 4690.19</div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">is active?</div>
+                <div><input class="toggle toggle-sm" type="checkbox" onclick="return false;" /></div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">age</div>
+                <div class="italic">
+                  <p>43</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">some_opt_value</div>
+                <div>
+                  <p>-</p>
+                </div>
+              </li>
+            </ul>
+            <div class="card-actions"><button class="btn">Edit</button><button class="btn btn-error btn-soft">Remove</button></div>
           </div>
         </div>
-        <div class="card bg-base-300 text-base-content">
+        <div class="card bg-info text-info-content">
           <div class="card-body">
-            <h2 class="card-title">Some title</h2>
-            <p>Some content.</p>
-            <div class="card-actions"><button class="btn btn-success btn-sm">Ok</button><button class="btn btn-error btn-sm">Cancel</button></div>
+            <h2 class="card-title">User info - Fatima Rippin</h2>
+            <p class="opacity-70 font-semibold text-sm">Some description can go here...</p>
+            <ul class="list">
+              <li class="list-row p-1">
+                <div class="font-bold">name</div>
+                <div>
+                  <p>Fatima Rippin</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">description</div>
+                <div>
+                  <p>pariatur et magni deleniti alias.</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">salary</div>
+                <div>S/ 3219.56</div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">is active?</div>
+                <div><input class="toggle toggle-sm" type="checkbox" onclick="return false;" checked /></div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">age</div>
+                <div class="italic">
+                  <p>43</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">some_opt_value</div>
+                <div>
+                  <p>82</p>
+                </div>
+              </li>
+            </ul>
+            <div class="card-actions"><button class="btn">Edit</button><button class="btn btn-error btn-soft">Remove</button></div>
           </div>
         </div>
-        <div class="card bg-base-300 text-base-content">
+        <div class="card bg-info text-info-content">
           <div class="card-body">
-            <h2 class="card-title">Some title</h2>
-            <p>Some content.</p>
-            <div class="card-actions"><button class="btn btn-success btn-sm">Ok</button><button class="btn btn-error btn-sm">Cancel</button></div>
+            <h2 class="card-title">User info - Giovanna Quitzon</h2>
+            <p class="opacity-70 font-semibold text-sm">Some description can go here...</p>
+            <ul class="list">
+              <li class="list-row p-1">
+                <div class="font-bold">name</div>
+                <div>
+                  <p>Giovanna Quitzon</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">description</div>
+                <div>
+                  <p>et cupiditate illum eius.</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">salary</div>
+                <div>S/ 1368.28</div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">is active?</div>
+                <div><input class="toggle toggle-sm" type="checkbox" onclick="return false;" /></div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">age</div>
+                <div class="italic">
+                  <p>24</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">some_opt_value</div>
+                <div>
+                  <p>228</p>
+                </div>
+              </li>
+            </ul>
+            <div class="card-actions"><button class="btn">Edit</button><button class="btn btn-error btn-soft">Remove</button></div>
           </div>
         </div>
-        <div class="card bg-base-300 text-base-content">
+        <div class="card bg-error text-error-content">
           <div class="card-body">
-            <h2 class="card-title">Some title</h2>
-            <p>Some content.</p>
-            <div class="card-actions"><button class="btn btn-success btn-sm">Ok</button><button class="btn btn-error btn-sm">Cancel</button></div>
+            <h2 class="card-title">User info - Amber Olson</h2>
+            <p class="opacity-70 font-semibold text-sm">Some description can go here...</p>
+            <ul class="list">
+              <li class="list-row p-1">
+                <div class="font-bold">name</div>
+                <div>
+                  <p>Amber Olson</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">description</div>
+                <div>
+                  <p>quaerat nulla laudantium dolores reiciendis quas esse.</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">salary</div>
+                <div>S/ -4415.05</div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">is active?</div>
+                <div><input class="toggle toggle-sm" type="checkbox" onclick="return false;" /></div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">age</div>
+                <div class="italic">
+                  <p>32</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">some_opt_value</div>
+                <div>
+                  <p>-</p>
+                </div>
+              </li>
+            </ul>
+            <div class="card-actions"><button class="btn">Edit</button><button class="btn btn-error btn-soft">Remove</button></div>
+          </div>
+        </div>
+        <div class="card bg-error text-error-content">
+          <div class="card-body">
+            <h2 class="card-title">User info - Isai Connelly</h2>
+            <p class="opacity-70 font-semibold text-sm">Some description can go here...</p>
+            <ul class="list">
+              <li class="list-row p-1">
+                <div class="font-bold">name</div>
+                <div>
+                  <p>Isai Connelly</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">description</div>
+                <div>
+                  <p>qui sed occaecati ea neque et et nihil.</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">salary</div>
+                <div>S/ -3044.41</div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">is active?</div>
+                <div><input class="toggle toggle-sm" type="checkbox" onclick="return false;" checked /></div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">age</div>
+                <div class="italic">
+                  <p>57</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">some_opt_value</div>
+                <div>
+                  <p>15</p>
+                </div>
+              </li>
+            </ul>
+            <div class="card-actions"><button class="btn">Edit</button><button class="btn btn-error btn-soft">Remove</button></div>
+          </div>
+        </div>
+        <div class="card bg-error text-error-content">
+          <div class="card-body">
+            <h2 class="card-title">User info - Santina Oberbrunner</h2>
+            <p class="opacity-70 font-semibold text-sm">Some description can go here...</p>
+            <ul class="list">
+              <li class="list-row p-1">
+                <div class="font-bold">name</div>
+                <div>
+                  <p>Santina Oberbrunner</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">description</div>
+                <div>
+                  <p>consequatur eius ex in autem reprehenderit animi.</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">salary</div>
+                <div>S/ -4332.67</div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">is active?</div>
+                <div><input class="toggle toggle-sm" type="checkbox" onclick="return false;" /></div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">age</div>
+                <div class="italic">
+                  <p>35</p>
+                </div>
+              </li>
+              <li class="list-row p-1">
+                <div class="font-bold">some_opt_value</div>
+                <div>
+                  <p>-</p>
+                </div>
+              </li>
+            </ul>
+            <div class="card-actions"><button class="btn">Edit</button><button class="btn btn-error btn-soft">Remove</button></div>
           </div>
         </div>
       </div>

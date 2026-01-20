@@ -3,6 +3,7 @@ name = "fhtmx"
 version = "0.16.0"
 authors = ["Renato Hermoza <rhermoza145@gmail.com>"]
 description = "Create html with rust with support for htmx."
+repository = "https://github.com/renato145/fhtmx"
 documentation = "https://docs.rs/fhtmx"
 keywords = ["html", "htmx"]
 license = "MIT OR Apache-2.0"
@@ -15,13 +16,14 @@ include = [
   "/README.md",
   "/CHANGELOG.md",
 ]
-repository = "https://github.com/renato145/fhtmx"
 
 [dependencies]
-indexmap = { workspace = true }
+fhtmx-derive = { path = "../fhtmx-derive" }
+indexmap = "2.13"
 pastey = "0.2"
 uuid = { version = "1.19", features = ["v4"] }
 
 [dev-dependencies]
 insta = { workspace = true }
 lipsum = "0.9"
+fake = { version = "4.4", features = ["derive"] }

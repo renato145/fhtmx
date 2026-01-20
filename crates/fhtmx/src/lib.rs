@@ -3,6 +3,7 @@ mod components;
 mod element;
 mod html_element;
 mod html_page;
+mod html_view;
 mod htmx;
 mod js;
 mod node;
@@ -18,6 +19,7 @@ pub mod prelude {
     pub use crate::element::*;
     pub use crate::html_element::*;
     pub use crate::html_page::*;
+    pub use crate::html_view::*;
     pub use crate::htmx::*;
     pub use crate::js::*;
     pub use crate::node::*;
@@ -25,4 +27,5 @@ pub mod prelude {
     pub use crate::sources::*;
     pub use crate::svg::*;
     pub use crate::utils::*;
+    pub use fhtmx_derive::HtmlView;
 }
