@@ -191,7 +191,6 @@ impl SvgElement {
     set_attr!(
         alignment_baseline = "alignment-baseline",
         baseline_shift = "baseline-shift",
-        class,
         clip,
         clip_path = "clip-path",
         clip_rule = "clip-rule",
