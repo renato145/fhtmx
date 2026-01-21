@@ -1,4 +1,5 @@
 use fhtmx::prelude::*;
+use lipsum::lipsum;
 
 fn wrapper(title: &str, node: impl IntoNode) -> HtmlElement {
     mk_centered_container()
@@ -55,13 +56,21 @@ fn main() {
         icons_group("Callout", callout_icons),
     ]);
 
+    let alerts = div().class("flex flex-col gap-y-2").add_children([
+        mk_alert_info(&lipsum(15)),
+        mk_alert_success(&lipsum(15)),
+        mk_alert_warning(&lipsum(15)),
+        mk_alert_error(&lipsum(15)),
+    ]);
+
     let body = main_container()
         .add_class("mt-4")
         .add(
             h1().add("Components using DaisyUI")
                 .class("text-2xl font-bold text-center"),
         )
-        .add(wrapper("Icons", icons));
+        .add(wrapper("Icons", icons))
+        .add(wrapper("Alerts", alerts));
 
     let page = HtmlPage::new()
         .custom_html_node(html().set_attr("data-theme", "dark").lang("en"))
