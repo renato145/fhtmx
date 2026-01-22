@@ -104,8 +104,6 @@ where
     )
 }
 
-// TODO: mk_table
-
 #[cfg(test)]
 mod tests {
     use super::*;

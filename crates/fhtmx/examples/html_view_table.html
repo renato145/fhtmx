@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="en">
+  <head>
+    <title>Html view</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body>
+    <main class="container mx-auto mt-4">
+      <h1 class="text-2xl font-bold text-center">Html view example</h1>
+      <div class="mt-4 p-2 grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="card bg-info text-info-content">
+          <div class="card-body">
+            <h2 class="card-title">User info - Bret Leffler</h2>
+            <p class="opacity-70 font-semibold text-sm">Some description can go here...</p>
+            <div class="overflow-x-auto">
+              <table class="table table-sm">
+                <tbody>
+                  <tr>
+                    <th>name</th>
+                    <td>
+                      <p>Bret Leffler</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>description</th>
+                    <td>
+                      <p>perspiciatis accusamus quidem doloribus voluptate.</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>salary</th>
+                    <td>S/ 4690.19</td>
+                  </tr>
+                  <tr>
+                    <th>is active?</th>
+                    <td><input class="toggle toggle-sm" type="checkbox" onclick="return false;" /></td>
+                  </tr>
+                  <tr>
+                    <th>age</th>
+                    <td>
+                      <p>43</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>some_opt_value</th>
+                    <td>
+                      <p>-</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card-actions"><button class="btn">Edit</button><button class="btn btn-error btn-soft">Remove</button></div>
+          </div>
+        </div>
+        <div class="card bg-info text-info-content">
+          <div class="card-body">
+            <h2 class="card-title">User info - Fatima Rippin</h2>
+            <p class="opacity-70 font-semibold text-sm">Some description can go here...</p>
+            <div class="overflow-x-auto">
+              <table class="table table-sm">
+                <tbody>
+                  <tr>
+                    <th>name</th>
+                    <td>
+                      <p>Fatima Rippin</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>description</th>
+                    <td>
+                      <p>pariatur et magni deleniti alias.</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>salary</th>
+                    <td>S/ 3219.56</td>
+                  </tr>
+                  <tr>
+                    <th>is active?</th>
+                    <td><input class="toggle toggle-sm" type="checkbox" onclick="return false;" checked /></td>
+                  </tr>
+                  <tr>
+                    <th>age</th>
+                    <td>
+                      <p>43</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>some_opt_value</th>
+                    <td>
+                      <p>82</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card-actions"><button class="btn">Edit</button><button class="btn btn-error btn-soft">Remove</button></div>
+          </div>
+        </div>
+        <div class="card bg-info text-info-content">
+          <div class="card-body">
+            <h2 class="card-title">User info - Giovanna Quitzon</h2>
+            <p class="opacity-70 font-semibold text-sm">Some description can go here...</p>
+            <div class="overflow-x-auto">
+              <table class="table table-sm">
+                <tbody>
+                  <tr>
+                    <th>name</th>
+                    <td>
+                      <p>Giovanna Quitzon</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>description</th>
+                    <td>
+                      <p>et cupiditate illum eius.</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>salary</th>
+                    <td>S/ 1368.28</td>
+                  </tr>
+                  <tr>
+                    <th>is active?</th>
+                    <td><input class="toggle toggle-sm" type="checkbox" onclick="return false;" /></td>
+                  </tr>
+                  <tr>
+                    <th>age</th>
+                    <td>
+                      <p>24</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>some_opt_value</th>
+                    <td>
+                      <p>228</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card-actions"><button class="btn">Edit</button><button class="btn btn-error btn-soft">Remove</button></div>
+          </div>
+        </div>
+        <div class="card bg-error text-error-content">
+          <div class="card-body">
+            <h2 class="card-title">User info - Amber Olson</h2>
+            <p class="opacity-70 font-semibold text-sm">Some description can go here...</p>
+            <div class="overflow-x-auto">
+              <table class="table table-sm">
+                <tbody>
+                  <tr>
+                    <th>name</th>
+                    <td>
+                      <p>Amber Olson</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>description</th>
+                    <td>
+                      <p>quaerat nulla laudantium dolores reiciendis quas esse.</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>salary</th>
+                    <td>S/ -4415.05</td>
+                  </tr>
+                  <tr>
+                    <th>is active?</th>
+                    <td><input class="toggle toggle-sm" type="checkbox" onclick="return false;" /></td>
+                  </tr>
+                  <tr>
+                    <th>age</th>
+                    <td>
+                      <p>32</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>some_opt_value</th>
+                    <td>
+                      <p>-</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card-actions"><button class="btn">Edit</button><button class="btn btn-error btn-soft">Remove</button></div>
+          </div>
+        </div>
+        <div class="card bg-error text-error-content">
+          <div class="card-body">
+            <h2 class="card-title">User info - Isai Connelly</h2>
+            <p class="opacity-70 font-semibold text-sm">Some description can go here...</p>
+            <div class="overflow-x-auto">
+              <table class="table table-sm">
+                <tbody>
+                  <tr>
+                    <th>name</th>
+                    <td>
+                      <p>Isai Connelly</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>description</th>
+                    <td>
+                      <p>qui sed occaecati ea neque et et nihil.</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>salary</th>
+                    <td>S/ -3044.41</td>
+                  </tr>
+                  <tr>
+                    <th>is active?</th>
+                    <td><input class="toggle toggle-sm" type="checkbox" onclick="return false;" checked /></td>
+                  </tr>
+                  <tr>
+                    <th>age</th>
+                    <td>
+                      <p>57</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>some_opt_value</th>
+                    <td>
+                      <p>15</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card-actions"><button class="btn">Edit</button><button class="btn btn-error btn-soft">Remove</button></div>
+          </div>
+        </div>
+        <div class="card bg-error text-error-content">
+          <div class="card-body">
+            <h2 class="card-title">User info - Santina Oberbrunner</h2>
+            <p class="opacity-70 font-semibold text-sm">Some description can go here...</p>
+            <div class="overflow-x-auto">
+              <table class="table table-sm">
+                <tbody>
+                  <tr>
+                    <th>name</th>
+                    <td>
+                      <p>Santina Oberbrunner</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>description</th>
+                    <td>
+                      <p>consequatur eius ex in autem reprehenderit animi.</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>salary</th>
+                    <td>S/ -4332.67</td>
+                  </tr>
+                  <tr>
+                    <th>is active?</th>
+                    <td><input class="toggle toggle-sm" type="checkbox" onclick="return false;" /></td>
+                  </tr>
+                  <tr>
+                    <th>age</th>
+                    <td>
+                      <p>35</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>some_opt_value</th>
+                    <td>
+                      <p>-</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card-actions"><button class="btn">Edit</button><button class="btn btn-error btn-soft">Remove</button></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

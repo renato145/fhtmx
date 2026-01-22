@@ -11,6 +11,37 @@ impl darling::FromMeta for ExprOrString {
 }
 
 #[derive(Default)]
+pub enum Mode {
+    #[default]
+    List,
+    Table,
+    TableRight,
+}
+
+impl darling::FromMeta for Mode {
+    fn from_expr(expr: &syn::Expr) -> darling::Result<Self> {
+        if let syn::Expr::Lit(syn::ExprLit {
+            lit: syn::Lit::Str(s),
+            ..
+        }) = expr
+        {
+            match s.value().to_lowercase().as_str() {
+                "list" => Ok(Self::List),
+                "table" => Ok(Self::Table),
+                "table_right" => Ok(Self::TableRight),
+                _ => Err(darling::Error::custom(format!(
+                    "unknown mode '{}', expected one of: list, table, table_right",
+                    s.value()
+                ))
+                .with_span(s)),
+            }
+        } else {
+            Err(darling::Error::unexpected_expr_type(expr))
+        }
+    }
+}
+
+#[derive(Default)]
 pub enum PostProc {
     #[default]
     None,

@@ -1,6 +1,6 @@
 mod utils;
 
-use crate::utils::{DaisyColorAttr, ExprOrString, PostProc};
+use crate::utils::{DaisyColorAttr, ExprOrString, Mode, PostProc};
 use darling::{FromDeriveInput, FromField, ast::Data};
 use proc_macro::TokenStream;
 use quote::quote;
@@ -20,18 +20,21 @@ struct HtmlViewField {
     value_class: Option<String>,
 }
 
-// TODO: add types of containers: list, table, table_right?
 #[derive(FromDeriveInput)]
 #[darling(attributes(html_view), supports(struct_named))]
 struct HtmlViewInput {
     ident: Ident,
     data: Data<(), HtmlViewField>,
     #[darling(default)]
+    mode: Mode,
+    #[darling(default)]
     title: Option<ExprOrString>,
     #[darling(default)]
     color: Option<DaisyColorAttr>,
     #[darling(default)]
     class: Option<ExprOrString>,
+    #[darling(default)]
+    mode_class: Option<ExprOrString>,
     #[darling(default)]
     postproc: PostProc,
 }
@@ -43,6 +46,7 @@ pub fn derive_html_view(input: TokenStream) -> TokenStream {
         Ok(v) => v,
         Err(e) => return e.write_errors().into(),
     };
+    let mode = parsed.mode;
 
     // Extract fields from the parsed data
     let fields = parsed.data.take_struct().expect("expected named struct");
@@ -55,18 +59,49 @@ pub fn derive_html_view(input: TokenStream) -> TokenStream {
         };
         let row_class = o.row_class.unwrap_or_else(|| "p-1".to_string());
         let value_class_call = o.value_class.map(|x| quote! { .class(#x) });
-        quote! {
-            .add(
-                html_list_row(
-                    div().class("font-bold").add(#key),
-                    div()#value_class_call.add(#value)
+        match mode {
+            Mode::List => quote! {
+                .add(
+                    html_list_row(
+                        div().class("font-bold").add(#key),
+                        div()#value_class_call.add(#value)
+                    )
+                    .add_class(#row_class)
                 )
-                .add_class(#row_class)
-            )
+            },
+            Mode::Table => quote! {
+                .add(
+                    tr()
+                    .add(th().add(#key))
+                    .add(td().add(#value))
+                )
+            },
+            Mode::TableRight => quote! {
+                .add(
+                    tr()
+                    .add(th().class("text-right").add(#key))
+                    .add(td().add(#value))
+                )
+            },
         }
     });
 
     let struct_name = parsed.ident;
+
+    let mode_class_call = parsed
+        .mode_class
+        .map(|ExprOrString(expr)| quote! { .add_class(#expr) });
+    let content = match mode {
+        Mode::List => quote! {
+            dc_list() #mode_class_call #(#field_items)*
+        },
+        Mode::Table | Mode::TableRight => quote! {
+            div()
+            .class("overflow-x-auto")
+            .add(dc_table() #mode_class_call .add(tbody() #(#field_items)*))
+        },
+    };
+
     let title = match parsed.title {
         Some(ExprOrString(expr)) => quote! { Some(#expr.as_ref()) },
         None => quote! { None },
@@ -79,7 +114,6 @@ pub fn derive_html_view(input: TokenStream) -> TokenStream {
         .class
         .map(|ExprOrString(expr)| quote! { .add_class(#expr) });
     let card = quote! { mk_card(#title, self.html_content()) #color_call #class_call };
-
     let postproc_card = match parsed.postproc {
         PostProc::None => quote! { #card },
         PostProc::Flag => quote! { self.postproc(#card) },
@@ -89,7 +123,7 @@ pub fn derive_html_view(input: TokenStream) -> TokenStream {
     quote! {
         impl HtmlView for #struct_name {
             fn html_content(&self) -> HtmlElement {
-                dc_list()#(#field_items)*
+                #content
             }
 
             fn html_view(&self) -> HtmlElement {
