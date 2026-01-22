@@ -385,6 +385,7 @@ impl<T> FhtmxContext<T> for Option<T> {
     }
 }
 
+#[cfg(feature = "anyhow")]
 impl From<anyhow::Error> for FhtmxError {
     fn from(e: anyhow::Error) -> Self {
         Self {
@@ -401,12 +402,14 @@ impl From<anyhow::Error> for FhtmxError {
     }
 }
 
+#[cfg(feature = "anyhow")]
 #[allow(clippy::result_large_err)]
 pub trait FhtmxAnyhowExt<T> {
     /// Converts `anyhow::Error` into `FhtmxError`
     fn into_fhtmx_error(self) -> Result<T, FhtmxError>;
 }
 
+#[cfg(feature = "anyhow")]
 impl<T> FhtmxAnyhowExt<T> for Result<T, anyhow::Error> {
     fn into_fhtmx_error(self) -> Result<T, FhtmxError> {
         match self {
@@ -420,7 +423,6 @@ impl<T> FhtmxAnyhowExt<T> for Result<T, anyhow::Error> {
 mod tests {
     use super::*;
     use crate::render::Render;
-    use anyhow::Context;
     use googletest::prelude::*;
 
     #[test]
@@ -472,8 +474,11 @@ mod tests {
         expect_that!(s, not(contains_substring(r#"x-data="toast""#)));
     }
 
+    #[cfg(feature = "anyhow")]
     #[gtest]
     fn render_hide_source_works() {
+        use anyhow::Context;
+
         let e = "not-a-number"
             .parse::<i32>()
             .context("Some context from anyhow")

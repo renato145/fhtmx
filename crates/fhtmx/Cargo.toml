@@ -17,12 +17,21 @@ include = [
   "/CHANGELOG.md",
 ]
 
+[features]
+# default = ["anyhow"]
+default = ["anyhow", "jiff_0_2"]
+anyhow = ["dep:anyhow"]
+chrono_0_4 = ["chrono"]
+jiff_0_2 = ["jiff"]
+
 [dependencies]
 fhtmx-derive = { path = "../fhtmx-derive" }
 indexmap = "2.13"
 pastey = "0.2"
 uuid = { version = "1.19", features = ["v4"] }
-anyhow = "1.0"
+anyhow = { workspace = true, optional = true }
+jiff = { version = "0.2", optional = true }
+chrono = { version = "0.4", optional = true }
 
 [dev-dependencies]
 insta = { workspace = true }

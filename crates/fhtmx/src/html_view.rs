@@ -51,3 +51,31 @@ implement_for_display!(
     bool, char, &str, &String, String, i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128,
     usize, f32, f64
 );
+
+#[cfg(feature = "chrono_0_4")]
+impl HtmlView for chrono::NaiveDate {
+    fn html_content(&self) -> HtmlElement {
+        p().add(self.to_string())
+    }
+}
+
+#[cfg(feature = "chrono_0_4")]
+impl HtmlView for chrono::DateTime<chrono::Utc> {
+    fn html_content(&self) -> HtmlElement {
+        p().add(self.to_string())
+    }
+}
+
+#[cfg(feature = "jiff_0_2")]
+impl HtmlView for jiff::civil::Date {
+    fn html_content(&self) -> HtmlElement {
+        p().add(self.to_string())
+    }
+}
+
+#[cfg(feature = "jiff_0_2")]
+impl HtmlView for jiff::Timestamp {
+    fn html_content(&self) -> HtmlElement {
+        p().add(self.to_string())
+    }
+}

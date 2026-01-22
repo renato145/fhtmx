@@ -29,6 +29,3 @@ pub mod prelude {
     pub use crate::utils::*;
     pub use fhtmx_derive::HtmlView;
 }
-
-// TODO: datetime utils for html (chrono & jiff)
-// TODO: make anyhow a feature
