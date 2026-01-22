@@ -10,7 +10,6 @@ use syn::{DeriveInput, Ident};
 #[darling(attributes(html_view))]
 struct HtmlViewField {
     ident: Option<Ident>,
-    // ty: Type,
     #[darling(default)]
     alias: Option<String>,
     #[darling(default)]
@@ -21,6 +20,7 @@ struct HtmlViewField {
     value_class: Option<String>,
 }
 
+// TODO: add types of containers: list, table, table_right?
 #[derive(FromDeriveInput)]
 #[darling(attributes(html_view), supports(struct_named))]
 struct HtmlViewInput {
