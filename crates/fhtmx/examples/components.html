@@ -6,6 +6,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>document.addEventListener("alpine:init", () => {
+  Alpine.data("toast", (millis = 3000, afterPointerMillis = 1000) => ({
+    show: true,
+    fadeTimeout: null,
+    timeout: null,
+
+    init() {
+      this.fadeTimeout = setTimeout(() => {
+        this.show = false;
+      }, millis);
+      this.timeout = setTimeout(() => {
+        this.$el.remove();
+      }, millis + 1000);
+      this.$el.addEventListener("pointerenter", () => {
+        clearTimeout(this.fadeTimeout);
+        clearTimeout(this.timeout);
+        this.fadeTimeout = null;
+        this.timeout = null;
+        this.show = true;
+      });
+      this.$el.addEventListener("pointerleave", () => {
+        if (this.fadeTimeout === null) {
+          this.fadeTimeout = setTimeout(() => {
+            this.show = false;
+          }, afterPointerMillis);
+        }
+        if (this.timeout === null) {
+          this.timeout = setTimeout(() => {
+            this.$el.remove();
+          }, afterPointerMillis + 1000);
+        }
+      });
+    },
+
+    destroy() {
+      clearTimeout(this.fadeTimeout);
+      clearTimeout(this.timeout);
+    },
+  }));
+});
+</script>
   </head>
   <body>
     <main class="container mx-auto mt-4">
@@ -292,6 +334,22 @@
             <div class="collapse-content">
               <div class="pt-4">This is an example of a ‘collapsed’ caution callout that can be expanded by the user.</div>
             </div>
+          </div>
+        </div>
+      </div>
+      <div class="container flex flex-col mx-auto mt-4 p-4 rounded-box items-start bg-base-300 text-base-content">
+        <h2 class="text-2xl font-semibold mb-4">Toasts</h2>
+        <div class="w-full" x-data="{ items: [], i: 0 }">
+          <button class="btn" @click="items.push(i++)">Spawn toast</button>
+          <div class="toast">
+            <template x-for="item in items">
+              <div class="alert alert-success" role="alert" x-data="toast" x-show="show" x-transition:enter="transition ease-out duration-50" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-1000" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="whitespace-pre-wrap">Some success message :)</span>
+              </div>
+            </template>
           </div>
         </div>
       </div>

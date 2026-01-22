@@ -103,6 +103,22 @@ fn main() {
             true,
         ));
 
+    let toasts = div()
+        .class("w-full")
+        .set_attr("x-data", "{ items: [], i: 0 }")
+        .add(
+            dc_btn()
+                .set_attr("@click", "items.push(i++)")
+                .add("Spawn toast"),
+        )
+        .add(
+            div().class("toast").add(
+                template()
+                    .set_attr("x-for", "item in items")
+                    .add(mk_alert_success("Some success message :)").setup_toast(false)),
+            ),
+        );
+
     let body = main_container()
         .add_class("mt-4")
         .add(
@@ -111,13 +127,16 @@ fn main() {
         )
         .add(wrapper("Icons", icons))
         .add(wrapper("Alerts", alerts))
-        .add(wrapper("Callout blocks", callout_blocks));
+        .add(wrapper("Callout blocks", callout_blocks))
+        .add(wrapper("Toasts", toasts));
 
     let page = HtmlPage::new()
         .custom_html_node(html().set_attr("data-theme", "dark").lang("en"))
         .title("Components")
         .add_header_node(daisy_link())
         .add_header_node(source_tailwind())
+        .add_header_node(source_alpinejs())
+        .add_header_node(script_setup_toast())
         .add_body_node(body)
         .render();
     std::fs::write("examples/components.html", page).unwrap();

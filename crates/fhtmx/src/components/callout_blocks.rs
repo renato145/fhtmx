@@ -1,10 +1,6 @@
 use super::{daisy::*, icons};
-use crate::{
-    children, element::Element, html_element::*, node::*, prelude::mk_dropdown, svg::SvgElement,
-};
+use crate::{element::Element, html_element::*, node::*};
 use pastey::paste;
-
-// icon: SvgElement, content: impl IntoNode
 
 /// Creates a new callout component
 pub fn mk_callout(
@@ -47,7 +43,7 @@ macro_rules! new_callout {
                     let title = p()
                         .class("ml-2 pr-8 font-bold text-lg")
                         .add(title_content);
-                    let title = children![icon, title];
+                    let title = crate::children![icon, title];
                     let content = div().class("pt-4").add(content);
                     mk_callout(title, content, $color, collapse)
                 }

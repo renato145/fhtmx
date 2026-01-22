@@ -59,3 +59,9 @@ pub fn daisy_link() -> HtmlElement {
         .rel("stylesheet")
         .typ("text/css")
 }
+
+/// Script to setup toast
+pub fn script_setup_toast() -> HtmlElement {
+    script().add_raw(include_str!("setup_toast.js"))
+    // .add_header_child(script().inner_unsafe(include_str!("setup.js")))
+}
