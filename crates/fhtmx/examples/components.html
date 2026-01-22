@@ -177,18 +177,18 @@
       </div>
       <div class="container flex flex-col mx-auto mt-4 p-4 rounded-box items-start bg-base-300 text-base-content">
         <h2 class="text-2xl font-semibold mb-4">Alerts</h2>
-        <div class="flex flex-col gap-y-2">
+        <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-2">
           <div class="alert alert-info" role="alert">
             <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
               <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            <span class="whitespace-pre-wrap">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</span>
+            <span class="whitespace-pre-wrap">Info alert: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</span>
           </div>
           <div class="alert alert-success" role="alert">
             <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            <span class="whitespace-pre-wrap">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</span>
+            <span class="whitespace-pre-wrap">Sucess alert: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</span>
           </div>
           <div class="alert alert-warning" role="alert">
             <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
@@ -196,13 +196,102 @@
               <line x1="12" x2="12" y1="8" y2="12"></line>
               <line x1="12" x2="12.01" y1="16" y2="16"></line>
             </svg>
-            <span class="whitespace-pre-wrap">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</span>
+            <span class="whitespace-pre-wrap">Warning alert: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</span>
           </div>
           <div class="alert alert-error" role="alert">
             <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            <span class="whitespace-pre-wrap">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</span>
+            <span class="whitespace-pre-wrap">Error alert: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</span>
+          </div>
+        </div>
+      </div>
+      <div class="container flex flex-col mx-auto mt-4 p-4 rounded-box items-start bg-base-300 text-base-content">
+        <h2 class="text-2xl font-semibold mb-4">Callout blocks</h2>
+        <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="collapse collapse-open border border-l-6 rounded bg-base-100 border-info/50">
+            <input type="checkbox" />
+            <div class="collapse-title px-2 py-1 flex items-center bg-info/20">
+              <svg class="h-5 w-5 text-info" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 16v-4"></path>
+                <path d="M12 8h.01"></path>
+              </svg>
+              <p class="ml-2 pr-8 font-bold text-lg">Note</p>
+            </div>
+            <div class="collapse-content">
+              <div class="pt-4">
+                <p>Note that there are five types of callout_blocks<span class="font-bold">callout_blocks</span>, including: <span class="font-bold">note, tip, warning, caution and important.</span></p>
+              </div>
+            </div>
+          </div>
+          <div class="collapse collapse-open border border-l-6 rounded bg-base-100 border-warning/50">
+            <input type="checkbox" />
+            <div class="collapse-title px-2 py-1 flex items-center bg-warning/20">
+              <svg class="h-5 w-5 text-warning" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path>
+                <line x1="12" x2="12" y1="8" y2="12"></line>
+                <line x1="12" x2="12.01" y1="16" y2="16"></line>
+              </svg>
+              <p class="ml-2 pr-8 font-bold text-lg">Warning</p>
+            </div>
+            <div class="collapse-content">
+              <div class="pt-4">Callouts provide a simple way to attract attention, for example, to this warning.</div>
+            </div>
+          </div>
+          <div class="collapse collapse-open border border-l-6 rounded bg-base-100 border-error/50">
+            <input type="checkbox" />
+            <div class="collapse-title px-2 py-1 flex items-center bg-error/20">
+              <svg class="h-5 w-5 text-error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <p class="ml-2 pr-8 font-bold text-lg">Error</p>
+            </div>
+            <div class="collapse-content">
+              <div class="pt-4">Some error message here...</div>
+            </div>
+          </div>
+          <div class="collapse collapse-open border border-l-6 rounded bg-base-100 border-error/50">
+            <input type="checkbox" />
+            <div class="collapse-title px-2 py-1 flex items-center bg-error/20">
+              <svg class="h-5 w-5 text-error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" x2="12" y1="8" y2="12"></line>
+                <line x1="12" x2="12.01" y1="16" y2="16"></line>
+              </svg>
+              <p class="ml-2 pr-8 font-bold text-lg">Important</p>
+            </div>
+            <div class="collapse-content">
+              <div class="pt-4">The callout heading is provided by the callout type, with the expected heading (i.e., Note, Warning, Important, Tip, or Caution).</div>
+            </div>
+          </div>
+          <div class="collapse collapse-open border border-l-6 rounded bg-base-100 border-success/50">
+            <input type="checkbox" />
+            <div class="collapse-title px-2 py-1 flex items-center bg-success/20">
+              <svg class="h-5 w-5 text-success" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+              </svg>
+              <p class="ml-2 pr-8 font-bold text-lg">Tip: with some title</p>
+            </div>
+            <div class="collapse-content">
+              <div class="pt-4">This is an example of a callout with a title. Providing a callout title is optional.</div>
+            </div>
+          </div>
+          <div class="collapse collapse-arrow border border-l-6 rounded bg-base-100 border-error/50">
+            <input type="checkbox" />
+            <div class="collapse-title px-2 py-1 flex items-center bg-error/20">
+              <svg class="h-5 w-5 text-error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                <path d="M12 16h.01"></path>
+                <path d="M12 8v4"></path>
+                <path d="M15.312 2a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586l-4.688-4.688A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2z"></path>
+              </svg>
+              <p class="ml-2 pr-8 font-bold text-lg">Caution: with collapse</p>
+            </div>
+            <div class="collapse-content">
+              <div class="pt-4">This is an example of a ‘collapsed’ caution callout that can be expanded by the user.</div>
+            </div>
           </div>
         </div>
       </div>

@@ -56,12 +56,52 @@ fn main() {
         icons_group("Callout", callout_icons),
     ]);
 
-    let alerts = div().class("flex flex-col gap-y-2").add_children([
-        mk_alert_info(&lipsum(15)),
-        mk_alert_success(&lipsum(15)),
-        mk_alert_warning(&lipsum(15)),
-        mk_alert_error(&lipsum(15)),
-    ]);
+    let alerts = div()
+        .class("w-full grid grid-cols-1 md:grid-cols-2 gap-2")
+        .add_children([
+            mk_alert_info(format!("Info alert: {}", lipsum(15))),
+            mk_alert_success(format!("Sucess alert: {}", lipsum(15))),
+            mk_alert_warning(format!("Warning alert: {}", lipsum(15))),
+            mk_alert_error(format!("Error alert: {}", lipsum(15))),
+        ]);
+
+    let callout_blocks = div()
+        .class("w-full grid grid-cols-1 md:grid-cols-2 gap-4")
+        .add(mk_callout_note(
+            None,
+            p().add("Note that there are five types of callout_blocks")
+                .add(span().class("font-bold").add("callout_blocks"))
+                .add(", including: ")
+                .add(
+                    span()
+                        .class("font-bold")
+                        .add("note, tip, warning, caution and important."),
+                ),
+            false,
+        ))
+        .add(mk_callout_warning(
+            None,
+            "Callouts provide a simple way to attract attention, for example, to this warning.",
+            false,
+        ))
+        .add(mk_callout_error(None, "Some error message here...", false))
+        .add(mk_callout_important(
+            None,
+            "The callout heading is provided by the callout type, with the expected heading \
+             (i.e., Note, Warning, Important, Tip, or Caution).",
+            false,
+        ))
+        .add(mk_callout_tip(
+            Some("with some title"),
+            "This is an example of a callout with a title. \
+             Providing a callout title is optional.",
+            false,
+        ))
+        .add(mk_callout_caution(
+            Some("with collapse"),
+            "This is an example of a ‘collapsed’ caution callout that can be expanded by the user.",
+            true,
+        ));
 
     let body = main_container()
         .add_class("mt-4")
@@ -70,7 +110,8 @@ fn main() {
                 .class("text-2xl font-bold text-center"),
         )
         .add(wrapper("Icons", icons))
-        .add(wrapper("Alerts", alerts));
+        .add(wrapper("Alerts", alerts))
+        .add(wrapper("Callout blocks", callout_blocks));
 
     let page = HtmlPage::new()
         .custom_html_node(html().set_attr("data-theme", "dark").lang("en"))
