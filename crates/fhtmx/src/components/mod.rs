@@ -6,6 +6,7 @@ mod daisy_colors;
 mod daisy_xtra;
 pub mod icons;
 mod lazy_load;
+mod theme;
 mod toast;
 
 pub use alerts::*;
@@ -15,6 +16,7 @@ pub use daisy::*;
 pub use daisy_colors::*;
 pub use daisy_xtra::*;
 pub use lazy_load::*;
+pub use theme::*;
 pub use toast::*;
 
 // TODO: error

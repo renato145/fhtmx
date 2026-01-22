@@ -148,7 +148,7 @@ pub trait Element: Sized {
         self
     }
 
-    fn toogle_class(self, class: impl Into<Cow<'static, str>>) -> Self {
+    fn toggle_class(self, class: impl Into<Cow<'static, str>>) -> Self {
         let class = class.into();
         if self.has_class(&class) {
             self.remove_class(&class)
@@ -362,8 +362,8 @@ mod test {
             .add_class("grid")
             .add_class("flex-col")
             .remove_class("grid")
-            .toogle_class("p-2")
-            .toogle_class("mt-4")
+            .toggle_class("p-2")
+            .toggle_class("mt-4")
             .render();
         insta::assert_snapshot!(res, @r#"<div class="flex flex-col p-2"></div>"#);
     }
