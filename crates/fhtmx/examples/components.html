@@ -340,7 +340,7 @@
       <div class="container flex flex-col mx-auto mt-4 p-4 rounded-box items-start bg-base-300 text-base-content">
         <h2 class="text-2xl font-semibold mb-4">Toasts</h2>
         <div class="w-full" x-data="{ items: [], i: 0 }">
-          <button class="btn" @click="items.push(i++)">Spawn toast</button>
+          <button class="btn btn-primary" @click="items.push(i++)">Spawn toast</button>
           <div class="toast">
             <template x-for="item in items">
               <div class="alert alert-success" role="alert" x-data="toast" x-show="show" x-transition:enter="transition ease-out duration-50" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-1000" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -350,6 +350,34 @@
                 <span class="whitespace-pre-wrap">Some success message :)</span>
               </div>
             </template>
+          </div>
+        </div>
+      </div>
+      <div class="container flex flex-col mx-auto mt-4 p-4 rounded-box items-start bg-base-300 text-base-content">
+        <h2 class="text-2xl font-semibold mb-4">Lazy load</h2>
+        <div class="w-full flex flex-col gap-4">
+          <div class="text-xs">
+            <p>extra small<span class="loading loading-bars loading-xs ml-2"></span></p>
+          </div>
+          <div class="text-sm">
+            <p>small<span class="loading loading-bars loading-sm ml-2"></span></p>
+          </div>
+          <div>
+            <p>medium (default)<span class="loading loading-bars ml-2"></span></p>
+          </div>
+          <div class="text-lg">
+            <p>large<span class="loading loading-bars loading-lg ml-2"></span></p>
+          </div>
+          <div class="text-xl">
+            <p>extra large<span class="loading loading-bars loading-xl ml-2"></span></p>
+          </div>
+          <div class="flex flex-wrap gap-4 items-center">
+            <p class="mt-2 text-lg font-semibold">Other icons:</p>
+            <div><span class="loading loading-spinner"></span></div>
+            <div><span class="loading loading-dots"></span></div>
+            <div><span class="loading loading-ring"></span></div>
+            <div><span class="loading loading-ball"></span></div>
+            <div><span class="loading loading-infinity"></span></div>
           </div>
         </div>
       </div>

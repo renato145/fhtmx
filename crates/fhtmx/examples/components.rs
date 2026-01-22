@@ -108,6 +108,7 @@ fn main() {
         .set_attr("x-data", "{ items: [], i: 0 }")
         .add(
             dc_btn()
+                .add_class("btn-primary")
                 .set_attr("@click", "items.push(i++)")
                 .add("Spawn toast"),
         )
@@ -119,6 +120,24 @@ fn main() {
             ),
         );
 
+    let lazy_load = div()
+        .class("w-full flex flex-col gap-4")
+        .add(lazy_load_bars_xs(Some("extra small")))
+        .add(lazy_load_bars_sm(Some("small")))
+        .add(lazy_load(Some("medium (default)")))
+        .add(lazy_load_bars_lg(Some("large")))
+        .add(lazy_load_bars_xl(Some("extra large")))
+        .add(
+            div()
+                .class("flex flex-wrap gap-4 items-center")
+                .add(p().class("mt-2 text-lg font-semibold").add("Other icons:"))
+                .add(lazy_load_spinner(None))
+                .add(lazy_load_dots(None))
+                .add(lazy_load_ring(None))
+                .add(lazy_load_ball(None))
+                .add(lazy_load_infinity(None)),
+        );
+
     let body = main_container()
         .add_class("mt-4")
         .add(
@@ -128,7 +147,8 @@ fn main() {
         .add(wrapper("Icons", icons))
         .add(wrapper("Alerts", alerts))
         .add(wrapper("Callout blocks", callout_blocks))
-        .add(wrapper("Toasts", toasts));
+        .add(wrapper("Toasts", toasts))
+        .add(wrapper("Lazy load", lazy_load));
 
     let page = HtmlPage::new()
         .custom_html_node(html().set_attr("data-theme", "dark").lang("en"))

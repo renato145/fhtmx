@@ -189,6 +189,12 @@ pub trait Element: Sized {
         self
     }
 
+    /// Alias for `add_opt_child`
+    #[inline]
+    fn add_opt(self, node: Option<impl IntoNode>) -> Self {
+        self.add_opt_child(node)
+    }
+
     fn insert_child(mut self, index: usize, node: impl IntoNode) -> Self {
         let node = node.into_node();
         match node {
@@ -344,7 +350,7 @@ mod test {
             .add_opt_class(Some("mx-4"))
             .set_opt_empty_attr(Some("hidden"))
             .set_opt_empty_attr(None::<&str>)
-            .add_opt_child(Some("yay"))
+            .add_opt(Some("yay"))
             .render();
         insta::assert_snapshot!(res, @r#"<div class="mx-4" hidden>yay</div>"#);
     }

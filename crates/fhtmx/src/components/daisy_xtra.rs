@@ -7,7 +7,7 @@ use std::borrow::Cow;
 pub fn mk_card(title: Option<&str>, content: impl IntoNode) -> HtmlElement {
     dc_card().add(
         dc_card_body()
-            .add_opt_child(title.map(|x| dc_card_title().add(x)))
+            .add_opt(title.map(|x| dc_card_title().add(x)))
             .add(content),
     )
 }
