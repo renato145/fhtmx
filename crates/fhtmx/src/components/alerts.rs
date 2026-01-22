@@ -36,7 +36,7 @@ mod test {
     fn alert_works() {
         let res = mk_alert_error("Some error").render();
         insta::assert_snapshot!(res, @r#"
-        <div class="alert" role="alert">
+        <div class="alert alert-error" role="alert">
           <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>

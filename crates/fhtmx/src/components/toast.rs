@@ -25,7 +25,7 @@ pub fn setup_toast(el: HtmlElement, oob: bool) -> HtmlElement {
     }
 }
 
-pub trait KshUiToast {
+pub trait FhtmxToast {
     /// Setup alpine directives so the `el` will fade after some seconds.
     /// - If oob is set to true, it will use the global toast container in the layout.
     /// - If oob is false, you may want to set the `el` to be the toast container, make sure to add the
@@ -37,7 +37,7 @@ pub trait KshUiToast {
     fn setup_toast(self, oob: bool) -> HtmlElement;
 }
 
-impl KshUiToast for HtmlElement {
+impl FhtmxToast for HtmlElement {
     fn setup_toast(self, oob: bool) -> HtmlElement {
         setup_toast(self, oob)
     }

@@ -103,6 +103,24 @@ fn main() {
             true,
         ));
 
+    let errors = div()
+        .class("w-full flex flex-col gap-4")
+        .add(FhtmxError::custom_error("Simple error example.").disable_toast())
+        .add(
+            "not-a-number"
+                .parse::<i32>()
+                .into_fhtmx_error()
+                .unwrap_err()
+                .disable_toast(),
+        )
+        .add(
+            "not-a-number"
+                .parse::<i32>()
+                .fhtmx_context("Some error context")
+                .unwrap_err()
+                .disable_toast(),
+        );
+
     let toasts = div()
         .class("w-full")
         .set_attr("x-data", "{ items: [], i: 0 }")
@@ -148,6 +166,7 @@ fn main() {
         .add(wrapper("Icons", icons))
         .add(wrapper("Alerts", alerts))
         .add(wrapper("Callout blocks", callout_blocks))
+        .add(wrapper("Errors", errors))
         .add(wrapper("Toasts", toasts))
         .add(wrapper("Lazy load", lazy_load));
 

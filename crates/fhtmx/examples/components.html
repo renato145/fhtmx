@@ -363,6 +363,38 @@
         </div>
       </div>
       <div class="container flex flex-col mx-auto mt-4 p-4 rounded-box items-start bg-base-300 text-base-content">
+        <h2 class="text-2xl font-semibold mb-4">Errors</h2>
+        <div class="w-full flex flex-col gap-4">
+          <div class="alert alert-error" role="alert">
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="whitespace-pre-wrap">Simple error example.</span>
+          </div>
+          <div class="alert alert-error" role="alert">
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="whitespace-pre-wrap">invalid digit found in string</span>
+          </div>
+          <div class="collapse collapse-arrow border border-l-6 rounded bg-base-100 border-error/50">
+            <input type="checkbox" />
+            <div class="collapse-title px-2 py-1 flex items-center bg-error/20">
+              <svg class="h-5 w-5 text-error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <p class="ml-2 pr-8 font-bold text-lg">Error: Some error context</p>
+            </div>
+            <div class="collapse-content">
+              <div class="pt-4">
+                <pre class="text-wrap text-sm">Caused by:
+	invalid digit found in string</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container flex flex-col mx-auto mt-4 p-4 rounded-box items-start bg-base-300 text-base-content">
         <h2 class="text-2xl font-semibold mb-4">Toasts</h2>
         <div class="w-full" x-data="{ items: [], i: 0 }">
           <button class="btn btn-primary" @click="items.push(i++)">Spawn toast</button>

@@ -22,8 +22,10 @@ fhtmx-derive = { path = "../fhtmx-derive" }
 indexmap = "2.13"
 pastey = "0.2"
 uuid = { version = "1.19", features = ["v4"] }
+anyhow = "1.0"
 
 [dev-dependencies]
 insta = { workspace = true }
 lipsum = "0.9"
 fake = { version = "4.4", features = ["derive"] }
+googletest = "0.14"

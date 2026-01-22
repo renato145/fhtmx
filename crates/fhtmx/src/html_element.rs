@@ -39,6 +39,18 @@ impl HtmlElement {
     }
 }
 
+pub trait IntoHtmlElement {
+    /// Transforms into a `HtmlElement`
+    fn into_element(self) -> HtmlElement;
+}
+
+impl IntoHtmlElement for HtmlElement {
+    #[inline]
+    fn into_element(self) -> HtmlElement {
+        self
+    }
+}
+
 impl Element for HtmlElement {
     #[inline]
     fn tag(&self) -> &'static str {
@@ -86,9 +98,9 @@ impl Element for HtmlElement {
     }
 }
 
-impl IntoNode for HtmlElement {
+impl<T: IntoHtmlElement> IntoNode for T {
     fn into_node(self) -> HtmlNode {
-        HtmlNode::Element(self)
+        HtmlNode::Element(self.into_element())
     }
 }
 
