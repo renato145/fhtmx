@@ -5,6 +5,7 @@ use actix_web::{
     web,
 };
 use fhtmx::prelude::*;
+use fhtmx_actix::prelude::*;
 use serde::Deserialize;
 use std::{str::FromStr, sync::Mutex};
 use tracing_actix_web::TracingLogger;
@@ -80,149 +81,118 @@ impl TodoListItem {
         }
     }
 
-    fn html(&self) -> HtmlSingleElement {
-        li().id(self.id)
-            .inner(&self.value)
-            .add_child(
-                button()
-                    .inner("modify")
+    fn html(&self) -> HtmlElement {
+        li().id(self.id.to_string())
+            .add(&self.value)
+            .add(
+                dc_link()
+                    .add_class("ml-2 link-info text-xs")
                     .hx_get(format!("/todo/{}/form", self.id))
                     .hx_target(HXTarget::Closest("li"))
                     .hx_swap(HXSwap::OuterHTML)
-                    .class("ml-2 link link-info text-xs"),
+                    .add("modify"),
             )
-            .add_child(
-                button()
-                    .inner("remove")
+            .add(
+                dc_link()
+                    .add_class("ml-1 link-error text-xs")
                     .hx_delete(format!("/todo/{}", self.id))
                     .hx_target(HXTarget::Closest("li"))
                     .hx_swap(HXSwap::Delete)
                     .hx_confirm("Are you sure?")
-                    .class("ml-1 link link-error text-xs"),
+                    .add("remove"),
             )
-            .boxed()
     }
 
-    fn html_form(&self) -> HtmlSingleElement {
-        li().class("my-2")
-            .id(self.id)
-            .add_child(
-                form()
-                    .class("contents")
-                    .add_child(
-                        input()
-                            .class("input")
-                            .r#type("text")
-                            .name("content")
-                            .value(&self.value)
-                            .set_attr("onfocus", "this.select()")
-                            .autofocus()
-                            .required(),
-                    )
-                    .add_child(
-                        button()
-                            .inner("ok")
-                            .hx_put(format!("/todo/{}", self.id))
-                            .hx_target(HXTarget::Closest("li"))
-                            .hx_swap(HXSwap::OuterHTML)
-                            .class("ml-2 btn btn-primary"),
-                    )
-                    .add_child(
-                        button()
-                            .inner("cancel")
-                            .hx_get(format!("/todo/{}", self.id))
-                            .hx_target(HXTarget::Closest("li"))
-                            .hx_swap(HXSwap::OuterHTML)
-                            .class("ml-1 btn btn-error"),
-                    ),
-            )
-            .boxed()
+    fn html_form(&self) -> HtmlElement {
+        li().class("my-2").id(self.id.to_string()).add(
+            form()
+                .class("contents")
+                .add(
+                    dc_input()
+                        .typ("text")
+                        .name("content")
+                        .value(&self.value)
+                        .set_attr("onfocus", "this.select()")
+                        .autofocus()
+                        .required(),
+                )
+                .add(
+                    dc_btn()
+                        .add_class("ml-2 btn-primary")
+                        .hx_put(format!("/todo/{}", self.id))
+                        .hx_target(HXTarget::Closest("li"))
+                        .hx_swap(HXSwap::OuterHTML)
+                        .add("ok"),
+                )
+                .add(
+                    dc_btn()
+                        .add_class("ml-1 btn-error")
+                        .hx_get(format!("/todo/{}", self.id))
+                        .hx_target(HXTarget::Closest("li"))
+                        .hx_swap(HXSwap::OuterHTML)
+                        .add("cancel"),
+                ),
+        )
     }
 }
 
-fn page_layout<C: HtmlRender + 'static>(title: &str, content: C) -> HttpResponse {
-    let body = main_tag()
-        .class("container mx-auto mt-4")
-        .add_child(h1().inner(title).class("text-3xl font-bold text-center"))
-        .add_child(content);
+fn page_layout(title: &str, content: impl IntoNode) -> HttpResponse {
+    let body = main_container()
+        .add_class("mt-4")
+        .add(h1().class("text-3xl font-bold text-center").add(title))
+        .add(content);
     let html_body = HtmlPage::new()
         .custom_html_node(html().set_attr("data-theme", "dark").lang("en"))
+        .add_header_node(source_htmx())
+        .add_header_node(daisy_link())
+        .add_header_node(source_tailwind())
         .title(title)
-        .add_header_child(
-            script()
-                .src("https://unpkg.com/htmx.org@2.0.4")
-                .set_attr(
-                    "integrity",
-                    "sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+",
-                )
-                .set_attr("crossorigin", "anonymous"),
-        )
-        .add_header_child(
-            link()
-                .href("https://cdn.jsdelivr.net/npm/daisyui@5")
-                .rel("stylesheet")
-                .r#type("text/css"),
-        )
-        .add_header_child(script().src("https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"))
-        .add_body_child(body)
+        .add_body_node(body)
         .render();
     HttpResponse::Ok()
         .content_type(ContentType::html())
         .body(html_body)
 }
 
-fn todo_list_description(n: usize) -> HtmlElement<&'static str, HtmlGenericElement> {
-    let inner = match n {
+fn todo_list_description(n: usize) -> HtmlElement {
+    let s = match n {
         0 => "The list is empty, try adding some items...".to_string(),
         1 => "1 item".to_string(),
         n => format!("{} items:", n),
     };
-    p().id("todo-list-description").inner(&inner)
+    p().id("todo-list-description").add(s)
 }
 
-fn sort_list_btn(n: usize) -> HtmlElement<&'static str, HtmlGenericElement> {
+fn sort_list_btn(n: usize) -> HtmlElement {
     if n == 0 {
         div().id("sort-btn").hidden()
     } else {
         div()
             .id("sort-btn")
             .class("flex gap-x-2")
-            .add_child(
-                button()
+            .add(
+                dc_btn()
+                    .add_class("self-start btn-primary btn-sm")
                     .hx_post("/todo/sort")
                     .hx_target("#todo-list")
-                    .class("self-start btn btn-primary btn-sm")
-                    .inner("Sort items"),
+                    .add("Sort items"),
             )
-            .add_child(
-                button()
+            .add(
+                dc_btn()
+                    .add_class("self-start btn-error btn-sm")
                     .hx_post("/todo/clear")
                     .hx_target("#todo-list")
                     .hx_confirm("Are you sure?")
-                    .class("self-start btn btn-error btn-sm")
-                    .inner("Clear todo"),
+                    .add("Clear todo"),
             )
-            .add_child(
-                button()
+            .add(
+                dc_btn()
+                    .add_class("self-start btn-info btn-sm")
                     .hx_post("/js_invoke")
                     .hx_target("body")
                     .hx_swap(HXSwap::BeforeEnd)
-                    .class("self-start btn btn-info btn-sm")
-                    .inner("Call js"),
+                    .add("Call js"),
             )
-    }
-}
-
-trait HtmlActixRender: HtmlRender {
-    fn render_response(&self) -> HttpResponse;
-}
-
-impl<T: ?Sized + HtmlRender> HtmlActixRender for T {
-    fn render_response(&self) -> HttpResponse {
-        let html_body = self.render();
-        HttpResponse::Ok()
-            .content_type(ContentType::html())
-            .body(html_body)
     }
 }
 
@@ -231,43 +201,43 @@ async fn index(state: web::Data<State>) -> HttpResponse {
     let items = state.read_todo_list();
     let mut todo_list = div()
         .class("mt-8 p-4 flex flex-col gap-y-2")
-        .add_child(todo_list_description(items.len()))
-        .add_child(sort_list_btn(items.len()));
-    todo_list = todo_list.add_child(
+        .add(todo_list_description(items.len()))
+        .add(sort_list_btn(items.len()));
+    todo_list = todo_list.add(
         ul().id("todo-list")
             .class("mt-2 list-inside list-disc")
-            .add_children(items.iter().map(|o| o.html()).collect()),
+            .add_children(items.iter().map(|o| o.html())),
     );
     let page = div()
         .class("mt-8")
-        .add_child(
+        .add(
             form()
+                .class("flex items-center gap-x-2")
                 .hx_post("/todo")
                 .hx_target("#todo-list")
                 .hx_swap(HXSwap::BeforeEnd)
                 .set_attr("hx-on::after-request", "this.reset()")
-                .class("flex items-center gap-x-2")
-                .add_child(
+                .add(
                     label()
                         .class("flex items-center")
-                        .add_child(
+                        .add(
                             span()
                                 .class("text-nowrap text-lg font-medium")
-                                .inner("Add items to the TODO list"),
+                                .add("Add items to the TODO list"),
                         )
-                        .add_child(
-                            input()
-                                .class("ml-4 input")
-                                .r#type("text")
+                        .add(
+                            dc_input()
+                                .add_class("ml-4")
+                                .typ("text")
                                 .name("content")
                                 .placeholder("Write your TODO here")
                                 .autofocus()
                                 .required(),
                         ),
                 )
-                .add_child(button().class("btn btn-primary").inner("Add")),
+                .add(dc_btn().add_class("btn-primary").add("Add")),
         )
-        .add_child(todo_list);
+        .add(todo_list);
     page_layout("Actix demo", page)
 }
 
@@ -286,14 +256,12 @@ async fn add_todo(
     todo_list.push(new_item.clone());
     let mut html_body = vec![
         new_item.html(),
-        todo_list_description(todo_list.len())
-            .hx_swap_oob("true")
-            .boxed(),
+        todo_list_description(todo_list.len()).hx_swap_oob("true"),
     ];
     if todo_list.len() == 1 {
-        html_body.push(sort_list_btn(1).hx_swap_oob("true").boxed());
+        html_body.push(sort_list_btn(1).hx_swap_oob("true"));
     }
-    html_body.render_response()
+    html_body.into_node().render_response()
 }
 
 #[tracing::instrument(skip(state))]
@@ -308,15 +276,11 @@ async fn rm_todo(
         .position(|o| o.id == id)
         .ok_or_else(|| ErrorBadRequest("id not found."))?;
     todo_list.remove(idx);
-    let mut html_body = vec![
-        todo_list_description(todo_list.len())
-            .hx_swap_oob("true")
-            .boxed(),
-    ];
+    let mut html_body = vec![todo_list_description(todo_list.len()).hx_swap_oob("true")];
     if todo_list.is_empty() {
-        html_body.push(sort_list_btn(0).hx_swap_oob("true").boxed());
+        html_body.push(sort_list_btn(0).hx_swap_oob("true"));
     }
-    Ok(html_body.render_response())
+    Ok(html_body.into_node().render_response())
 }
 
 #[tracing::instrument(skip(state))]
@@ -371,16 +335,17 @@ async fn sort_todo(state: web::Data<State>) -> HttpResponse {
         .iter()
         .map(|o| o.html())
         .collect::<Vec<_>>()
+        .into_node()
         .render_response()
 }
 
 #[tracing::instrument(skip(state))]
 async fn clear_todo(state: web::Data<State>) -> HttpResponse {
     state.todo_list.lock().unwrap().clear();
-    vec![
-        todo_list_description(0).hx_swap_oob("true").boxed(),
-        sort_list_btn(0).hx_swap_oob("true").boxed(),
-    ]
+    fragment([
+        todo_list_description(0).hx_swap_oob("true"),
+        sort_list_btn(0).hx_swap_oob("true"),
+    ])
     .render_response()
 }
 
