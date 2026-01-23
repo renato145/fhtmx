@@ -3,6 +3,7 @@
   "include-component-in-tag": true,
   "plugins": ["cargo-workspace"],
   "packages": {
-    "crates/fhtmx": {}
+    "crates/fhtmx": {},
+    "crates/fhtmx-actix": {}
   }
 }

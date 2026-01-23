@@ -1,0 +1,21 @@
+[package]
+name = "fhtmx-actix"
+version = "0.1.0"
+authors = ["Renato Hermoza <rhermoza145@gmail.com>"]
+description = "Actix utilities for fhtmx."
+repository = "https://github.com/renato145/fhtmx"
+documentation = "https://docs.rs/fhtmx-actix"
+keywords = ["html", "htmx", "actix"]
+license = "MIT OR Apache-2.0"
+edition = "2024"
+
+[dependencies]
+fhtmx = { path = "../fhtmx", features = ["actix"] }
+actix-web = { workspace = true }
+actix-web-lab = "0.24"
+tracing = { workspace = true }
+tokio = { version = "1.49", features = ["sync"] }
+futures = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+dashmap = "6.1"
+uuid = { version = "1.19", features = ["serde", "v4"] }

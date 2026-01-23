@@ -3,7 +3,11 @@ use crate::{
     html_element::*,
     prelude::{FhtmxToast, mk_alert_error, mk_callout_error},
 };
+#[cfg(feature = "actix")]
+use actix_web::{HttpResponse, ResponseError};
 use std::fmt::{self, Write};
+
+pub type FhtmxResult<T> = Result<T, FhtmxError>;
 
 /// An error that can be rendered with fhtmx using `mk_callout_error`
 pub struct FhtmxError {
@@ -133,6 +137,58 @@ impl FhtmxError {
         self.hide_source = true;
         self
     }
+
+    pub fn as_element(&self) -> HtmlElement {
+        let main_error = self.get_main_error();
+        let mut error_html = match (self.hide_source, self.get_source_error()) {
+            (true, _) | (false, None) => {
+                mk_alert_error(main_error).set_opt_attr("id", self.id.as_ref())
+            }
+            (false, Some(s)) => mk_callout_error(
+                Some(&main_error),
+                pre().class("text-wrap text-sm").add(s),
+                true,
+            ),
+        };
+        if let Some(xtra_classes) = &self.xtra_classes {
+            error_html = error_html.add_class(xtra_classes.clone());
+        }
+        if self.as_toast {
+            error_html.setup_toast(false)
+        } else {
+            error_html
+        }
+    }
+
+    #[cfg(feature = "actix")]
+    pub fn render_response(&self) -> HttpResponse {
+        use crate::htmx::HXSwap;
+        use crate::render::Render;
+        use actix_web::http::header::ContentType;
+
+        let html_body = self.as_element().render();
+        let mut builder = HttpResponse::Ok();
+        builder.content_type(ContentType::html());
+        match (self.as_toast, &self.hx_retarget) {
+            (_, Some(target)) => {
+                builder.append_header(("HX-Retarget", target.as_str()));
+            }
+            (true, None) => {
+                builder.append_header(("HX-Retarget", "#toast-container"));
+            }
+            _ => {}
+        }
+        match (self.as_toast, &self.hx_reswap) {
+            (_, Some(hx_swap)) => {
+                builder.append_header(("HX-Reswap", hx_swap.as_str()));
+            }
+            (true, None) => {
+                builder.append_header(("HX-Reswap", HXSwap::AfterBegin.to_string()));
+            }
+            _ => {}
+        }
+        builder.body(html_body)
+    }
 }
 
 impl fmt::Display for FhtmxError {
@@ -180,6 +236,23 @@ impl IntoHtmlElement for FhtmxError {
         } else {
             error_html
         }
+    }
+}
+
+#[cfg(feature = "actix")]
+impl ResponseError for FhtmxError {
+    fn status_code(&self) -> actix_web::http::StatusCode {
+        actix_web::http::StatusCode::OK
+    }
+
+    fn error_response(&self) -> HttpResponse<actix_web::body::BoxBody> {
+        if self.do_trace {
+            tracing::error!(
+                error.cause_chain=?self, error.message=%self,
+                "Failed to render FhtmxError."
+            );
+        }
+        self.render_response()
     }
 }
 
