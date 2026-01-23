@@ -10,7 +10,7 @@ license = "MIT OR Apache-2.0"
 edition = "2024"
 
 [dependencies]
-fhtmx = { path = "../fhtmx", features = ["actix"] }
+fhtmx = { version = "0.17.0", path = "../fhtmx", features = ["actix"] }
 actix-web = { workspace = true }
 actix-web-lab = "0.24"
 tracing = { workspace = true }
