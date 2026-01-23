@@ -1,5 +1,55 @@
 # Changelog
 
+## [0.17.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.16.0...fhtmx-v0.17.0) (2026-01-23)
+
+
+### Features
+
+* add accordion component ([b00b369](https://github.com/renato145/fhtmx/commit/b00b3693b1282bef09e882468259aa32d153641c))
+* add alerts ([e259933](https://github.com/renato145/fhtmx/commit/e25993373dd9c785fb9ece8fed323543be31cd64))
+* add attribute ([decae45](https://github.com/renato145/fhtmx/commit/decae454eed7326abdaa178bfa14b7eb8d367d9b))
+* add attribute macros ([fb0f230](https://github.com/renato145/fhtmx/commit/fb0f230416f02fbb72b89f4f51a3b607284f9029))
+* add callout_blocks ([67c3ec3](https://github.com/renato145/fhtmx/commit/67c3ec356bd66101ba48e75e9cfd18d2624772e3))
+* add children macro ([fa29a7b](https://github.com/renato145/fhtmx/commit/fa29a7b9abdc79700a50bed0f39850d516208f3f))
+* add class utilities ([a8636d6](https://github.com/renato145/fhtmx/commit/a8636d6ccfba8f4c59633043f74d24b167420cae))
+* add container ([495fd3b](https://github.com/renato145/fhtmx/commit/495fd3b55c6e4466f6bd13f30e3f3f1c6545aea8))
+* add daisy button and dropdown ([8cf994c](https://github.com/renato145/fhtmx/commit/8cf994c074476805d47989f3fba90b0b27b42b56))
+* add daisy colors ([d6313bc](https://github.com/renato145/fhtmx/commit/d6313bc2211e0533f7518e5d42fafe44e4115bc1))
+* add daisy_xtra ([42a986a](https://github.com/renato145/fhtmx/commit/42a986a30b772f9e3747e8a16da4ba0bedb274a2))
+* add daisy_xtra example ([7784b6e](https://github.com/renato145/fhtmx/commit/7784b6e695bd8d116582862aa0a0adef14512dcd))
+* add datetime utils ([afa6c45](https://github.com/renato145/fhtmx/commit/afa6c458931ffd011343aaf0e3aecd61efbbc627))
+* add error ([b6d747a](https://github.com/renato145/fhtmx/commit/b6d747a1d6be62d44e35e9eeaaae1a6b3c743a3e))
+* add fab ([3ddcef7](https://github.com/renato145/fhtmx/commit/3ddcef7c1cd5883e9ff7a41a8084e198bccfef99))
+* add fhtmx-actix crate ([c233e7c](https://github.com/renato145/fhtmx/commit/c233e7c1d36ad721015015def6a552cef9dd0863))
+* add html_page ([c327a9b](https://github.com/renato145/fhtmx/commit/c327a9bb375bdf400651c5a0a47e49bd457101a1))
+* add html_view derive macro ([784f7f1](https://github.com/renato145/fhtmx/commit/784f7f1f8939861b14f02014d8c8d8dd0d766fc1))
+* add html_view modes ([ee67900](https://github.com/renato145/fhtmx/commit/ee679003735bb339aed2b1008a84b88d9113f7e0))
+* add HtmlAttribute ([977a0ca](https://github.com/renato145/fhtmx/commit/977a0ca2bcf0d8a9810a701eb4a8fafc88093976))
+* add htmx ([62ae2f3](https://github.com/renato145/fhtmx/commit/62ae2f3d5e18777a576240fa5809a40c67f5dbaa))
+* add icons ([b950681](https://github.com/renato145/fhtmx/commit/b950681f5bac67e9d91e10acd30036c93fc5aac4))
+* add js ([d746436](https://github.com/renato145/fhtmx/commit/d746436c499891a2c5589780e623d9da8117f499))
+* add lazy_load ([07093b6](https://github.com/renato145/fhtmx/commit/07093b65ea9c353f909771ec1d8ec654d37c573c))
+* add main_container ([038a2d0](https://github.com/renato145/fhtmx/commit/038a2d0a3c99388e46739cad2cbc865c92823362))
+* add mk_card ([ffb88ae](https://github.com/renato145/fhtmx/commit/ffb88aeb363628fce7c1efe413f773d964b3882e))
+* add sources ([0d115ec](https://github.com/renato145/fhtmx/commit/0d115eceb7effba60fd26988444afa2c4f9df8f2))
+* add svg ([79b4254](https://github.com/renato145/fhtmx/commit/79b4254692f3aeed0b13cc6eb2456d94bca6b26a))
+* add theme ([be0d557](https://github.com/renato145/fhtmx/commit/be0d5573ce0578d0f1311d17af93365ddffae061))
+* add toast ([360e1b2](https://github.com/renato145/fhtmx/commit/360e1b2e651eac31fb8d556ba3d0d0a8d64abab7))
+* add utility random_id ([4113e75](https://github.com/renato145/fhtmx/commit/4113e7528802de62fd3dc8e762702687f85ddefb))
+* alias for add_child, add ([bb6358e](https://github.com/renato145/fhtmx/commit/bb6358ec2cbb08af682aac462ebc16dd8c2e887d))
+* element utils ([3a39b8c](https://github.com/renato145/fhtmx/commit/3a39b8c67c87412efc352420fc2a79a05e72b791))
+* move daisy components inside fhtmx ([91255f7](https://github.com/renato145/fhtmx/commit/91255f7f504d7b18f7c6eb8f9bdb2f9f33f60155))
+* render impl ([0b22870](https://github.com/renato145/fhtmx/commit/0b2287011fb5deb62de789f45aa4c1f3271a2c77))
+* rm color from containers ([b04d6ea](https://github.com/renato145/fhtmx/commit/b04d6eab09f2ac7147d92f6a5d47c99955e73ec7))
+* start HtmlElement rework ([7ea365a](https://github.com/renato145/fhtmx/commit/7ea365a8cb5428c316f2139f5a36886b47e68932))
+* update daisy example ([6fb68ed](https://github.com/renato145/fhtmx/commit/6fb68edfdcc3bd2224713394fea65079897a6a45))
+* user IndexMap ([70db3ab](https://github.com/renato145/fhtmx/commit/70db3ab2c9692a75e41a19b1cbfb439e04656e0f))
+
+
+### Bug Fixes
+
+* class name on swap ([359ae12](https://github.com/renato145/fhtmx/commit/359ae12e2b2c05b7de771ce9bc4e25d3b6e1d38a))
+
 ## [0.16.0](https://github.com/renato145/fhtmx/compare/v0.15.1...v0.16.0) (2025-12-01)
 
 

@@ -1,0 +1,8 @@
+# Changelog
+
+## [0.2.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.1.0...fhtmx-actix-v0.2.0) (2026-01-23)
+
+
+### Features
+
+* add fhtmx-actix crate ([c233e7c](https://github.com/renato145/fhtmx/commit/c233e7c1d36ad721015015def6a552cef9dd0863))
