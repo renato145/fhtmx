@@ -8,14 +8,7 @@ documentation = "https://docs.rs/fhtmx"
 keywords = ["html", "htmx"]
 license = "MIT OR Apache-2.0"
 edition = "2024"
-# TODO: update
-include = [
-  "/src/**/*",
-  "!/src/**/snapshots/*",
-  "/LICENSE",
-  "/README.md",
-  "/CHANGELOG.md",
-]
+exclude = ["examples", "justfile", "package.json", "pnpm-lock.yaml"]
 
 [features]
 default = ["anyhow"]

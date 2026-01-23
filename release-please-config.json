@@ -4,6 +4,7 @@
   "plugins": ["cargo-workspace"],
   "packages": {
     "crates/fhtmx": {},
+    "crates/fhtmx-derive": {},
     "crates/fhtmx-actix": {}
   }
 }
