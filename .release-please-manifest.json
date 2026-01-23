@@ -1,4 +1,4 @@
 {
   "crates/fhtmx": "0.16.0",
-  "crates/fhtmx-actix": "0.0.1"
+  "crates/fhtmx-actix": "0.1.0"
 }
