@@ -1,6 +1,6 @@
 [package]
 name = "fhtmx-actix"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Renato Hermoza <rhermoza145@gmail.com>"]
 description = "Actix utilities for fhtmx."
 repository = "https://github.com/renato145/fhtmx"
