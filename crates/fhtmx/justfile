@@ -14,9 +14,12 @@ run-example name:
   bacon ex -- {{name}}
 
 run-examples:
-  cargo run --example simple
+  cargo run --example components
   cargo run --example daisy_form
   cargo run --example daisy_xtra
+  cargo run --example html_view
+  cargo run --example html_view_table
+  cargo run --example simple
 
 tmux-run-example name:
   #!/usr/bin/env bash

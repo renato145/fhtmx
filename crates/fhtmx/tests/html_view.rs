@@ -20,15 +20,11 @@ fn macro_works() {
         <ul class="list">
           <li class="list-row p-1">
             <div class="font-bold">name</div>
-            <div>
-              <p>Karls</p>
-            </div>
+            <div>Karls</div>
           </li>
           <li class="list-row p-1">
             <div class="font-bold">age</div>
-            <div>
-              <p>20</p>
-            </div>
+            <div>20</div>
           </li>
         </ul>
       </div>

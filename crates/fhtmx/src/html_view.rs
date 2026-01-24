@@ -15,9 +15,9 @@ where
 }
 
 pub trait HtmlView {
-    fn html_content(&self) -> HtmlElement;
+    fn html_content(&self) -> HtmlNode;
 
-    fn html_view(&self) -> HtmlElement {
+    fn html_view(&self) -> HtmlNode {
         self.html_content()
     }
 
@@ -27,10 +27,10 @@ pub trait HtmlView {
 }
 
 impl<T: HtmlView> HtmlView for Option<T> {
-    fn html_content(&self) -> HtmlElement {
+    fn html_content(&self) -> HtmlNode {
         match self {
             Some(x) => x.html_view(),
-            None => p().add("-"),
+            None => "-".into_node(),
         }
     }
 }
@@ -39,8 +39,8 @@ macro_rules! implement_for_display {
     ($($t:ty),* $(,)?) => {
         $(
             impl HtmlView for $t {
-                fn html_content(&self) -> HtmlElement {
-                    p().add(HtmlNode::Text(self.to_string()))
+                fn html_content(&self) -> HtmlNode {
+                    HtmlNode::Text(self.to_string())
                 }
             }
         )*
@@ -54,28 +54,28 @@ implement_for_display!(
 
 #[cfg(feature = "chrono_0_4")]
 impl HtmlView for chrono::NaiveDate {
-    fn html_content(&self) -> HtmlElement {
-        p().add(self.to_string())
+    fn html_content(&self) -> HtmlNode {
+        HtmlNode::Text(self.to_string())
     }
 }
 
 #[cfg(feature = "chrono_0_4")]
 impl HtmlView for chrono::DateTime<chrono::Utc> {
-    fn html_content(&self) -> HtmlElement {
-        p().add(self.to_string())
+    fn html_content(&self) -> HtmlNode {
+        HtmlNode::Text(self.to_string())
     }
 }
 
 #[cfg(feature = "jiff_0_2")]
 impl HtmlView for jiff::civil::Date {
-    fn html_content(&self) -> HtmlElement {
-        p().add(self.to_string())
+    fn html_content(&self) -> HtmlNode {
+        HtmlNode::Text(self.to_string())
     }
 }
 
 #[cfg(feature = "jiff_0_2")]
 impl HtmlView for jiff::Timestamp {
-    fn html_content(&self) -> HtmlElement {
-        p().add(self.to_string())
+    fn html_content(&self) -> HtmlNode {
+        HtmlNode::Text(self.to_string())
     }
 }

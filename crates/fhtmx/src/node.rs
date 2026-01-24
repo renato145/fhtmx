@@ -11,6 +11,22 @@ pub enum HtmlNode {
     Fragment(Vec<HtmlNode>),
 }
 
+impl HtmlNode {
+    pub fn to_element(self) -> Option<HtmlElement> {
+        match self {
+            Self::Element(x) => Some(x),
+            _ => None,
+        }
+    }
+
+    pub fn to_svg(self) -> Option<SvgElement> {
+        match self {
+            Self::SvgElement(x) => Some(x),
+            _ => None,
+        }
+    }
+}
+
 /// Creates a `HtmlNode::Raw` node
 #[inline]
 pub fn raw_node(raw: impl ToString) -> HtmlNode {

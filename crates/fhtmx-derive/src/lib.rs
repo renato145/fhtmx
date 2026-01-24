@@ -122,12 +122,12 @@ pub fn derive_html_view(input: TokenStream) -> TokenStream {
 
     quote! {
         impl HtmlView for #struct_name {
-            fn html_content(&self) -> HtmlElement {
-                #content
+            fn html_content(&self) -> HtmlNode {
+                #content .into_node()
             }
 
-            fn html_view(&self) -> HtmlElement {
-                #postproc_card
+            fn html_view(&self) -> HtmlNode {
+                #postproc_card .into_node()
             }
         }
     }
