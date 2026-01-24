@@ -1,4 +1,5 @@
 use crate::{html_element::HtmlElement, svg::SvgElement};
+use uuid::Uuid;
 
 /// Types of nodes that can go inside an `Element`
 #[derive(Clone, Debug)]
@@ -56,6 +57,17 @@ impl<T: IntoNode> IntoNode for Vec<T> {
     }
 }
 
+pub trait AsNode {
+    /// Transforms into a `HtmlNode` not consuming self
+    fn as_node(&self) -> HtmlNode;
+}
+
+impl AsNode for HtmlNode {
+    fn as_node(&self) -> HtmlNode {
+        self.clone()
+    }
+}
+
 macro_rules! implement_for_display {
     ($($t:ty),* $(,)?) => {
         $(
@@ -64,14 +76,26 @@ macro_rules! implement_for_display {
                     HtmlNode::Text(self.to_string())
                 }
             }
+
+            impl AsNode for $t {
+                fn as_node(&self) -> HtmlNode {
+                    HtmlNode::Text(self.to_string())
+                }
+            }
         )*
     };
 }
 
 implement_for_display!(
-    char, &str, &String, String, i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize,
-    f32, f64
+    Uuid, char, &str, &String, String, i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128,
+    usize, f32, f64
 );
+
+#[cfg(feature = "chrono_0_4")]
+implement_for_display!(chrono::NaiveDate, chrono::DateTime<chrono::Utc>);
+
+#[cfg(feature = "jiff_0_2")]
+implement_for_display!(jiff::civil::Date, jiff::Timestamp);
 
 /// Build a list of nodes with mixed types.
 ///

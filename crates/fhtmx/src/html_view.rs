@@ -1,7 +1,7 @@
 use crate::{
     element::Element,
     html_element::*,
-    node::{HtmlNode, IntoNode},
+    node::{AsNode, HtmlNode, IntoNode},
     prelude::dc_list_row,
     render::Render,
 };
@@ -21,8 +21,14 @@ pub trait HtmlView {
         self.html_content()
     }
 
-    fn render(&self) -> String {
+    fn render_view(&self) -> String {
         self.html_view().render()
+    }
+}
+
+impl<T: AsNode> HtmlView for T {
+    fn html_content(&self) -> HtmlNode {
+        self.as_node()
     }
 }
 
@@ -32,52 +38,5 @@ impl<T: HtmlView> HtmlView for Option<T> {
             Some(x) => x.html_view(),
             None => "-".into_node(),
         }
-    }
-}
-
-macro_rules! implement_for_display {
-    ($($t:ty),* $(,)?) => {
-        $(
-            impl HtmlView for $t {
-                fn html_content(&self) -> HtmlNode {
-                    HtmlNode::Text(self.to_string())
-                }
-            }
-        )*
-    };
-}
-
-implement_for_display!(
-    bool, char, &str, &String, String, i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128,
-    usize, f32, f64
-);
-
-#[cfg(feature = "chrono_0_4")]
-impl HtmlView for chrono::NaiveDate {
-    fn html_content(&self) -> HtmlNode {
-        HtmlNode::Text(self.to_string())
-    }
-}
-
-// TODO: also implement into node
-
-#[cfg(feature = "chrono_0_4")]
-impl HtmlView for chrono::DateTime<chrono::Utc> {
-    fn html_content(&self) -> HtmlNode {
-        HtmlNode::Text(self.to_string())
-    }
-}
-
-#[cfg(feature = "jiff_0_2")]
-impl HtmlView for jiff::civil::Date {
-    fn html_content(&self) -> HtmlNode {
-        HtmlNode::Text(self.to_string())
-    }
-}
-
-#[cfg(feature = "jiff_0_2")]
-impl HtmlView for jiff::Timestamp {
-    fn html_content(&self) -> HtmlNode {
-        HtmlNode::Text(self.to_string())
     }
 }
