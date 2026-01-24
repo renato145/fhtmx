@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.18.0...fhtmx-v0.19.0) (2026-01-24)
+
+
+### Features
+
+* add form components ([350565e](https://github.com/renato145/fhtmx/commit/350565e3e1dcfcc4f8cdbbbb271f5a0a8783b5ef))
+
 ## [0.18.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.17.1...fhtmx-v0.18.0) (2026-01-24)
 
 
