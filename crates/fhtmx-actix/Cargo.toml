@@ -1,6 +1,6 @@
 [package]
 name = "fhtmx-actix"
-version = "0.2.3"
+version = "0.2.4"
 authors = ["Renato Hermoza <rhermoza145@gmail.com>"]
 description = "Actix utilities for fhtmx."
 repository = "https://github.com/renato145/fhtmx"
@@ -10,7 +10,7 @@ license = "MIT OR Apache-2.0"
 edition = "2024"
 
 [dependencies]
-fhtmx = { version = "0.19.0", path = "../fhtmx", features = ["actix"] }
+fhtmx = { version = "0.20.0", path = "../fhtmx", features = ["actix"] }
 actix-web = { workspace = true }
 actix-web-lab = "0.24"
 tracing = { workspace = true }
