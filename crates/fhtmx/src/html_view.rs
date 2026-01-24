@@ -59,6 +59,8 @@ impl HtmlView for chrono::NaiveDate {
     }
 }
 
+// TODO: also implement into node
+
 #[cfg(feature = "chrono_0_4")]
 impl HtmlView for chrono::DateTime<chrono::Utc> {
     fn html_content(&self) -> HtmlNode {
