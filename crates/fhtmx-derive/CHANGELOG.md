@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/renato145/fhtmx/compare/fhtmx-derive-v0.2.0...fhtmx-derive-v0.3.0) (2026-01-24)
+
+
+### Features
+
+* change return type for HtmlView to HtmlNode ([3815d90](https://github.com/renato145/fhtmx/commit/3815d9041bd750b80196f34c667cb2679e56dfb8))
+
 ## [0.2.0](https://github.com/renato145/fhtmx/compare/fhtmx-derive-v0.1.0...fhtmx-derive-v0.2.0) (2026-01-23)
 
 
