@@ -295,4 +295,9 @@ impl HtmlElement {
         autofocus, blocking, checked, defer, disabled, hidden, inert, multiple, nomodule, open,
         popover, r#async, readonly, required, selected
     );
+
+    /// Selects all texts when the element is focused (eg: useful for a search field)
+    pub fn select_onfocus(self) -> Self {
+        self.set_attr("onfocus", "this.select()")
+    }
 }

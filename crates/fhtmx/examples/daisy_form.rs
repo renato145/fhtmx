@@ -1,9 +1,8 @@
 use fhtmx::prelude::*;
 
-fn labelled_fieldset(label: &str, inputs: &[(&str, &str, &str)]) -> HtmlElement {
-    dc_fieldset()
+fn labelled_fieldset(lbl: &str, inputs: &[(&str, &str, &str)]) -> HtmlElement {
+    mk_fieldset_container(lbl)
         .add_class("w-xs bg-base-300 p-4 rounded-box")
-        .add(dc_fieldset_legend().add(label))
         .add_children(inputs.iter().flat_map(|&(lbl, typ, placeholder)| {
             [
                 dc_label().add(lbl),
@@ -14,14 +13,13 @@ fn labelled_fieldset(label: &str, inputs: &[(&str, &str, &str)]) -> HtmlElement 
 
 fn main() {
     let body = main_container()
-        .add_class("mt-4")
         .add(
             h1().add("A Form example with DaisyUI")
-                .class("text-2xl font-bold text-center"),
+                .class("py-6 text-2xl font-bold text-center"),
         )
         .add(
             div()
-                .class("mt-4 p-4 flex flex-wrap justify-center gap-8 bg-base-100 rounded-box")
+                .class("mt-2 flex flex-wrap justify-center gap-8")
                 .add(
                     labelled_fieldset(
                         "Personal data",
