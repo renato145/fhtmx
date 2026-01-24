@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.19.0...fhtmx-v0.20.0) (2026-01-24)
+
+
+### Features
+
+* add AsNode ([a4c5ff0](https://github.com/renato145/fhtmx/commit/a4c5ff04fda4f652707b7a05a8b5c81008833020))
+
 ## [0.19.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.18.0...fhtmx-v0.19.0) (2026-01-24)
 
 
