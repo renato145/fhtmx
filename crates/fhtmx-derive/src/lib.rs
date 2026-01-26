@@ -18,6 +18,8 @@ struct HtmlViewField {
     row_class: Option<String>,
     #[darling(default)]
     value_class: Option<String>,
+    #[darling(default)]
+    skip: bool,
 }
 
 #[derive(FromDeriveInput)]
@@ -50,7 +52,7 @@ pub fn derive_html_view(input: TokenStream) -> TokenStream {
 
     // Extract fields from the parsed data
     let fields = parsed.data.take_struct().expect("expected named struct");
-    let field_items = fields.into_iter().map(|o| {
+    let field_items = fields.into_iter().filter(|o| !o.skip).map(|o| {
         let field_ident = o.ident.unwrap();
         let key = o.alias.unwrap_or_else(|| field_ident.to_string());
         let value = match o.value {

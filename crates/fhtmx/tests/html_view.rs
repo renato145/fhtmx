@@ -5,12 +5,15 @@ fn macro_works() {
     #[derive(HtmlView)]
     #[html_view(title = "User info")]
     struct User {
-        name: &'static str,
+        name: String,
         age: usize,
+        #[html_view(skip)]
+        password: String,
     }
     let x = User {
-        name: "Karls",
+        name: "Karls".to_string(),
         age: 20,
+        password: "xxxx".to_string(),
     };
     let res = x.html_view().render();
     insta::assert_snapshot!(res, @r#"
