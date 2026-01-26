@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.2.4...fhtmx-actix-v0.3.0) (2026-01-26)
+
+
+### Features
+
+* add SseState get_session_data ([b63b388](https://github.com/renato145/fhtmx/commit/b63b388c454d74b244bd63662e3c17b87c97c618))
+
 ## [0.2.4](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.2.3...fhtmx-actix-v0.2.4) (2026-01-24)
 
 
