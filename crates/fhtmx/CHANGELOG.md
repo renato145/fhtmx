@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.21.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.20.0...fhtmx-v0.21.0) (2026-01-26)
+
+
+### Features
+
+* add skip field attr ([e8a30ab](https://github.com/renato145/fhtmx/commit/e8a30ab42e98e0ee6fce431eae802be81b3e5aa5))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fhtmx-derive bumped from 0.3.0 to 0.4.0
+
 ## [0.20.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.19.0...fhtmx-v0.20.0) (2026-01-24)
 
 

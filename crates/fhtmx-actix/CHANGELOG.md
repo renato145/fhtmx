@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.1](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.4.0...fhtmx-actix-v0.4.1) (2026-01-26)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fhtmx bumped from 0.20.0 to 0.21.0
+
 ## [0.4.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.3.0...fhtmx-actix-v0.4.0) (2026-01-26)
 
 
