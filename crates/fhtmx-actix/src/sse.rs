@@ -85,6 +85,12 @@ impl<T> Default for SseState<T> {
     }
 }
 
+impl<T: Clone> SseState<T> {
+    pub fn get_session_data(&self, id: Uuid) -> Option<T> {
+        self.sessions.get(&id).and_then(|x| x.data.clone())
+    }
+}
+
 impl<T> SseState<T> {
     pub fn add_session(
         &self,
