@@ -15,11 +15,32 @@ struct HtmlViewField {
     #[darling(default)]
     value: Option<ExprOrString>,
     #[darling(default)]
+    value_display: bool,
+    #[darling(default)]
+    value_debug: bool,
+    #[darling(default)]
+    value_debug_pretty: bool,
+    #[darling(default)]
     row_class: Option<String>,
     #[darling(default)]
     value_class: Option<String>,
     #[darling(default)]
     skip: bool,
+}
+
+impl HtmlViewField {
+    fn validate(self) -> darling::Result<Self> {
+        let count = self.value.is_some() as u8
+            + self.value_display as u8
+            + self.value_debug as u8
+            + self.value_debug_pretty as u8;
+        if count > 1 {
+            return Err(darling::Error::custom(
+                "only one of `value`, `value_display`, `value_debug`, or `value_debug_pretty` can be set",
+            ));
+        }
+        Ok(self)
+    }
 }
 
 #[derive(FromDeriveInput)]
@@ -52,41 +73,58 @@ pub fn derive_html_view(input: TokenStream) -> TokenStream {
 
     // Extract fields from the parsed data
     let fields = parsed.data.take_struct().expect("expected named struct");
-    let field_items = fields.into_iter().filter(|o| !o.skip).map(|o| {
-        let field_ident = o.ident.unwrap();
-        let key = o.alias.unwrap_or_else(|| field_ident.to_string());
-        let value = match o.value {
-            Some(ExprOrString(expr)) => quote! { #expr },
-            None => quote! { self.#field_ident.html_content() },
-        };
-        let row_class = o.row_class.unwrap_or_else(|| "p-1".to_string());
-        let value_class_call = o.value_class.map(|x| quote! { .class(#x) });
-        match mode {
-            Mode::List => quote! {
-                .add(
-                    html_list_row(
-                        div().class("font-bold").add(#key),
-                        div()#value_class_call.add(#value)
+    let field_items = fields
+        .into_iter()
+        .map(|o| o.validate().unwrap())
+        .filter(|o| !o.skip)
+        .map(|o| {
+            let field_ident = o.ident.unwrap();
+            let key = o.alias.unwrap_or_else(|| field_ident.to_string());
+            let value = match (
+                o.value,
+                o.value_display,
+                o.value_debug,
+                o.value_debug_pretty,
+            ) {
+                (Some(ExprOrString(expr)), false, false, false) => quote! { #expr },
+                (None, true, false, false) => quote! { format!("{}", self.#field_ident) },
+                (None, false, true, false) => quote! { format!("{:?}", self.#field_ident) },
+                (None, false, false, true) => {
+                    quote! { pre().add(format!("{:#?}", self.#field_ident)).class("text-wrap") }
+                }
+                (None, false, false, false) => {
+                    quote! { self.#field_ident.html_content() }
+                }
+                _ => unreachable!(),
+            };
+            let row_class = o.row_class.unwrap_or_else(|| "p-1".to_string());
+            let value_class_call = o.value_class.map(|x| quote! { .class(#x) });
+            match mode {
+                Mode::List => quote! {
+                    .add(
+                        html_list_row(
+                            div().class("font-bold").add(#key),
+                            div()#value_class_call.add(#value)
+                        )
+                        .add_class(#row_class)
                     )
-                    .add_class(#row_class)
-                )
-            },
-            Mode::Table => quote! {
-                .add(
-                    tr()
-                    .add(th().add(#key))
-                    .add(td().add(#value))
-                )
-            },
-            Mode::TableRight => quote! {
-                .add(
-                    tr()
-                    .add(th().class("text-right").add(#key))
-                    .add(td().add(#value))
-                )
-            },
-        }
-    });
+                },
+                Mode::Table => quote! {
+                    .add(
+                        tr()
+                        .add(th().add(#key))
+                        .add(td().add(#value))
+                    )
+                },
+                Mode::TableRight => quote! {
+                    .add(
+                        tr()
+                        .add(th().class("text-right").add(#key))
+                        .add(td().add(#value))
+                    )
+                },
+            }
+        });
 
     let struct_name = parsed.ident;
 

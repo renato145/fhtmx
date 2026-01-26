@@ -5,6 +5,16 @@ use fake::{
 };
 use fhtmx::prelude::*;
 
+#[allow(dead_code)]
+#[derive(Debug, Dummy)]
+struct Details {
+    admin: bool,
+    #[dummy(faker = "1..=10")]
+    years: u8,
+    #[dummy(faker = "Sentence(4..10)")]
+    description: String,
+}
+
 #[derive(HtmlView, Dummy)]
 #[html_view(title=self.custom_title(), class=self.custom_class(), postproc)]
 struct UserInfo {
@@ -21,6 +31,8 @@ struct UserInfo {
     #[html_view(value_class = "italic")]
     age: usize,
     some_opt_value: Option<u8>,
+    #[html_view(value_debug_pretty)]
+    details: Details,
 }
 
 impl UserInfo {

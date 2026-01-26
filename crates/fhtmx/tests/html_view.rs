@@ -1,7 +1,14 @@
 use fhtmx::prelude::*;
 
 #[test]
+#[allow(dead_code)]
 fn macro_works() {
+    #[derive(Debug)]
+    struct Details {
+        active: bool,
+        years: u8,
+    }
+
     #[derive(HtmlView)]
     #[html_view(title = "User info")]
     struct User {
@@ -9,11 +16,18 @@ fn macro_works() {
         age: usize,
         #[html_view(skip)]
         password: String,
+        #[html_view(value_debug_pretty)]
+        details: Details,
     }
+
     let x = User {
         name: "Karls".to_string(),
         age: 20,
         password: "xxxx".to_string(),
+        details: Details {
+            active: false,
+            years: 5,
+        },
     };
     let res = x.html_view().render();
     insta::assert_snapshot!(res, @r#"
@@ -28,6 +42,15 @@ fn macro_works() {
           <li class="list-row p-1">
             <div class="font-bold">age</div>
             <div>20</div>
+          </li>
+          <li class="list-row p-1">
+            <div class="font-bold">details</div>
+            <div>
+              <pre class="text-wrap">Details {
+        active: false,
+        years: 5,
+    }</pre>
+            </div>
           </li>
         </ul>
       </div>
