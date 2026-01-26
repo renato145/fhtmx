@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.3.0...fhtmx-actix-v0.4.0) (2026-01-26)
+
+
+### Features
+
+* change sse handler query type ([fa9cad9](https://github.com/renato145/fhtmx/commit/fa9cad95a3ef9bc91b7394bb1cdfe6773a6d6faf))
+
 ## [0.3.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.2.4...fhtmx-actix-v0.3.0) (2026-01-26)
 
 
