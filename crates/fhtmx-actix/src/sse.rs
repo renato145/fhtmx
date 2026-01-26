@@ -160,18 +160,17 @@ pub struct SseSession<T> {
 
 /// Identifier for the session
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct SseQueryParams<T> {
+pub struct SseHandlerQuery {
     pub id: Uuid,
-    pub data: Option<T>,
 }
 
 /// Route to handle web sockets
 #[tracing::instrument(skip_all)]
 pub async fn sse_handler<T>(
-    web::Query(query): web::Query<SseQueryParams<T>>,
+    web::Query(query): web::Query<SseHandlerQuery>,
     state: web::Data<SseState<T>>,
 ) -> impl Responder {
     let (tx, rx) = mpsc::channel(8);
-    state.add_session(query.id, query.data, tx);
+    state.add_session(query.id, None, tx);
     actix_web_lab::sse::Sse::from_infallible_receiver(rx).with_keep_alive(Duration::from_secs(3))
 }
