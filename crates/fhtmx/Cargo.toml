@@ -1,6 +1,6 @@
 [package]
 name = "fhtmx"
-version = "0.21.0"
+version = "0.22.0"
 authors = ["Renato Hermoza <rhermoza145@gmail.com>"]
 description = "Create html with rust with support for htmx."
 repository = "https://github.com/renato145/fhtmx"
@@ -18,7 +18,7 @@ jiff_0_2 = ["jiff"]
 actix = ["actix-web", "tracing"]
 
 [dependencies]
-fhtmx-derive = { version = "0.4.0", path = "../fhtmx-derive" }
+fhtmx-derive = { version = "0.5.0", path = "../fhtmx-derive" }
 anyhow = { workspace = true, optional = true }
 actix-web = { workspace = true, optional = true }
 tracing = { workspace = true, optional = true }

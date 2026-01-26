@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/renato145/fhtmx/compare/fhtmx-derive-v0.4.0...fhtmx-derive-v0.5.0) (2026-01-26)
+
+
+### Features
+
+* add value view fields ([8af4887](https://github.com/renato145/fhtmx/commit/8af4887dad0e0afda67dfcab1db6d5b2d00029da))
+
 ## [0.4.0](https://github.com/renato145/fhtmx/compare/fhtmx-derive-v0.3.0...fhtmx-derive-v0.4.0) (2026-01-26)
 
 

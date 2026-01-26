@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.22.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.21.0...fhtmx-v0.22.0) (2026-01-26)
+
+
+### Features
+
+* add value view fields ([8af4887](https://github.com/renato145/fhtmx/commit/8af4887dad0e0afda67dfcab1db6d5b2d00029da))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fhtmx-derive bumped from 0.4.0 to 0.5.0
+
 ## [0.21.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.20.0...fhtmx-v0.21.0) (2026-01-26)
 
 
