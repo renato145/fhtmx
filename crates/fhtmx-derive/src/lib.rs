@@ -93,7 +93,7 @@ pub fn derive_html_view(input: TokenStream) -> TokenStream {
                     quote! { pre().add(format!("{:#?}", self.#field_ident)).class("text-wrap") }
                 }
                 (None, false, false, false) => {
-                    quote! { self.#field_ident.html_content() }
+                    quote! { (&self.#field_ident).html_content() }
                 }
                 _ => unreachable!(),
             };

@@ -68,7 +68,13 @@ impl AsNode for HtmlNode {
     }
 }
 
-macro_rules! implement_for_display {
+impl<T: Copy + IntoNode> AsNode for T {
+    fn as_node(&self) -> HtmlNode {
+        self.into_node()
+    }
+}
+
+macro_rules! implement_into_for_display {
     ($($t:ty),* $(,)?) => {
         $(
             impl IntoNode for $t {
@@ -76,29 +82,22 @@ macro_rules! implement_for_display {
                     HtmlNode::Text(self.to_string())
                 }
             }
-
-            impl AsNode for $t {
-                fn as_node(&self) -> HtmlNode {
-                    HtmlNode::Text(self.to_string())
-                }
-            }
         )*
     };
 }
 
-implement_for_display!(
-    Uuid, char, &str, &String, String, i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128,
+implement_into_for_display!(
+    String, &String, Uuid, char, &str, i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128,
     usize, f32, f64
 );
 
 #[cfg(feature = "chrono_0_4")]
-implement_for_display!(chrono::NaiveDate, chrono::DateTime<chrono::Utc>);
+implement_into_for_display!(chrono::NaiveDate, chrono::DateTime<chrono::Utc>);
 
 #[cfg(feature = "jiff_0_2")]
-implement_for_display!(jiff::civil::Date, jiff::Timestamp);
+implement_into_for_display!(jiff::civil::Date, jiff::Timestamp);
 
 /// Build a list of nodes with mixed types.
-///
 ///
 /// # Example
 ///
