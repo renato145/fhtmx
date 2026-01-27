@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/renato145/fhtmx/compare/fhtmx-derive-v0.5.0...fhtmx-derive-v0.6.0) (2026-01-27)
+
+
+### Features
+
+* impl as_node for more general type ([5c1715e](https://github.com/renato145/fhtmx/commit/5c1715e2585e4f6c3707b37d664ea15ee7fa4927))
+
 ## [0.5.0](https://github.com/renato145/fhtmx/compare/fhtmx-derive-v0.4.0...fhtmx-derive-v0.5.0) (2026-01-26)
 
 
