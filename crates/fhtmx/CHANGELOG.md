@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.23.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.22.0...fhtmx-v0.23.0) (2026-01-27)
+
+
+### Features
+
+* impl as_node for more general type ([5c1715e](https://github.com/renato145/fhtmx/commit/5c1715e2585e4f6c3707b37d664ea15ee7fa4927))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fhtmx-derive bumped from 0.5.0 to 0.6.0
+
 ## [0.22.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.21.0...fhtmx-v0.22.0) (2026-01-26)
 
 
