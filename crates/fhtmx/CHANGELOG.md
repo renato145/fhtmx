@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.24.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.23.0...fhtmx-v0.24.0) (2026-01-29)
+
+
+### Features
+
+* simplify AsNode implementation to always use clone ([280b00f](https://github.com/renato145/fhtmx/commit/280b00f3d85b6264b297961294692e09d18869b3))
+
 ## [0.23.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.22.0...fhtmx-v0.23.0) (2026-01-27)
 
 
