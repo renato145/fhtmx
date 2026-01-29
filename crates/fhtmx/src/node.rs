@@ -57,23 +57,6 @@ impl<T: IntoNode> IntoNode for Vec<T> {
     }
 }
 
-pub trait AsNode {
-    /// Transforms into a `HtmlNode` not consuming self
-    fn as_node(&self) -> HtmlNode;
-}
-
-impl AsNode for HtmlNode {
-    fn as_node(&self) -> HtmlNode {
-        self.clone()
-    }
-}
-
-impl<T: Copy + IntoNode> AsNode for T {
-    fn as_node(&self) -> HtmlNode {
-        self.into_node()
-    }
-}
-
 macro_rules! implement_into_for_display {
     ($($t:ty),* $(,)?) => {
         $(
@@ -96,6 +79,17 @@ implement_into_for_display!(chrono::NaiveDate, chrono::DateTime<chrono::Utc>);
 
 #[cfg(feature = "jiff_0_2")]
 implement_into_for_display!(jiff::civil::Date, jiff::Timestamp);
+
+pub trait AsNode {
+    /// Transforms into a `HtmlNode` not consuming self
+    fn as_node(&self) -> HtmlNode;
+}
+
+impl<T: Clone + IntoNode> AsNode for T {
+    fn as_node(&self) -> HtmlNode {
+        self.clone().into_node()
+    }
+}
 
 /// Build a list of nodes with mixed types.
 ///

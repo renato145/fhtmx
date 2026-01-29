@@ -18,6 +18,7 @@ fn macro_works() {
         password: String,
         #[html_view(value_debug_pretty)]
         details: Details,
+        contract: Option<String>,
     }
 
     let x = User {
@@ -28,6 +29,7 @@ fn macro_works() {
             active: false,
             years: 5,
         },
+        contract: None,
     };
     let res = x.html_view().render();
     insta::assert_snapshot!(res, @r#"
@@ -51,6 +53,10 @@ fn macro_works() {
         years: 5,
     }</pre>
             </div>
+          </li>
+          <li class="list-row p-1">
+            <div class="font-bold">contract</div>
+            <div>-</div>
           </li>
         </ul>
       </div>

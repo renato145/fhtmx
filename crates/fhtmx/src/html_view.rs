@@ -40,3 +40,17 @@ impl<T: HtmlView> HtmlView for Option<T> {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use crate::prelude::*;
+
+    #[test]
+    fn html_view_works_for_opt() {
+        let x = Some("wiii");
+        let _ = x.html_view();
+        let x = Some("wiii".to_string());
+        let _ = x.html_view();
+        let _ = x.as_ref().html_view();
+    }
+}
