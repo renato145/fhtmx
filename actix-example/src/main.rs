@@ -14,6 +14,11 @@ use uuid::Uuid;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    let port = std::env::args()
+        .nth(1)
+        .map(|x| x.parse::<u16>().unwrap())
+        .unwrap_or(8000u16);
+
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| "info".into()),
@@ -41,7 +46,7 @@ async fn main() -> anyhow::Result<()> {
             .route("/js_invoke", web::post().to(js_invoke))
             .app_data(state.clone())
     })
-    .bind(("127.0.0.1", 8000))?
+    .bind(("0.0.0.0", port))?
     .run()
     .await?;
     Ok(())
