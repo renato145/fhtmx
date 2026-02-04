@@ -65,3 +65,8 @@ pub fn script_setup_toast() -> HtmlElement {
     script().add_raw(include_str!("setup_toast.js"))
     // .add_header_child(script().inner_unsafe(include_str!("setup.js")))
 }
+
+/// Styles for typography (from https://github.com/AnswerDotAI/typrose)
+pub fn typography_css() -> HtmlElement {
+    style().add_raw(include_str!("typrose.css"))
+}

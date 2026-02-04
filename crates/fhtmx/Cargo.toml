@@ -27,6 +27,7 @@ chrono = { version = "0.4", optional = true }
 uuid = { version = "1.19", features = ["v4"] }
 indexmap = "2.13"
 pastey = "0.2"
+pulldown-cmark = "0.13"
 
 [dev-dependencies]
 insta = { workspace = true }

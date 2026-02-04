@@ -8,6 +8,7 @@ mod error;
 mod form;
 pub mod icons;
 mod lazy_load;
+mod markdown;
 mod theme;
 mod toast;
 
@@ -20,5 +21,6 @@ pub use daisy_xtra::*;
 pub use error::*;
 pub use form::*;
 pub use lazy_load::*;
+pub use markdown::*;
 pub use theme::*;
 pub use toast::*;
