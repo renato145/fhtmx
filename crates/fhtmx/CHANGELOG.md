@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.25.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.24.0...fhtmx-v0.25.0) (2026-02-04)
+
+
+### Features
+
+* markdown component ([d2a297d](https://github.com/renato145/fhtmx/commit/d2a297d262466c2cb09ad2a1bd9878e0be58d70b))
+
 ## [0.24.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.23.0...fhtmx-v0.24.0) (2026-01-29)
 
 
