@@ -64,12 +64,28 @@ fn main() {
         Some("my-accordion".to_string()),
     );
 
+    let modal = fragment([
+        dc_btn()
+            .set_attr("onclick", "my_modal.showModal()")
+            .add("Open modal"),
+        dc_modal().id("my_modal").add(
+            dc_modal_box()
+                .add(h3().class("text-lg font-bold").add("Hello!"))
+                .add(
+                    p().class("py-4")
+                        .add("Press ESC key or click the button below to close"),
+                )
+                .add(dc_modal_action().add(dc_btn().add("Close"))),
+        ),
+    ]);
+
     let body = main_container()
         .add_class("mt-4")
         .add(
             h1().add("Components using DaisyUI")
                 .class("text-2xl font-bold text-center"),
         )
+        .add(wrapper("Modal", modal))
         .add(wrapper("Cards", cards))
         .add(wrapper("Dropdown", dropdown))
         .add(wrapper("FAB (Floating Action Button)", fab))
