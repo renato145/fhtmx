@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.26.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.25.0...fhtmx-v0.26.0) (2026-03-08)
+
+
+### Features
+
+* add url_query ([6263bcf](https://github.com/renato145/fhtmx/commit/6263bcfa749fbe255095c8a1d6601346789bcbd1))
+
 ## [0.25.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.24.0...fhtmx-v0.25.0) (2026-02-04)
 
 
