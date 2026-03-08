@@ -10,6 +10,7 @@ mod node;
 mod render;
 mod sources;
 mod svg;
+mod url_query;
 mod utils;
 
 pub mod prelude {
@@ -26,6 +27,7 @@ pub mod prelude {
     pub use crate::render::*;
     pub use crate::sources::*;
     pub use crate::svg::*;
+    pub use crate::url_query::*;
     pub use crate::utils::*;
     pub use fhtmx_derive::HtmlView;
 }

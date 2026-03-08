@@ -28,6 +28,7 @@ uuid = { version = "1.19", features = ["v4"] }
 indexmap = "2.13"
 pastey = "0.2"
 pulldown-cmark = "0.13"
+url = "2.5"
 
 [dev-dependencies]
 insta = { workspace = true }
