@@ -3,10 +3,9 @@
 use actix_web::{Responder, web};
 use actix_web_lab::sse::{Data, Event};
 use dashmap::DashMap;
-use futures::{StreamExt, stream};
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use std::{marker::PhantomData, sync::Arc, time::Duration};
-use tokio::sync::mpsc;
+use tokio::{sync::mpsc, task::JoinHandle};
 use uuid::Uuid;
 
 // TODO: clean removed sessions
@@ -72,6 +71,20 @@ where
     }
 }
 
+impl<T> SseSetup<T>
+where
+    T: Send + Sync + 'static,
+{
+    /// Gets a `SseState` instance for you to add it to your app and launches a task to execute
+    /// `SseState::remove_stale_sessions`.
+    #[must_use]
+    pub fn state_data_and_spawn_cleaner(&self, period: Duration) -> web::Data<SseState<T>> {
+        let state = web::Data::new(SseState::default());
+        spawn_remove_stale_sessions_task(state.clone(), period);
+        state
+    }
+}
+
 /// SSE state
 pub struct SseState<T> {
     pub sessions: Arc<DashMap<Uuid, SseSession<T>>>,
@@ -106,10 +119,15 @@ impl<T> SseState<T> {
         self.sessions.remove(&id)
     }
 
+    pub fn remove_stale_sessions(&self) {
+        self.sessions
+            .retain(|_, o| o.sender.try_send(Event::Comment("ping".into())).is_ok());
+    }
+
     /// Sends a message to session id
-    pub async fn send_message(&self, id: Uuid, data: Data) -> Option<()> {
+    pub fn send_message(&self, id: Uuid, data: Data) -> Option<()> {
         let sender = self.sessions.get(&id)?.sender.clone();
-        if sender.send(Event::Data(data)).await.is_err() {
+        if sender.try_send(Event::Data(data)).is_err() {
             // Channel is closed so we remove the session
             self.remove_session(id);
         }
@@ -117,17 +135,17 @@ impl<T> SseState<T> {
     }
 
     /// Broadcast a message to all sessions and returns the number of sent messages
-    pub async fn broadcast(&self, data: Data) -> usize {
+    pub fn broadcast(&self, data: Data) -> usize {
         let senders = self
             .sessions
             .iter()
             .map(|o| o.value().sender.clone())
             .collect::<Vec<_>>();
-        sse_broadcast(senders, data).await
+        sse_broadcast(senders, data)
     }
 
     /// Broadcast a message to all sessions but one id and returns the number of sent messages
-    pub async fn broadcast_all_but(&self, id: Uuid, data: Data) -> usize {
+    pub fn broadcast_all_but(&self, id: Uuid, data: Data) -> usize {
         let senders = self
             .sessions
             .iter()
@@ -139,18 +157,32 @@ impl<T> SseState<T> {
                 }
             })
             .collect::<Vec<_>>();
-        sse_broadcast(senders, data).await
+        sse_broadcast(senders, data)
     }
 }
 
-pub async fn sse_broadcast(senders: Vec<mpsc::Sender<Event>>, data: Data) -> usize {
-    stream::iter(senders)
-        .filter_map(|o| {
-            let data = data.clone();
-            async move { o.send(Event::Data(data)).await.ok() }
-        })
+/// Launches task to clean disconnected sessions
+pub fn spawn_remove_stale_sessions_task<T>(
+    state: web::Data<SseState<T>>,
+    period: Duration,
+) -> JoinHandle<()>
+where
+    T: Send + Sync + 'static,
+{
+    tokio::spawn(async move {
+        let mut interval = tokio::time::interval(period);
+        loop {
+            interval.tick().await;
+            state.remove_stale_sessions();
+        }
+    })
+}
+
+pub fn sse_broadcast(senders: Vec<mpsc::Sender<Event>>, data: Data) -> usize {
+    senders
+        .into_iter()
+        .filter_map(|o| o.try_send(Event::Data(data.clone())).ok())
         .count()
-        .await
 }
 
 pub struct SseSession<T> {
