@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.7.1...fhtmx-actix-v0.8.0) (2026-03-11)
+
+
+### Features
+
+* remove session on send_message ([5ad70b2](https://github.com/renato145/fhtmx/commit/5ad70b235923b0a162871b2de180a31d54e89f68))
+
 ## [0.7.1](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.7.0...fhtmx-actix-v0.7.1) (2026-03-11)
 
 
