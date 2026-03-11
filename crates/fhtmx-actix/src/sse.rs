@@ -134,7 +134,11 @@ impl<T> SseState<T> {
     /// Sends a message to session id
     pub fn send_message(&self, id: Uuid, data: Data) -> Option<()> {
         let sender = self.sessions.get(&id)?.sender.clone();
-        sender.try_send(Event::Data(data)).ok()
+        if sender.try_send(Event::Data(data)).is_err() {
+            // Channel is closed so we remove the session
+            self.remove_session(id);
+        }
+        Some(())
     }
 
     /// Broadcast a message to all sessions and returns the number of sent messages
