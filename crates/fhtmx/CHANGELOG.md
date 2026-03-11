@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.27.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.26.0...fhtmx-v0.27.0) (2026-03-11)
+
+
+### Features
+
+* add htmx headers ([267e86a](https://github.com/renato145/fhtmx/commit/267e86a8c2c98f8419a12aee7c8c8a1ebf8e5c69))
+
 ## [0.26.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.25.0...fhtmx-v0.26.0) (2026-03-08)
 
 
