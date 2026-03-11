@@ -117,19 +117,24 @@ impl<T> SseState<T> {
         self.sessions.remove(&id)
     }
 
-    pub fn remove_stale_sessions(&self) {
-        self.sessions
-            .retain(|_, o| o.sender.try_send(Event::Comment("ping".into())).is_ok());
+    pub fn remove_stale_sessions(&self) -> usize {
+        let mut removed = 0;
+        self.sessions.retain(
+            |_, o| match o.sender.try_send(Event::Comment("ping".into())) {
+                Ok(()) => true,
+                Err(_) => {
+                    removed += 1;
+                    false
+                }
+            },
+        );
+        removed
     }
 
     /// Sends a message to session id
     pub fn send_message(&self, id: Uuid, data: Data) -> Option<()> {
         let sender = self.sessions.get(&id)?.sender.clone();
-        if sender.try_send(Event::Data(data)).is_err() {
-            // Channel is closed so we remove the session
-            self.remove_session(id);
-        }
-        Some(())
+        sender.try_send(Event::Data(data)).ok()
     }
 
     /// Broadcast a message to all sessions and returns the number of sent messages
@@ -171,7 +176,10 @@ where
         let mut interval = tokio::time::interval(period);
         loop {
             interval.tick().await;
-            state.remove_stale_sessions();
+            let removed = state.remove_stale_sessions();
+            if removed > 0 {
+                tracing::info!("Removed {removed} staled sessions.");
+            }
         }
     })
 }
