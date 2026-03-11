@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.6.0...fhtmx-actix-v0.7.0) (2026-03-11)
+
+
+### Features
+
+* add tracing to remove_stale_sessions task ([1bd4686](https://github.com/renato145/fhtmx/commit/1bd4686369fa19334f115f28ef5b5b0019b5f0de))
+
 ## [0.6.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.5.0...fhtmx-actix-v0.6.0) (2026-03-11)
 
 

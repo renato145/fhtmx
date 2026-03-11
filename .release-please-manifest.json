@@ -1,5 +1,5 @@
 {
   "crates/fhtmx": "0.27.0",
   "crates/fhtmx-derive": "0.6.0",
-  "crates/fhtmx-actix": "0.6.0"
+  "crates/fhtmx-actix": "0.7.0"
 }
