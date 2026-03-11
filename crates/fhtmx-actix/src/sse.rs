@@ -8,8 +8,6 @@ use std::{marker::PhantomData, sync::Arc, time::Duration};
 use tokio::{sync::mpsc, task::JoinHandle};
 use uuid::Uuid;
 
-// TODO: clean removed sessions
-
 /// Setups Server sent event state and routes
 ///
 /// # Example
