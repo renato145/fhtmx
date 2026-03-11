@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.28.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.27.0...fhtmx-v0.28.0) (2026-03-11)
+
+
+### Features
+
+* add _mut methods to Element ([9bdc71c](https://github.com/renato145/fhtmx/commit/9bdc71cc481e637270d7ef37d23a0d2aabd11ecb))
+
 ## [0.27.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.26.0...fhtmx-v0.27.0) (2026-03-11)
 
 
