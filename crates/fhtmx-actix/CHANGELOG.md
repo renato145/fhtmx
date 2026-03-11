@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.4.6...fhtmx-actix-v0.5.0) (2026-03-11)
+
+
+### Features
+
+* add sse cleaner task and change sse msg functions to sync ([e8f95b0](https://github.com/renato145/fhtmx/commit/e8f95b083ff89c1376b1402c8677a082b86463db))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fhtmx bumped from 0.26.0 to 0.27.0
+
 ## [0.4.6](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.4.5...fhtmx-actix-v0.4.6) (2026-03-08)
 
 
