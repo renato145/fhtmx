@@ -106,6 +106,87 @@ impl IntoAttributeValue for HXTarget<'_> {
     }
 }
 
+#[derive(Debug, Clone, Copy)]
+pub enum HtmxRequestHeader {
+    /// Indicates that the request is via an element using hx-boost
+    HXBoosted,
+    /// The current URL of the browser
+    HXCurrentURL,
+    /// “true” if the request is for history restoration after a miss in the local history cache
+    HXHistoryRestoreRequest,
+    /// The user response to an hx-prompt
+    HXPrompt,
+    /// Always “true”
+    HXRequest,
+    /// The id of the target element if it exists
+    HXTarget,
+    /// The name of the triggered element if it exists
+    HXTriggerName,
+    /// The id of the triggered element if it exists
+    HXTrigger,
+}
+
+impl std::fmt::Display for HtmxRequestHeader {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = match self {
+            HtmxRequestHeader::HXBoosted => "HX-Boosted",
+            HtmxRequestHeader::HXCurrentURL => "HX-Current-URL",
+            HtmxRequestHeader::HXHistoryRestoreRequest => "HX-History-Restore-Request",
+            HtmxRequestHeader::HXPrompt => "HX-Prompt",
+            HtmxRequestHeader::HXRequest => "HX-Request",
+            HtmxRequestHeader::HXTarget => "HX-Target",
+            HtmxRequestHeader::HXTriggerName => "HX-Trigger-Name",
+            HtmxRequestHeader::HXTrigger => "HX-Trigger",
+        };
+        write!(f, "{}", s)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum HtmxResponseHeader {
+    /// Allows you to do a client-side redirect that does not do a full page reload
+    HXLocation,
+    /// Pushes a new url into the history stack
+    HXPushUrl,
+    /// Can be used to do a client-side redirect to a new location
+    HXRedirect,
+    /// If set to “true” the client-side will do a full refresh of the page
+    HXRefresh,
+    /// Replaces the current URL in the location bar
+    HXReplaceUrl,
+    /// Allows you to specify how the response will be swapped. See hx-swap for possible values
+    HXReswap,
+    /// A CSS selector that updates the target of the content update to a different element on the page
+    HXRetarget,
+    /// A CSS selector that allows you to choose which part of the response is used to be swapped in. Overrides an existing hx-select on the triggering element
+    HXReselect,
+    /// Allows you to trigger client-side events
+    HXTrigger,
+    /// Allows you to trigger client-side events after the settle step
+    HXTriggerAfterSettle,
+    /// Allows you to trigger client-side events after the swap step
+    HXTriggerAfterSwap,
+}
+
+impl std::fmt::Display for HtmxResponseHeader {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = match self {
+            HtmxResponseHeader::HXLocation => "HX-Location",
+            HtmxResponseHeader::HXPushUrl => "HX-Push-Url",
+            HtmxResponseHeader::HXRedirect => "HX-Redirect",
+            HtmxResponseHeader::HXRefresh => "HX-Refresh",
+            HtmxResponseHeader::HXReplaceUrl => "HX-Replace-Url",
+            HtmxResponseHeader::HXReswap => "HX-Reswap",
+            HtmxResponseHeader::HXRetarget => "HX-Retarget",
+            HtmxResponseHeader::HXReselect => "HX-Reselect",
+            HtmxResponseHeader::HXTrigger => "HX-Trigger",
+            HtmxResponseHeader::HXTriggerAfterSettle => "HX-Trigger-After-Settle",
+            HtmxResponseHeader::HXTriggerAfterSwap => "HX-Trigger-After-Swap",
+        };
+        write!(f, "{}", s)
+    }
+}
+
 // TODO: simplify
 macro_rules! set_htmx_attr {
     ($attr:ident = $name:expr; $eg:expr) => {
