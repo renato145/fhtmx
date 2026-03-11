@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.5.0...fhtmx-actix-v0.6.0) (2026-03-11)
+
+
+### Features
+
+* update crates ([850745c](https://github.com/renato145/fhtmx/commit/850745cb92687c3093c2372b4c2c12eabb996356))
+
 ## [0.5.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.4.6...fhtmx-actix-v0.5.0) (2026-03-11)
 
 
