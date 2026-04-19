@@ -1,0 +1,16 @@
+[package]
+name = "fhtmx-axum"
+version = "0.1.0"
+authors = ["Renato Hermoza <rhermoza145@gmail.com>"]
+description = "Axum utilities for fhtmx."
+repository = "https://github.com/renato145/fhtmx"
+documentation = "https://docs.rs/fhtmx-axum"
+keywords = ["html", "htmx", "axum"]
+license = "MIT OR Apache-2.0"
+edition = "2024"
+
+[dependencies]
+fhtmx = { version = "0.28.0", path = "../fhtmx", features = ["actix"] }
+axum-core = "0.5"
+http = "1"
+mime = "0.3"
