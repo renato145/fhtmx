@@ -11,11 +11,11 @@ edition = "2024"
 
 [dependencies]
 fhtmx = { version = "0.28.0", path = "../fhtmx", features = ["actix"] }
+uuid = { workspace = true, features = ["serde", "v4"] }
 actix-web = { workspace = true }
-actix-web-lab = "0.26"
 tracing = { workspace = true }
-tokio = { version = "1.50", features = ["sync"] }
+tokio = { workspace = true }
+dashmap = { workspace = true }
+serde = { workspace = true }
+actix-web-lab = "0.26"
 futures = "0.3"
-serde = { version = "1.0", features = ["derive"] }
-dashmap = "6.1"
-uuid = { version = "1.22", features = ["serde", "v4"] }

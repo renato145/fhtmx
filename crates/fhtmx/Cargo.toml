@@ -22,10 +22,11 @@ fhtmx-derive = { version = "0.6.0", path = "../fhtmx-derive" }
 anyhow = { workspace = true, optional = true }
 actix-web = { workspace = true, optional = true }
 tracing = { workspace = true, optional = true }
+uuid = { workspace = true }
 jiff = { version = "0.2", optional = true }
 chrono = { version = "0.4", optional = true }
-uuid = { version = "1.19", features = ["v4"] }
-indexmap = "2.13"
+# axum-core = "0.5"
+indexmap = "2.14"
 pastey = "0.2"
 pulldown-cmark = "0.13"
 url = "2.5"
@@ -33,5 +34,5 @@ url = "2.5"
 [dev-dependencies]
 insta = { workspace = true }
 lipsum = "0.9"
-fake = { version = "4.4", features = ["derive"] }
+fake = { version = "5.1", features = ["derive"] }
 googletest = "0.14"

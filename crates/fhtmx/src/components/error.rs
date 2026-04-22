@@ -256,6 +256,8 @@ impl ResponseError for FhtmxError {
     }
 }
 
+// TODO: axum implementation
+
 pub trait FhtmxErrorExt {
     /// Sets the context of the error
     fn fhtmx_set_context(self, context: impl ToString) -> Self;

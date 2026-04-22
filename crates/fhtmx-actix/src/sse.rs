@@ -214,5 +214,6 @@ pub async fn sse_handler<T>(
 ) -> impl Responder {
     let (tx, rx) = mpsc::channel(8);
     state.add_session(query.id, None, tx);
+    // TODO: spawn task to automatically clean sessions here
     actix_web_lab::sse::Sse::from_infallible_receiver(rx).with_keep_alive(Duration::from_secs(3))
 }

@@ -11,6 +11,16 @@ edition = "2024"
 
 [dependencies]
 fhtmx = { version = "0.28.0", path = "../fhtmx", features = ["actix"] }
-axum-core = "0.5"
+tokio = { workspace = true }
+serde = { workspace = true }
+dashmap = { workspace = true }
+tracing = { workspace = true }
+uuid = { workspace = true, features = ["serde", "v4"] }
+axum = { version = "0.8", default-features = false, features = [
+  "query",
+  "tokio",
+] }
 http = "1"
 mime = "0.3"
+futures-util = "0.3"
+tokio-stream = "0.1"
