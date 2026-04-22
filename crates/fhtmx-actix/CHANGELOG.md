@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.9.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.8.0...fhtmx-actix-v0.9.0) (2026-04-22)
+
+
+### Features
+
+* remove spawn_remove_stale_session_task ([d733e7c](https://github.com/renato145/fhtmx/commit/d733e7ce540b2ca7378ee0a80a1df66326ae1923))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fhtmx bumped from 0.28.0 to 0.29.0
+
 ## [0.8.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.7.1...fhtmx-actix-v0.8.0) (2026-03-11)
 
 

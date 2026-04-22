@@ -1,6 +1,6 @@
 [package]
 name = "fhtmx-axum"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Renato Hermoza <rhermoza145@gmail.com>"]
 description = "Axum utilities for fhtmx."
 repository = "https://github.com/renato145/fhtmx"
@@ -10,7 +10,7 @@ license = "MIT OR Apache-2.0"
 edition = "2024"
 
 [dependencies]
-fhtmx = { version = "0.28.0", path = "../fhtmx", features = ["actix"] }
+fhtmx = { version = "0.29.0", path = "../fhtmx", features = ["actix"] }
 tokio = { workspace = true }
 serde = { workspace = true }
 dashmap = { workspace = true }
