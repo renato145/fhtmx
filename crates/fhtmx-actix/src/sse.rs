@@ -5,7 +5,7 @@ use actix_web_lab::sse::{Data, Event};
 use dashmap::DashMap;
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use std::{marker::PhantomData, sync::Arc, time::Duration};
-use tokio::{sync::mpsc, task::JoinHandle};
+use tokio::sync::mpsc;
 use uuid::Uuid;
 
 /// Setups Server sent event state and routes
@@ -55,7 +55,7 @@ impl SseSetup<FhtmxUiNoSessionData> {
 
 impl<T> SseSetup<T>
 where
-    T: DeserializeOwned + 'static,
+    T: DeserializeOwned + Send + Sync + 'static,
 {
     /// Gets a `SseState` instance for you to add it to your app
     #[must_use]
@@ -66,20 +66,6 @@ where
     /// Setups the sse route
     pub fn setup_route(&self, path: &str, cfg: &mut web::ServiceConfig) {
         cfg.route(path, web::get().to(sse_handler::<T>));
-    }
-}
-
-impl<T> SseSetup<T>
-where
-    T: Send + Sync + 'static,
-{
-    /// Gets a `SseState` instance for you to add it to your app and launches a task to execute
-    /// `SseState::remove_stale_sessions`.
-    #[must_use]
-    pub fn state_data_and_spawn_cleaner(&self, period: Duration) -> web::Data<SseState<T>> {
-        let state = web::Data::new(SseState::default());
-        spawn_remove_stale_sessions_task(state.clone(), period);
-        state
     }
 }
 
@@ -168,26 +154,6 @@ impl<T> SseState<T> {
     }
 }
 
-/// Launches task to clean disconnected sessions
-pub fn spawn_remove_stale_sessions_task<T>(
-    state: web::Data<SseState<T>>,
-    period: Duration,
-) -> JoinHandle<()>
-where
-    T: Send + Sync + 'static,
-{
-    tokio::spawn(async move {
-        let mut interval = tokio::time::interval(period);
-        loop {
-            interval.tick().await;
-            let removed = state.remove_stale_sessions();
-            if removed > 0 {
-                tracing::info!("Removed {removed} staled sessions.");
-            }
-        }
-    })
-}
-
 pub fn sse_broadcast(senders: Vec<mpsc::Sender<Event>>, data: Data) -> usize {
     senders
         .into_iter()
@@ -208,12 +174,18 @@ pub struct SseHandlerQuery {
 
 /// Route to handle web sockets
 #[tracing::instrument(skip_all)]
-pub async fn sse_handler<T>(
+pub async fn sse_handler<T: Send + Sync + 'static>(
     web::Query(query): web::Query<SseHandlerQuery>,
     state: web::Data<SseState<T>>,
 ) -> impl Responder {
     let (tx, rx) = mpsc::channel(8);
-    state.add_session(query.id, None, tx);
-    // TODO: spawn task to automatically clean sessions here
+    state.add_session(query.id, None, tx.clone());
+
+    let sessions = state.sessions.clone();
+    tokio::spawn(async move {
+        tx.closed().await;
+        sessions.remove(&query.id);
+    });
+
     actix_web_lab::sse::Sse::from_infallible_receiver(rx).with_keep_alive(Duration::from_secs(3))
 }
