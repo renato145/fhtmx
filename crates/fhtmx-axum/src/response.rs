@@ -1,4 +1,4 @@
-use axum_core::{
+use axum::{
     extract::FromRequestParts,
     response::{IntoResponse, Response},
 };

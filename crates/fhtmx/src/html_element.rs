@@ -27,7 +27,6 @@ pub struct HtmlElement {
     pub children: Vec<HtmlNode>,
 }
 
-// TODO: implement commented methods
 impl HtmlElement {
     pub fn new(tag: &'static str) -> Self {
         Self {

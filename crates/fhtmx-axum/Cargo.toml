@@ -19,6 +19,7 @@ uuid = { workspace = true, features = ["serde", "v4"] }
 axum = { version = "0.8", default-features = false, features = [
   "query",
   "tokio",
+  "macros",
 ] }
 http = "1"
 mime = "0.3"
