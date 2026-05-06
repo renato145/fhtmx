@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.10.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.9.0...fhtmx-actix-v0.10.0) (2026-05-06)
+
+
+### Features
+
+* rework sse ([e15413b](https://github.com/renato145/fhtmx/commit/e15413bc4c44a92f348ff49013457734c9799822))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fhtmx bumped from 0.29.0 to 0.30.0
+
 ## [0.9.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.8.0...fhtmx-actix-v0.9.0) (2026-04-22)
 
 
