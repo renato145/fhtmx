@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.30.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.29.0...fhtmx-v0.30.0) (2026-05-06)
+
+
+### Features
+
+* add axum feature in fhtmx ([4d38611](https://github.com/renato145/fhtmx/commit/4d38611ea6323943e665998f9316374352a79787))
+* rework sse ([e15413b](https://github.com/renato145/fhtmx/commit/e15413bc4c44a92f348ff49013457734c9799822))
+
 ## [0.29.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.28.0...fhtmx-v0.29.0) (2026-04-22)
 
 
