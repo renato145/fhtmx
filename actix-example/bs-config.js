@@ -2,11 +2,13 @@ module.exports = {
   ui: {
     port: 8081,
   },
-  files: ["./src/**/*.rs"],
+  files: ["target/debug/actix-example"],
   proxy: {
     target: "http://localhost:8000",
   },
   port: 8080,
-  injectChanges: false,
-  reloadDelay: 2000,
+  injectChanges: true,
+  reloadDelay: 500,
+  open: false,
+  notify: false,
 };

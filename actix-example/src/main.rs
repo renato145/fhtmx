@@ -4,10 +4,12 @@ use actix_web::{
     http::header::ContentType,
     web,
 };
+use actix_web_lab::sse::Data;
 use fhtmx::prelude::*;
 use fhtmx_actix::prelude::*;
 use serde::Deserialize;
-use std::{str::FromStr, sync::Mutex};
+use std::{str::FromStr, sync::Mutex, time::Duration};
+use tracing::Instrument;
 use tracing_actix_web::TracingLogger;
 use tracing_subscriber::{fmt::format::FmtSpan, layer::SubscriberExt, util::SubscriberInitExt};
 use uuid::Uuid;
@@ -31,6 +33,7 @@ async fn main() -> anyhow::Result<()> {
         .init();
 
     let state = web::Data::new(State::default());
+    let sse_data = SseSetup::state_data();
 
     HttpServer::new(move || {
         App::new()
@@ -44,7 +47,11 @@ async fn main() -> anyhow::Result<()> {
             .route("/todo/sort", web::post().to(sort_todo))
             .route("/todo/clear", web::post().to(clear_todo))
             .route("/js_invoke", web::post().to(js_invoke))
+            .route("/start_stream", web::get().to(start_stream))
+            .route("/broadcast", web::post().to(broadcast))
+            .configure(|cfg| SseSetup::setup_route("/sse", cfg))
             .app_data(state.clone())
+            .app_data(sse_data.clone())
     })
     .bind(("0.0.0.0", port))?
     .run()
@@ -149,6 +156,7 @@ fn page_layout(title: &str, content: impl IntoNode) -> HttpResponse {
     let html_body = HtmlPage::new()
         .custom_html_node(html().set_attr("data-theme", "dark").lang("en"))
         .add_header_node(source_htmx())
+        .add_header_node(source_htmx_sse())
         .add_header_node(daisy_link())
         .add_header_node(source_tailwind())
         .title(title)
@@ -213,6 +221,40 @@ async fn index(state: web::Data<State>) -> HttpResponse {
             .class("mt-2 list-inside list-disc")
             .add_children(items.iter().map(|o| o.html())),
     );
+    let sse_stream = mk_card(
+        Some("Stream from SSE"),
+        fragment([
+            mk_labelled_input(
+                "Broadcast",
+                input()
+                    .typ("text")
+                    .name("msg")
+                    .hx_post("/broadcast")
+                    .hx_trigger("keyup[key=='Enter']")
+                    // .hx_target(HXTarget::This)
+                    .hx_swap(HXSwap::None)
+                    .set_attr("hx-on::after-request", "this.value = ''")
+                    .placeholder("Write a message to broadcast"),
+            ),
+            mk_card(
+                Some("Incoming messages:"),
+                fragment([
+                    sse_status(false),
+                    ul().id("logs").class("list-inside list-disc"),
+                ]),
+            )
+            .add_class("card-sm")
+            .hx_get("/start_stream")
+            .hx_trigger("sse:sse_id once")
+            .hx_swap(HXSwap::None),
+        ]),
+    )
+    .add_class("bg-base-300")
+    .hx_ext("sse")
+    .sse_connect("/sse")
+    .sse_swap("message,sse_id")
+    .hx_swap(HXSwap::AfterBegin)
+    .hx_target("#logs");
     let page = div()
         .class("mt-8")
         .add(
@@ -242,8 +284,9 @@ async fn index(state: web::Data<State>) -> HttpResponse {
                 )
                 .add(dc_btn().add_class("btn-primary").add("Add")),
         )
-        .add(todo_list);
-    page_layout("Actix demo", page)
+        .add(todo_list)
+        .add(sse_stream);
+    page_layout("Actix demo", fragment([page, script_setup_sse()]))
 }
 
 #[derive(Debug, Deserialize)]
@@ -358,4 +401,70 @@ async fn clear_todo(state: web::Data<State>) -> HttpResponse {
 async fn js_invoke(state: web::Data<State>) -> HttpResponse {
     let n = state.todo_list.lock().unwrap().len();
     iife(format!(r#"alert("Your list got {n} items.");"#)).render_response()
+}
+
+#[tracing::instrument(skip_all)]
+async fn start_stream(
+    web::Query(query): web::Query<SseHandlerQuery>,
+    state: web::Data<State>,
+    sse_state: web::Data<SseState>,
+) -> HttpResponse {
+    let id = query.sse_id;
+    tokio::spawn(
+        async move {
+            let data = sse_status(true)
+                .hx_swap_oob("true")
+                .add(p().add(format!("sse_id={id}")));
+            let data = Data::new(data.render());
+            sse_state.send_message(id, data);
+            let mut interval = tokio::time::interval(Duration::from_secs(5));
+            loop {
+                interval.tick().await;
+                let n = state.todo_list.lock().unwrap().len();
+                let data = Data::new(li().add(format!("Got {n} elements in the list.")).render());
+                if sse_state.send_message(id, data).is_none() {
+                    break;
+                }
+            }
+        }
+        .in_current_span(),
+    );
+    HttpResponse::Ok().finish()
+}
+
+fn sse_status(online: bool) -> HtmlElement {
+    div()
+        .id("sse-status")
+        .class("flex items-center text-sm")
+        .add(dc_status().add_class(if online {
+            "status-success"
+        } else {
+            "status-error"
+        }))
+        .add(
+            p().class("pl-1")
+                .add(if online { "online" } else { "offline" }),
+        )
+}
+
+#[derive(Debug, Deserialize)]
+pub struct BroadcastForm {
+    msg: String,
+    sse_id: Uuid,
+}
+
+#[tracing::instrument(skip(sse_state))]
+pub async fn broadcast(
+    web::Form(form): web::Form<BroadcastForm>,
+    sse_state: web::Data<SseState>,
+) -> HttpResponse {
+    let BroadcastForm { msg, sse_id } = form;
+    let data = Data::new(
+        li().class("font-bold")
+            .add(format!("{sse_id}: {msg}"))
+            .render(),
+    );
+    let n = sse_state.broadcast(data);
+    tracing::info!("Sent msg to {n} sessions.");
+    HttpResponse::Ok().finish()
 }

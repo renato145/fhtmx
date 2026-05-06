@@ -2,6 +2,6 @@
 mod actix;
 #[cfg(feature = "axum")]
 mod axum;
-mod error;
+mod fhtmx_error;
 
-pub use error::*;
+pub use fhtmx_error::*;
