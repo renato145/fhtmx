@@ -3,8 +3,6 @@ use crate::{
     html_element::*,
     prelude::{FhtmxToast, mk_alert_error, mk_callout_error},
 };
-#[cfg(feature = "actix")]
-use actix_web::{HttpResponse, ResponseError};
 use std::fmt::{self, Write};
 
 pub type FhtmxResult<T> = Result<T, FhtmxError>;
@@ -159,36 +157,6 @@ impl FhtmxError {
             error_html
         }
     }
-
-    #[cfg(feature = "actix")]
-    pub fn render_response(&self) -> HttpResponse {
-        use crate::htmx::HXSwap;
-        use crate::render::Render;
-        use actix_web::http::header::ContentType;
-
-        let html_body = self.as_element().render();
-        let mut builder = HttpResponse::Ok();
-        builder.content_type(ContentType::html());
-        match (self.as_toast, &self.hx_retarget) {
-            (_, Some(target)) => {
-                builder.append_header(("HX-Retarget", target.as_str()));
-            }
-            (true, None) => {
-                builder.append_header(("HX-Retarget", "#toast-container"));
-            }
-            _ => {}
-        }
-        match (self.as_toast, &self.hx_reswap) {
-            (_, Some(hx_swap)) => {
-                builder.append_header(("HX-Reswap", hx_swap.as_str()));
-            }
-            (true, None) => {
-                builder.append_header(("HX-Reswap", HXSwap::AfterBegin.to_string()));
-            }
-            _ => {}
-        }
-        builder.body(html_body)
-    }
 }
 
 impl fmt::Display for FhtmxError {
@@ -238,25 +206,6 @@ impl IntoHtmlElement for FhtmxError {
         }
     }
 }
-
-#[cfg(feature = "actix")]
-impl ResponseError for FhtmxError {
-    fn status_code(&self) -> actix_web::http::StatusCode {
-        actix_web::http::StatusCode::OK
-    }
-
-    fn error_response(&self) -> HttpResponse<actix_web::body::BoxBody> {
-        if self.do_trace {
-            tracing::error!(
-                error.cause_chain=?self, error.message=%self,
-                "Failed to render FhtmxError."
-            );
-        }
-        self.render_response()
-    }
-}
-
-// TODO: axum implementation
 
 pub trait FhtmxErrorExt {
     /// Sets the context of the error

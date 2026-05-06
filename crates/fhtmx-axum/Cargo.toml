@@ -16,12 +16,12 @@ serde = { workspace = true }
 dashmap = { workspace = true }
 tracing = { workspace = true }
 uuid = { workspace = true, features = ["serde", "v4"] }
+http = { workspace = true }
+mime = { workspace = true }
 axum = { version = "0.8", default-features = false, features = [
   "query",
   "tokio",
   "macros",
 ] }
-http = "1"
-mime = "0.3"
 futures-util = "0.3"
 tokio-stream = "0.1"
