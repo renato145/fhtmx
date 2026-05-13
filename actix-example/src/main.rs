@@ -33,7 +33,8 @@ async fn main() -> anyhow::Result<()> {
         .init();
 
     let state = web::Data::new(State::default());
-    let sse_data = SseSetup::state_data();
+    let sse_setup = SseSetup::new();
+    let sse_data = sse_setup.state_data();
 
     HttpServer::new(move || {
         App::new()
@@ -48,8 +49,11 @@ async fn main() -> anyhow::Result<()> {
             .route("/todo/clear", web::post().to(clear_todo))
             .route("/js_invoke", web::post().to(js_invoke))
             .route("/start_stream", web::get().to(start_stream))
-            .route("/broadcast", web::post().to(broadcast))
-            .configure(|cfg| SseSetup::setup_route("/sse", cfg))
+            .route(
+                "/broadcast",
+                web::post().to(broadcast::<FhtmxUiNoSessionData>),
+            )
+            .configure(|cfg| sse_setup.setup_route("/sse", cfg))
             .app_data(state.clone())
             .app_data(sse_data.clone())
     })
@@ -407,7 +411,7 @@ async fn js_invoke(state: web::Data<State>) -> HttpResponse {
 async fn start_stream(
     web::Query(query): web::Query<SseHandlerQuery>,
     state: web::Data<State>,
-    sse_state: web::Data<SseState>,
+    sse_state: web::Data<SseState<FhtmxUiNoSessionData>>,
 ) -> HttpResponse {
     let id = query.sse_id;
     tokio::spawn(
@@ -454,9 +458,9 @@ pub struct BroadcastForm {
 }
 
 #[tracing::instrument(skip(sse_state))]
-pub async fn broadcast(
+pub async fn broadcast<T>(
     web::Form(form): web::Form<BroadcastForm>,
-    sse_state: web::Data<SseState>,
+    sse_state: web::Data<SseState<T>>,
 ) -> HttpResponse {
     let BroadcastForm { msg, sse_id } = form;
     let data = Data::new(
