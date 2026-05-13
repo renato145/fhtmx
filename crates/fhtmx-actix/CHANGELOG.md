@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.10.0...fhtmx-actix-v0.11.0) (2026-05-13)
+
+
+### Features
+
+* add session_data in SseSetup ([b5bb1e7](https://github.com/renato145/fhtmx/commit/b5bb1e7b1499cb487f4922b75c476b7c5773652f))
+
 ## [0.10.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.9.0...fhtmx-actix-v0.10.0) (2026-05-06)
 
 

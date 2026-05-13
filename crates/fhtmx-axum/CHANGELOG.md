@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/renato145/fhtmx/compare/fhtmx-axum-v0.3.0...fhtmx-axum-v0.4.0) (2026-05-13)
+
+
+### Features
+
+* add session_data in SseSetup ([b5bb1e7](https://github.com/renato145/fhtmx/commit/b5bb1e7b1499cb487f4922b75c476b7c5773652f))
+
 ## [0.3.0](https://github.com/renato145/fhtmx/compare/fhtmx-axum-v0.2.0...fhtmx-axum-v0.3.0) (2026-05-06)
 
 
