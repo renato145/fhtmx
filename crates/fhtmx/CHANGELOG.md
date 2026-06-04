@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.32.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.31.0...fhtmx-v0.32.0) (2026-06-04)
+
+
+### Features
+
+* rename icon names ([3468913](https://github.com/renato145/fhtmx/commit/346891323fda3fc412396b8606628e1eb4948111))
+
 ## [0.31.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.30.0...fhtmx-v0.31.0) (2026-06-04)
 
 
