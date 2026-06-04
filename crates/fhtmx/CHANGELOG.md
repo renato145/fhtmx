@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.31.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.30.0...fhtmx-v0.31.0) (2026-06-04)
+
+
+### Features
+
+* **icons:** add run, cancel, and plus icons ([88fe926](https://github.com/renato145/fhtmx/commit/88fe926e2557ae019568fcebe2a93264d0e1d1bc))
+
+
+### Bug Fixes
+
+* **htmx:** correct hx-swap innerHTML display value ([637befd](https://github.com/renato145/fhtmx/commit/637befd91c51eb07fc62e99313be830c32f77c03))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fhtmx-derive bumped from 0.6.0 to 0.6.1
+
 ## [0.30.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.29.0...fhtmx-v0.30.0) (2026-05-06)
 
 

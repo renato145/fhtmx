@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.11.1](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.11.0...fhtmx-actix-v0.11.1) (2026-06-04)
+
+
+### Bug Fixes
+
+* correct fhtmx-axum feature flag to axum ([ff36df6](https://github.com/renato145/fhtmx/commit/ff36df630a98a52bed8a63ec9ca4103c1db0c5b5))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fhtmx bumped from 0.30.0 to 0.31.0
+
 ## [0.11.0](https://github.com/renato145/fhtmx/compare/fhtmx-actix-v0.10.0...fhtmx-actix-v0.11.0) (2026-05-13)
 
 

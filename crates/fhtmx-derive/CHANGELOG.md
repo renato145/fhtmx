@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/renato145/fhtmx/compare/fhtmx-derive-v0.6.0...fhtmx-derive-v0.6.1) (2026-06-04)
+
+
+### Bug Fixes
+
+* correct fhtmx-axum feature flag to axum ([ff36df6](https://github.com/renato145/fhtmx/commit/ff36df630a98a52bed8a63ec9ca4103c1db0c5b5))
+
 ## [0.6.0](https://github.com/renato145/fhtmx/compare/fhtmx-derive-v0.5.0...fhtmx-derive-v0.6.0) (2026-01-27)
 
 
