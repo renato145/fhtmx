@@ -39,6 +39,9 @@ fn main() {
         (icons::edit(), "edit"),
         (icons::save(), "save"),
         (icons::delete(), "delete"),
+        (icons::run(), "run"),
+        (icons::cancel(), "cancel"),
+        (icons::plus(), "plus"),
     ];
     let callout_icons = vec![
         (icons::info(), "info"),

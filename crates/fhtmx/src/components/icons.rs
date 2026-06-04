@@ -273,7 +273,7 @@ pub fn success() -> SvgElement {
 }
 
 /// Play-triangle icon.
-pub fn run_icon() -> SvgElement {
+pub fn run() -> SvgElement {
     svg()
         .fill("none")
         .view_box("0 0 24 24")
@@ -288,7 +288,7 @@ pub fn run_icon() -> SvgElement {
 }
 
 /// "X" icon.
-pub fn cancel_icon() -> SvgElement {
+pub fn cancel() -> SvgElement {
     svg()
         .fill("none")
         .view_box("0 0 24 24")
@@ -303,7 +303,7 @@ pub fn cancel_icon() -> SvgElement {
 }
 
 /// "+" icon.
-pub fn plus_icon() -> SvgElement {
+pub fn plus() -> SvgElement {
     svg()
         .fill("none")
         .view_box("0 0 24 24")
