@@ -10,7 +10,7 @@ license = "MIT OR Apache-2.0"
 edition = "2024"
 
 [dependencies]
-fhtmx = { version = "0.30.0", path = "../fhtmx", features = ["actix"] }
+fhtmx = { version = "0.30.0", path = "../fhtmx", features = ["axum"] }
 tokio = { workspace = true }
 serde = { workspace = true }
 dashmap = { workspace = true }

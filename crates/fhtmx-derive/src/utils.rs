@@ -68,7 +68,7 @@ impl darling::FromMeta for PostProc {
     }
 }
 
-/// DaisyUI color attribute for the `HtmlView` derive.
+/// `DaisyUI` color attribute for the `HtmlView` derive.
 #[derive(FromMeta)]
 pub enum DaisyColorAttr {
     Primary,

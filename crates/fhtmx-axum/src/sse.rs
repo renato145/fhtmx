@@ -37,7 +37,7 @@ pub struct SseSetup<T> {
 }
 
 /// Setup sse without session data
-#[derive(Debug, Clone, Copy, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 pub struct FhtmxUiNoSessionData;
 
 impl SseSetup<()> {

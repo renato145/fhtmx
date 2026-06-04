@@ -18,4 +18,3 @@ tokio = { workspace = true }
 dashmap = { workspace = true }
 serde = { workspace = true }
 actix-web-lab = "0.26"
-futures = "0.3"

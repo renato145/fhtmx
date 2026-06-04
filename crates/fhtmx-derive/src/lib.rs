@@ -73,7 +73,7 @@ struct HtmlViewInput {
 /// On the struct:
 /// - `title = "..."` or `title = expr`: Sets the card title.
 /// - `mode = "list" | "table" | "table_right"`: Layout mode (default: list).
-/// - `color = "primary" | ...`: DaisyUI color for the card.
+/// - `color = "primary" | ...`: `DaisyUI` color for the card.
 /// - `class = expr`: Extra CSS classes.
 /// - `postproc = expr`: Custom post-processing function.
 ///
