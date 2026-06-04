@@ -271,3 +271,48 @@ pub fn success() -> SvgElement {
                 .d("M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"),
         )
 }
+
+/// Play-triangle icon.
+pub fn run_icon() -> SvgElement {
+    svg()
+        .fill("none")
+        .view_box("0 0 24 24")
+        .stroke("currentColor")
+        .add(
+            svg_path()
+                .stroke_linecap("round")
+                .stroke_linejoin("round")
+                .stroke_width(2)
+                .d("M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"),
+        )
+}
+
+/// "X" icon.
+pub fn cancel_icon() -> SvgElement {
+    svg()
+        .fill("none")
+        .view_box("0 0 24 24")
+        .stroke("currentColor")
+        .add(
+            svg_path()
+                .stroke_linecap("round")
+                .stroke_linejoin("round")
+                .stroke_width(2)
+                .d("M6 6l12 12M18 6L6 18"),
+        )
+}
+
+/// "+" icon.
+pub fn plus_icon() -> SvgElement {
+    svg()
+        .fill("none")
+        .view_box("0 0 24 24")
+        .stroke("currentColor")
+        .add(
+            svg_path()
+                .stroke_linecap("round")
+                .stroke_linejoin("round")
+                .stroke_width(2)
+                .d("M12 5v14M5 12h14"),
+        )
+}
