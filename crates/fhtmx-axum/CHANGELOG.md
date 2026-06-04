@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.2](https://github.com/renato145/fhtmx/compare/fhtmx-axum-v0.4.1...fhtmx-axum-v0.4.2) (2026-06-04)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fhtmx bumped from 0.31.0 to 0.32.0
+
 ## [0.4.1](https://github.com/renato145/fhtmx/compare/fhtmx-axum-v0.4.0...fhtmx-axum-v0.4.1) (2026-06-04)
 
 
