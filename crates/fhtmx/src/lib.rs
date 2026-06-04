@@ -1,4 +1,4 @@
-//! Create HTML with Rust, with support for htmx attributes and DaisyUI components.
+//! Create HTML with Rust, with support for `htmx` attributes and `DaisyUI` components.
 //!
 //! # Quick start
 //!

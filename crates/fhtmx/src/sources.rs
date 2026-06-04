@@ -70,7 +70,7 @@ pub fn typography_css() -> HtmlElement {
     style().add_raw(include_str!("typrose.css"))
 }
 
-/// Script to setup sse_id identifier
+/// Script to setup `sse_id` identifier
 pub fn script_setup_sse() -> HtmlElement {
     script().add_raw(include_str!("setup_sse.js"))
 }

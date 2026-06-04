@@ -45,7 +45,7 @@ impl FhtmxError {
         }
     }
 
-    /// Creates a FhtmxError from `e` as toast and with tracing
+    /// Creates a `FhtmxError` from `e` as toast and with tracing
     pub fn from_error<E>(e: E) -> Self
     where
         E: std::error::Error + 'static,

@@ -1,4 +1,4 @@
-/// Semantic colors used by DaisyUI components.
+/// Semantic colors used by `DaisyUI` components.
 /// These colors adapt to the current theme automatically.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum DaisyColor {
@@ -27,7 +27,7 @@ pub enum DaisyColor {
 }
 
 impl DaisyColor {
-    /// Returns the DaisyUI class name for this color
+    /// Returns the `DaisyUI` class name for this color
     pub fn as_class(&self) -> &'static str {
         match self {
             DaisyColor::Primary => "primary",

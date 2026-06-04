@@ -5,12 +5,12 @@ use crate::{
 };
 use pastey::paste;
 
-/// The hx-swap attribute allows you to specify how the response will be swapped in relative to the
+/// The `hx-swap` attribute allows you to specify how the response will be swapped in relative to the
 /// target of an AJAX request. If you do not specify the option, the default is
-/// htmx.config.defaultSwapStyle (innerHTML).
+/// `htmx.config.defaultSwapStyle` (`innerHTML`).
 #[derive(Debug, Clone, Copy)]
 pub enum HXSwap {
-    /// Replace the inner html of the target element
+    /// Replace the inner HTML of the target element
     InnerHtml,
     /// Replace the entire target element with the response
     OuterHTML,
@@ -33,7 +33,7 @@ pub enum HXSwap {
 impl std::fmt::Display for HXSwap {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = match self {
-            HXSwap::InnerHtml => "innerHtml",
+            HXSwap::InnerHtml => "innerHTML",
             HXSwap::OuterHTML => "outerHTML",
             HXSwap::TextContent => "textContent",
             HXSwap::BeforeBegin => "beforebegin",
@@ -53,11 +53,11 @@ impl IntoAttributeValue for HXSwap {
     }
 }
 
-/// The hx-target attribute allows you to target a different element for swapping than the one
+/// The `hx-target` attribute allows you to target a different element for swapping than the one
 /// issuing the AJAX request.
 #[derive(Debug, Clone)]
 pub enum HXTarget<'a> {
-    /// Which indicates that the element that the hx-target attribute is on is the target.
+    /// Which indicates that the element that the `hx-target` attribute is on is the target.
     This,
     /// `closest <CSS selector>` which will find the closest ancestor element or itself, that matches
     /// the given CSS selector (e.g. `closest tr` will target the closest table row to the element).
@@ -65,13 +65,13 @@ pub enum HXTarget<'a> {
     /// `find <CSS selector>` which will find the first child descendant element that matches the
     /// given CSS selector.
     Find,
-    /// next which resolves to element.nextElementSibling
+    /// `next` which resolves to `element.nextElementSibling`
     Next,
     /// `next <CSS selector>` which will scan the DOM forward for the first element that matches the
     /// given CSS selector. (e.g. `next .error` will target the closest following sibling element
     /// with error class)
     NextSelector(&'a str),
-    /// previous which resolves to element.previousElementSibling
+    /// `previous` which resolves to `element.previousElementSibling`
     Previous,
     /// `previous <CSS selector>` which will scan the DOM backwards for the first element that
     /// matches the given CSS selector. (e.g. `previous .error` will target the closest previous
