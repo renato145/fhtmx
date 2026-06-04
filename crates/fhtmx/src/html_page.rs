@@ -6,6 +6,7 @@ use crate::{
     render::Render,
 };
 
+/// A complete HTML page builder (doctype, head, body).
 #[derive(Clone, Debug)]
 pub struct HtmlPage {
     doctype: bool,
@@ -19,6 +20,7 @@ pub struct HtmlPage {
 }
 
 impl HtmlPage {
+    /// Creates a new [`HtmlPage`] with sensible defaults.
     pub fn new() -> Self {
         Self {
             doctype: true,
@@ -32,16 +34,19 @@ impl HtmlPage {
         }
     }
 
+    /// Overrides the root `<html>` element with a custom one.
     pub fn custom_html_node(mut self, el: HtmlElement) -> Self {
         self.custom_html_node = Some(el);
         self
     }
 
+    /// Sets the page title.
     pub fn title(mut self, title: impl ToString) -> Self {
         self.title = Some(title.to_string());
         self
     }
 
+    /// Sets the meta description.
     pub fn description(mut self, description: impl ToString) -> Self {
         self.description = Some(description.to_string());
         self
@@ -59,16 +64,19 @@ impl HtmlPage {
         self
     }
 
+    /// Adds a node inside `<head>`.
     pub fn add_header_node(mut self, node: impl IntoNode) -> Self {
         self.header_nodes.push(node.into_node());
         self
     }
 
+    /// Adds a node inside `<body>`.
     pub fn add_body_node(mut self, node: impl IntoNode) -> Self {
         self.body_nodes.push(node.into_node());
         self
     }
 
+    /// Renders the page to a complete HTML string.
     pub fn render(self) -> String {
         self.into_node().render()
     }

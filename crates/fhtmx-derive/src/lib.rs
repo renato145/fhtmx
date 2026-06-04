@@ -1,3 +1,7 @@
+//! Proc-macros for fhtmx.
+//!
+//! Currently provides the [`HtmlView`](crate::derive_html_view) derive macro.
+
 mod utils;
 
 use crate::utils::{DaisyColorAttr, ExprOrString, Mode, PostProc};
@@ -62,6 +66,26 @@ struct HtmlViewInput {
     postproc: PostProc,
 }
 
+/// Derive macro that implements `HtmlView` for a named struct.
+///
+/// # Attributes
+///
+/// On the struct:
+/// - `title = "..."` or `title = expr`: Sets the card title.
+/// - `mode = "list" | "table" | "table_right"`: Layout mode (default: list).
+/// - `color = "primary" | ...`: DaisyUI color for the card.
+/// - `class = expr`: Extra CSS classes.
+/// - `postproc = expr`: Custom post-processing function.
+///
+/// On fields:
+/// - `skip`: Omits the field from the view.
+/// - `alias = "..."`: Custom label instead of the field name.
+/// - `value = expr`: Custom value expression.
+/// - `value_display`: Uses `format!("{}", ...)` for the value.
+/// - `value_debug`: Uses `format!("{:?}", ...)` for the value.
+/// - `value_debug_pretty`: Uses `format!("{:#?}", ...)` inside a `<pre>`.
+/// - `row_class = "..."`: CSS class for the list row.
+/// - `value_class = "..."`: CSS class for the value cell.
 #[proc_macro_derive(HtmlView, attributes(html_view))]
 pub fn derive_html_view(input: TokenStream) -> TokenStream {
     let input = syn::parse_macro_input!(input as DeriveInput);

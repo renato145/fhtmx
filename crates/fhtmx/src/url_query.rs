@@ -1,11 +1,14 @@
 use url::form_urlencoded;
 
+/// Builds a URL with optional query parameters.
 pub struct UrlBuilder {
+    /// The base URL path.
     pub base: String,
     query_encoder: Option<form_urlencoded::Serializer<'static, String>>,
 }
 
 impl UrlBuilder {
+    /// Creates a new builder with the given base URL.
     pub fn new(base: impl ToString) -> Self {
         Self {
             base: base.to_string(),
@@ -13,17 +16,20 @@ impl UrlBuilder {
         }
     }
 
+    /// Appends a query parameter mutably.
     pub fn push_query_mut(&mut self, name: &str, value: &str) {
         self.query_encoder
             .get_or_insert(form_urlencoded::Serializer::new(String::new()))
             .append_pair(name, value);
     }
 
+    /// Appends a query parameter and returns `self`.
     pub fn push_query(mut self, name: &str, value: &str) -> Self {
         self.push_query_mut(name, value);
         self
     }
 
+    /// Builds and returns the final URL string.
     pub fn finish(self) -> String {
         let mut url = self.base;
         if let Some(mut encoder) = self.query_encoder {

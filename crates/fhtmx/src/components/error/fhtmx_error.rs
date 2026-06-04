@@ -5,18 +5,27 @@ use crate::{
 };
 use std::fmt::{self, Write};
 
+/// Convenience alias for `Result<T, FhtmxError>`.
 pub type FhtmxResult<T> = Result<T, FhtmxError>;
 
-/// An error that can be rendered with fhtmx using `mk_callout_error`
+/// An error that can be rendered as HTML using fhtmx components.
 pub struct FhtmxError {
+    /// Custom error message.
     pub context: Option<String>,
+    /// Underlying error cause.
     pub source: Option<Box<dyn std::error::Error>>,
+    /// htmx retarget selector.
     pub hx_retarget: Option<String>,
+    /// htmx reswap strategy.
     pub hx_reswap: Option<String>,
+    /// Whether to trace/log the error.
     pub do_trace: bool,
+    /// Optional DOM id for the rendered error.
     pub id: Option<String>,
     xtra_classes: Option<String>,
+    /// Whether to render as a toast.
     pub as_toast: bool,
+    /// Whether to hide the source error chain in the output.
     pub hide_source: bool,
 }
 
@@ -54,6 +63,7 @@ impl FhtmxError {
         }
     }
 
+    /// Returns the primary error message.
     pub fn get_main_error(&self) -> String {
         match (&self.context, &self.source) {
             (Some(s), _) => s.to_string(),
@@ -62,6 +72,7 @@ impl FhtmxError {
         }
     }
 
+    /// Returns the formatted source error chain, if any.
     pub fn get_source_error(&self) -> Option<String> {
         let mut current = match (&self.context, &self.source) {
             (Some(_), None) => return None,
@@ -136,6 +147,7 @@ impl FhtmxError {
         self
     }
 
+    /// Renders the error as an [`HtmlElement`].
     pub fn as_element(&self) -> HtmlElement {
         let main_error = self.get_main_error();
         let mut error_html = match (self.hide_source, self.get_source_error()) {
@@ -207,6 +219,7 @@ impl IntoHtmlElement for FhtmxError {
     }
 }
 
+/// Extension methods for [`FhtmxError`] and `Result<T, FhtmxError>`.
 pub trait FhtmxErrorExt {
     /// Sets the context of the error
     fn fhtmx_set_context(self, context: impl ToString) -> Self;
@@ -327,7 +340,8 @@ impl<T> FhtmxErrorExt for Result<T, FhtmxError> {
     }
 }
 
-/// Provides the `fhtmx_context` method for `Result`, similar to `context` in the anyhow crate.
+/// Extension methods for `Result<T, E>` and `Option<T>` to convert into `FhtmxError`.
+/// Similar to `anyhow::Context`.
 #[allow(clippy::result_large_err)]
 pub trait FhtmxContext<T> {
     /// Wrap the error as a `FhtmxError`.
@@ -426,6 +440,7 @@ impl From<anyhow::Error> for FhtmxError {
     }
 }
 
+/// Extension methods for converting `anyhow::Error` into `FhtmxError`.
 #[cfg(feature = "anyhow")]
 #[allow(clippy::result_large_err)]
 pub trait FhtmxAnyhowExt<T> {

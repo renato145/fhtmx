@@ -5,7 +5,7 @@ use crate::{element::Element, html_element::*};
 /// - If oob is false, you may want to set the `el` to be the toast container, make sure to add the
 ///   toast class. Also, if you want to setup the toast position you can use any of these classes:
 ///   toast-start, toast-center, toast-end, toast-top, toast-middle and toast-bottom
-///   (https://daisyui.com/components/toast).
+///   (<https://daisyui.com/components/toast>).
 ///
 /// Make sure to add `script_setup_toast()` in your headers.
 pub fn setup_toast(el: HtmlElement, oob: bool) -> HtmlElement {
@@ -25,13 +25,14 @@ pub fn setup_toast(el: HtmlElement, oob: bool) -> HtmlElement {
     }
 }
 
+/// Extension trait for setting up toast behavior on [`HtmlElement`].
 pub trait FhtmxToast {
     /// Setup alpine directives so the `el` will fade after some seconds.
     /// - If oob is set to true, it will use the global toast container in the layout.
     /// - If oob is false, you may want to set the `el` to be the toast container, make sure to add the
     ///   toast class. Also, if you want to setup the toast position you can use any of these classes:
     ///   toast-start, toast-center, toast-end, toast-top, toast-middle and toast-bottom
-    ///   (https://daisyui.com/components/toast).
+    ///   (<https://daisyui.com/components/toast>).
     ///
     /// Make sure to add `script_setup_toast()` in your headers.
     fn setup_toast(self, oob: bool) -> HtmlElement;

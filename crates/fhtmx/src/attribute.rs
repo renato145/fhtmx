@@ -1,14 +1,23 @@
 use crate::utils::escape_html_to;
 
+/// Represents the value of an HTML attribute.
+///
+/// - [`Empty`](Self::Empty): boolean attribute with no value (`hidden`, `disabled`, etc.)
+/// - [`Raw`](Self::Raw): inserted as-is (useful for JSON or unescaped values)
+/// - [`Value`](Self::Value): HTML-escaped on render
 // TODO: use Cow here when rust gets the specialization feature
 #[derive(Clone, Debug)]
 pub enum AttributeValue {
+    /// Boolean attribute with no value.
     Empty,
+    /// Raw string inserted without HTML escaping.
     Raw(String),
+    /// Escaped string value.
     Value(String),
 }
 
 impl AttributeValue {
+    /// Estimated byte size when rendered.
     pub fn size_hint(&self) -> usize {
         match self {
             AttributeValue::Empty => 0,
@@ -16,6 +25,7 @@ impl AttributeValue {
         }
     }
 
+    /// Converts a [`Value`](Self::Value) into [`Raw`](Self::Raw), leaving others unchanged.
     pub fn into_raw(self) -> Self {
         match self {
             AttributeValue::Value(s) => AttributeValue::Raw(s),
@@ -23,6 +33,7 @@ impl AttributeValue {
         }
     }
 
+    /// Renders the attribute value into `buf`.
     pub fn render_to(&self, buf: &mut String) {
         match self {
             AttributeValue::Empty => {}
@@ -49,10 +60,12 @@ impl AttributeValue {
     }
 }
 
+/// Types that can be converted into an [`AttributeValue`].
 pub trait IntoAttributeValue: Sized {
-    /// Transforms into a html attribute string
+    /// Converts into an [`AttributeValue`]. Returns `None` to omit the attribute.
     fn into_attr(self) -> Option<AttributeValue>;
 
+    /// Like [`into_attr`](Self::into_attr) but marks the result as [`Raw`](AttributeValue::Raw).
     fn into_raw_attr(self) -> Option<AttributeValue> {
         self.into_attr().map(|x| x.into_raw())
     }

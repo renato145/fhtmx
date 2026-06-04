@@ -5,6 +5,7 @@ use actix_web::http::header::ContentType;
 use actix_web::{HttpResponse, ResponseError};
 
 impl FhtmxError {
+    /// Renders the error as an Actix [`HttpResponse`] with htmx headers.
     pub fn render_actix_response(&self) -> HttpResponse {
         let html_body = self.as_element().render();
         let mut builder = HttpResponse::Ok();

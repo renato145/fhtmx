@@ -1,18 +1,25 @@
 use crate::{html_element::HtmlElement, svg::SvgElement};
 use uuid::Uuid;
 
-/// Types of nodes that can go inside an `Element`
+/// A node in the HTML/SVG tree.
 #[derive(Clone, Debug)]
 pub enum HtmlNode {
+    /// `<!DOCTYPE html>`
     Doctype,
+    /// Raw HTML inserted without escaping.
     Raw(String),
+    /// Escaped text content.
     Text(String),
+    /// Standard HTML element.
     Element(HtmlElement),
+    /// SVG element.
     SvgElement(SvgElement),
+    /// Collection of nodes rendered without a wrapper.
     Fragment(Vec<HtmlNode>),
 }
 
 impl HtmlNode {
+    /// Unwraps into an [`HtmlElement`] if this node is one.
     pub fn to_element(self) -> Option<HtmlElement> {
         match self {
             Self::Element(x) => Some(x),
@@ -20,6 +27,7 @@ impl HtmlNode {
         }
     }
 
+    /// Unwraps into an [`SvgElement`] if this node is one.
     pub fn to_svg(self) -> Option<SvgElement> {
         match self {
             Self::SvgElement(x) => Some(x),
@@ -28,20 +36,21 @@ impl HtmlNode {
     }
 }
 
-/// Creates a `HtmlNode::Raw` node
+/// Creates a [`HtmlNode::Raw`] node from a string.
 #[inline]
 pub fn raw_node(raw: impl ToString) -> HtmlNode {
     HtmlNode::Raw(raw.to_string())
 }
 
-/// Creates a `HtmlNode::Fragment` node
+/// Creates a [`HtmlNode::Fragment`] from an iterator of nodes.
 #[inline]
 pub fn fragment(nodes: impl IntoIterator<Item = impl IntoNode>) -> HtmlNode {
     HtmlNode::Fragment(nodes.into_iter().map(|n| n.into_node()).collect())
 }
 
+/// Converts a value into an [`HtmlNode`].
 pub trait IntoNode {
-    /// Transforms into a `HtmlNode`
+    /// Transforms into a [`HtmlNode`].
     fn into_node(self) -> HtmlNode;
 }
 
@@ -80,8 +89,9 @@ implement_into_for_display!(chrono::NaiveDate, chrono::DateTime<chrono::Utc>);
 #[cfg(feature = "jiff_0_2")]
 implement_into_for_display!(jiff::civil::Date, jiff::Timestamp);
 
+/// Converts a value into an [`HtmlNode`] without consuming it.
 pub trait AsNode {
-    /// Transforms into a `HtmlNode` not consuming self
+    /// Transforms into a [`HtmlNode`] without consuming `self`.
     fn as_node(&self) -> HtmlNode;
 }
 

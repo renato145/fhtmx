@@ -7,18 +7,24 @@ use indexmap::{IndexMap, IndexSet};
 use pastey::paste;
 use std::borrow::Cow;
 
+/// SVG elements that are rendered inline without newlines.
 pub const SVG_INLINE_ELEMENTS: &[&str] = &["text", "tspan"];
 
-/// Represents a HTML element
+/// An SVG element.
 #[derive(Clone, Debug)]
 pub struct SvgElement {
+    /// Tag name, e.g. `"svg"`.
     pub tag: &'static str,
+    /// Ordered map of attributes.
     pub attrs: IndexMap<Cow<'static, str>, AttributeValue>,
+    /// Ordered set of CSS classes.
     pub classes: IndexSet<Cow<'static, str>>,
+    /// Child nodes.
     pub children: Vec<HtmlNode>,
 }
 
 impl SvgElement {
+    /// Creates a new SVG element with the given tag name.
     pub fn new(tag: &'static str) -> Self {
         Self {
             tag,
@@ -139,7 +145,7 @@ create_svg_fn!(
     fe_convolve_matrix="feConvolveMatrix"; "SVG filter. Applies a matrix convolution filter effect (this includes blurring, edge detection, sharpening, embossing and beveling)",
     fe_diffuse_lighting="feDiffuseLighting"; "SVG filter. Lights a graphic by using the alpha channel as a bump map",
     fe_displacement_map="feDisplacementMap"; "SVG filter. Uses pixels values from the graphic from in2 attribute to displace the image from the in attribute",
-    fe_distant_light="feDistantLight"; "SVG filter. Specifies a distant light source to be used inside a lighting filter primitive: <feDiffuseLighting> or <feSpecularLighting>",
+    fe_distant_light="feDistantLight"; "SVG filter. Specifies a distant light source to be used inside a lighting filter primitive: `<feDiffuseLighting>` or `<feSpecularLighting>`",
     fe_drop_shadow="feDropShadow"; "SVG filter. Creates a drop shadow of the graphic",
     fe_flood="feFlood"; "SVG filter. Fills the filter subregion with the color and opacity defined by flood-color and flood-opacity attributes",
     fe_func_a="feFuncA"; "SVG filter. Sub-element to feComponentTransfer",
@@ -149,7 +155,7 @@ create_svg_fn!(
     fe_gaussian_blur="feGaussianBlur"; "SVG filter. Blurs the graphic",
     fe_image="feImage"; "SVG filter. Gets graphic data from an external source and provides the pixel data as output",
     fe_merge="feMerge"; "SVG filter. Blends input graphic layers (applies filter effects concurrently instead of sequentially)",
-    fe_merge_node="feMergeNode"; "SVG filter. Takes the result of another filter to be processed by its parent <feMerge>",
+    fe_merge_node="feMergeNode"; "SVG filter. Takes the result of another filter to be processed by its parent `<feMerge>`",
     fe_morphology="feMorphology"; "SVG filter. Erodes or dilates the graphic (for fattening or thinning effects)",
     fe_offset="feOffset"; "SVG filter. Offsets the input graphic",
     fe_point_light="fePointLight"; "SVG filter. Specifies a light source that allows creating a point light effect",
@@ -163,10 +169,10 @@ create_svg_fn!(
     image; "Includes an image in SVG (must be .jpeg, .png, or other SVG files)",
     line; "Creates a line",
     linear_gradient="linearGradient"; "Defines a linear gradient",
-    marker; "Defines a graphic that is used to draw arrowheads or polymarkers on a specific <path>, <line>, <polyline> or <polygon> element",
+    marker; "Defines a graphic that is used to draw arrowheads or polymarkers on a specific `<path>`, `<line>`, `<polyline>` or `<polygon>` element",
     mask; "Defines an alpha mask for compositing the current object into the background. Masking is a combination of opacity values and clipping. Like clipping you can use shapes, text or paths to define sections of the mask. The default state of a mask is fully transparent which is the opposite of clipping plane. The graphics in a mask sets how opaque portions of the mask are",
     metadata; "Applies metadata to SVG content",
-    mpath; "A sub-element for the <animateMotion> element which provides the ability to reference an external <path> element as the definition of a motion path",
+    mpath; "A sub-element for the `<animateMotion>` element which provides the ability to reference an external `<path>` element as the definition of a motion path",
     path; "Defines a shape",
     pattern; "Defines an object that can be redrawn at repeated x- and y-coordinate intervals",
     polygon; r#"Creates a graphic that contains at least three sides. Polygons are made of straight lines, and the shape is "closed""#,
@@ -178,11 +184,11 @@ create_svg_fn!(
     stop; "The stops for a linear or radial gradient",
     style; "Allows style sheets to be embedded directly within SVG",
     switch; "None",
-    symbol; "Define graphical template objects which can be instantiated by a <use> element",
+    symbol; "Define graphical template objects which can be instantiated by a `<use>` element",
     text; "Defines a text",
     text_path="textPath"; "Renders text along the shape of a path",
     title; "A text description for elements in SVG - not displayed as part of the graphics. Browsers usually display the text as a tooltip",
-    tspan; "Defines a subtext within a <text> element",
+    tspan; "Defines a subtext within a `<text>` element",
     use; "Takes a node within the SVG document, and duplicates it somewhere else.",
     view; "How to view the graphic (zoom level or detail view)"
 );

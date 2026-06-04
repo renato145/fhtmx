@@ -69,6 +69,7 @@ where
         .add(dc_swap_off().add(off_txt))
 }
 
+/// Creates a Daisy accordion (radio-based collapse group).
 pub fn mk_accordion<I, T, C>(
     title_contents: I,
     cls: &str,

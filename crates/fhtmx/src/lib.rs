@@ -1,3 +1,25 @@
+//! Create HTML with Rust, with support for htmx attributes and DaisyUI components.
+//!
+//! # Quick start
+//!
+//! ```
+//! use fhtmx::prelude::*;
+//!
+//! let html = div()
+//!     .class("container")
+//!     .add(h1().add("Hello, world!"))
+//!     .add(p().add("Some text"))
+//!     .render();
+//! ```
+//!
+//! # Features
+//!
+//! - `anyhow` (default): Enables `anyhow::Error` conversion support.
+//! - `chrono_0_4`: Enables `IntoNode` for `chrono` types.
+//! - `jiff_0_2`: Enables `IntoNode` for `jiff` types.
+//! - `actix`: Enables Actix-web response integration.
+//! - `axum`: Enables Axum response integration.
+
 mod attribute;
 mod components;
 mod element;
@@ -13,6 +35,7 @@ mod svg;
 mod url_query;
 mod utils;
 
+/// Re-exports the most commonly used types and traits.
 pub mod prelude {
     pub use crate::attribute::*;
     pub use crate::children;

@@ -1,11 +1,13 @@
 use uuid::Uuid;
 
+/// Escapes HTML special characters and returns a new string.
 pub fn escape_html(s: &str) -> String {
     let mut buf = String::with_capacity(s.len());
     escape_html_to(s, &mut buf);
     buf
 }
 
+/// Escapes HTML special characters appending to `buf`.
 pub fn escape_html_to(s: &str, buf: &mut String) {
     for c in s.chars() {
         match c {
@@ -19,6 +21,7 @@ pub fn escape_html_to(s: &str, buf: &mut String) {
     }
 }
 
+/// Escapes HTML special characters appending to `buf` with indentation.
 pub fn escape_html_to_with_indent(s: &str, buf: &mut String, indent: usize) {
     if indent == 0 {
         escape_html_to(s, buf);
@@ -33,6 +36,7 @@ pub fn escape_html_to_with_indent(s: &str, buf: &mut String, indent: usize) {
     }
 }
 
+/// Generates a random id with the given prefix (e.g. `prefix-uuid`).
 pub fn random_id(prefix: &str) -> String {
     let uuid = Uuid::new_v4();
     // Convert it to a hyphenated string format

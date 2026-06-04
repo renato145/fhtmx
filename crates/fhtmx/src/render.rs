@@ -4,14 +4,15 @@ use crate::{
     utils::{escape_html_to, escape_html_to_with_indent},
 };
 
-/// Renders to HTML strings
+/// Renders a value to an HTML string.
 pub trait Render {
-    /// Render to a buffer
+    /// Renders the HTML into `buf` with the given indentation level.
     fn render_to(&self, buf: &mut String, indent: usize);
 
-    /// Size hint for more efficient rendering
+    /// Estimated byte size when rendered, used to pre-allocate buffers.
     fn size_hint(&self) -> usize;
 
+    /// Renders the HTML and returns it as a [`String`].
     fn render(&self) -> String {
         let mut buf = String::with_capacity(self.size_hint());
         self.render_to(&mut buf, 0);

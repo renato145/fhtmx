@@ -41,7 +41,7 @@ pub struct SseSetup<T> {
 pub struct FhtmxUiNoSessionData;
 
 impl SseSetup<()> {
-    /// Gets a `SseState` instance for you to add it to your app
+    /// Creates a new setup that carries session data of type `T`.
     #[must_use]
     pub fn new_with_data<T>() -> SseSetup<T> {
         SseSetup {
@@ -57,6 +57,7 @@ impl Default for SseSetup<FhtmxUiNoSessionData> {
 }
 
 impl SseSetup<FhtmxUiNoSessionData> {
+    /// Creates a new setup without session data.
     pub fn new() -> Self {
         SseSetup {
             session_data: PhantomData,
@@ -80,14 +81,18 @@ where
     }
 }
 
+/// An active SSE session.
 pub struct SseSession<T> {
+    /// Optional per-session data.
     pub data: Option<T>,
+    /// Channel sender for pushing events.
     pub sender: mpsc::Sender<Event>,
 }
 
-/// SSE state
+/// Shared SSE state holding all active sessions.
 #[derive(Clone)]
 pub struct SseState<T> {
+    /// Map of session id to session.
     pub sessions: Arc<DashMap<Uuid, SseSession<T>>>,
 }
 
@@ -100,12 +105,14 @@ impl<T> Default for SseState<T> {
 }
 
 impl<T: Clone> SseState<T> {
+    /// Clones the session data for `id`.
     pub fn get_session_data(&self, id: Uuid) -> Option<T> {
         self.sessions.get(&id).and_then(|x| x.data.clone())
     }
 }
 
 impl<T> SseState<T> {
+    /// Registers a new session.
     pub fn add_session(
         &self,
         id: Uuid,
@@ -116,6 +123,7 @@ impl<T> SseState<T> {
         self.sessions.insert(id, session)
     }
 
+    /// Removes and returns a session.
     pub fn remove_session(&self, id: Uuid) -> Option<(Uuid, SseSession<T>)> {
         self.sessions.remove(&id)
     }
@@ -157,6 +165,7 @@ impl<T> SseState<T> {
     }
 }
 
+/// Broadcasts an event to all senders, returning the number of successful sends.
 pub fn sse_broadcast<D: AsRef<str>>(senders: Vec<mpsc::Sender<Event>>, data: D) -> usize {
     let data = data.as_ref();
     senders
@@ -188,8 +197,9 @@ pub async fn sse_handler<T: Send + Sync + 'static>(
     Sse::new(stream).keep_alive(KeepAlive::default())
 }
 
-/// Identifier for the session
+/// Query parameter for identifying an SSE session.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SseHandlerQuery {
+    /// The SSE session id.
     pub id: Uuid,
 }

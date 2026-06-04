@@ -59,22 +59,22 @@ impl IntoAttributeValue for HXSwap {
 pub enum HXTarget<'a> {
     /// Which indicates that the element that the hx-target attribute is on is the target.
     This,
-    /// closest <CSS selector> which will find the closest ancestor element or itself, that matches
-    /// the given CSS selector (e.g. closest tr will target the closest table row to the element).
+    /// `closest <CSS selector>` which will find the closest ancestor element or itself, that matches
+    /// the given CSS selector (e.g. `closest tr` will target the closest table row to the element).
     Closest(&'a str),
-    /// find <CSS selector> which will find the first child descendant element that matches the
+    /// `find <CSS selector>` which will find the first child descendant element that matches the
     /// given CSS selector.
     Find,
     /// next which resolves to element.nextElementSibling
     Next,
-    /// next <CSS selector> which will scan the DOM forward for the first element that matches the
-    /// given CSS selector. (e.g. next .error will target the closest following sibling element
+    /// `next <CSS selector>` which will scan the DOM forward for the first element that matches the
+    /// given CSS selector. (e.g. `next .error` will target the closest following sibling element
     /// with error class)
     NextSelector(&'a str),
     /// previous which resolves to element.previousElementSibling
     Previous,
-    /// previous <CSS selector> which will scan the DOM backwards for the first element that
-    /// matches the given CSS selector. (e.g. previous .error will target the closest previous
+    /// `previous <CSS selector>` which will scan the DOM backwards for the first element that
+    /// matches the given CSS selector. (e.g. `previous .error` will target the closest previous
     /// sibling with error class)
     PreviousSelector(&'a str),
 }
@@ -106,6 +106,7 @@ impl IntoAttributeValue for HXTarget<'_> {
     }
 }
 
+/// Request headers sent by htmx.
 #[derive(Debug, Clone, Copy)]
 pub enum HtmxRequestHeader {
     /// Indicates that the request is via an element using hx-boost
@@ -142,6 +143,7 @@ impl std::fmt::Display for HtmxRequestHeader {
     }
 }
 
+/// Response headers understood by htmx.
 #[derive(Debug, Clone, Copy)]
 pub enum HtmxResponseHeader {
     /// Allows you to do a client-side redirect that does not do a full page reload

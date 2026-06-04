@@ -7,27 +7,34 @@ use indexmap::{IndexMap, IndexSet};
 use pastey::paste;
 use std::borrow::Cow;
 
+/// HTML void elements (self-closing tags).
 pub const VOID_ELEMENTS: &[&str] = &[
     "area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source",
     "track", "wbr",
 ];
 
+/// HTML inline elements.
 pub const INLINE_ELEMENTS: &[&str] = &[
     "a", "abbr", "b", "bdo", "br", "button", "cite", "code", "em", "i", "img", "input", "kbd",
     "label", "q", "s", "samp", "select", "small", "span", "strong", "sub", "sup", "textarea",
     "time", "u", "var",
 ];
 
-/// Represents a HTML element
+/// A standard HTML element.
 #[derive(Clone, Debug)]
 pub struct HtmlElement {
+    /// Tag name, e.g. `"div"`.
     pub tag: &'static str,
+    /// Ordered map of attributes.
     pub attrs: IndexMap<Cow<'static, str>, AttributeValue>,
+    /// Ordered set of CSS classes.
     pub classes: IndexSet<Cow<'static, str>>,
+    /// Child nodes.
     pub children: Vec<HtmlNode>,
 }
 
 impl HtmlElement {
+    /// Creates a new HTML element with the given tag name.
     pub fn new(tag: &'static str) -> Self {
         Self {
             tag,
@@ -38,8 +45,9 @@ impl HtmlElement {
     }
 }
 
+/// Converts a value into an [`HtmlElement`].
 pub trait IntoHtmlElement {
-    /// Transforms into a `HtmlElement`
+    /// Transforms into an [`HtmlElement`].
     fn into_element(self) -> HtmlElement;
 }
 
@@ -148,7 +156,7 @@ create_tag_fn!(
     caption; "Defines a table caption",
     cite; "Defines the title of a work",
     code; "Defines a piece of computer code",
-    col; "Specifies column properties for each column within a <colgroup> element",
+    col; "Specifies column properties for each column within a `<colgroup>` element",
     colgroup; "Specifies a group of one or more columns in a table for formatting",
     data; "Adds a machine-readable translation of a given content",
     datalist; "Specifies a list of pre-defined options for input controls",
@@ -163,7 +171,7 @@ create_tag_fn!(
     em; "Defines emphasized text",
     embed; "Defines a container for an external application",
     fieldset; "Groups related elements in a form",
-    figcaption; "Defines a caption for a <figure> element",
+    figcaption; "Defines a caption for a `<figure>` element",
     figure; "Specifies self-contained content",
     footer; "Defines a footer for a document or section",
     form; "Defines an HTML form for user input",
@@ -184,8 +192,8 @@ create_tag_fn!(
     input; "Defines an input control",
     ins; "Defines a text that has been inserted into a document",
     kbd; "Defines keyboard input",
-    label; "Defines a label for an <input> element",
-    legend; "Defines a caption for a <fieldset> element",
+    label; "Defines a label for an `<input>` element",
+    legend; "Defines a caption for a `<fieldset>` element",
     li; "Defines a list item",
     link; "Defines the relationship between a document and an external resource (most used to link to style sheets)",
     map; "Defines an image map",
@@ -216,12 +224,12 @@ create_tag_fn!(
     section; "Defines a section in a document",
     select; "Defines a drop-down list",
     small; "Defines smaller text",
-    source; "Defines multiple media resources for media elements (<video> and <audio>)",
+    source; "Defines multiple media resources for media elements (`<video>` and `<audio>`)",
     span; "Defines a section in a document",
     strong; "Defines important text",
     style; "Defines style information for a document",
     sub; "Defines subscripted text",
-    summary; "Defines a visible heading for a <details> element",
+    summary; "Defines a visible heading for a `<details>` element",
     sup; "Defines superscripted text",
     table; "Defines a table",
     tbody; "Groups the body content in a table",
@@ -234,7 +242,7 @@ create_tag_fn!(
     time; "Defines a specific time (or datetime)",
     title; "Defines a title for the document",
     tr; "Defines a row in a table",
-    track; "Defines text tracks for media elements (<video> and <audio>)",
+    track; "Defines text tracks for media elements (`<video>` and `<audio>`)",
     u; "Defines some text that is unarticulated and styled differently from normal text",
     ul; "Defines an unordered list",
     var; "Defines a variable",

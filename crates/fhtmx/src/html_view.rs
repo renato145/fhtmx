@@ -6,6 +6,7 @@ use crate::{
     render::Render,
 };
 
+/// Creates a key/value list row for use in [`HtmlView`] renders.
 pub fn html_list_row<K, V>(key: K, value: V) -> HtmlElement
 where
     K: IntoNode,
@@ -14,13 +15,17 @@ where
     dc_list_row().add(key).add(value)
 }
 
+/// Renders a type as HTML (table, list, or card).
 pub trait HtmlView {
+    /// Returns the inner content without wrapping.
     fn html_content(&self) -> HtmlNode;
 
+    /// Returns the full view (wrapped in a card by default for derived impls).
     fn html_view(&self) -> HtmlNode {
         self.html_content()
     }
 
+    /// Renders the view to a string.
     fn render_view(&self) -> String {
         self.html_view().render()
     }

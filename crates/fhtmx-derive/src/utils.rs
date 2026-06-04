@@ -1,7 +1,10 @@
+//! Internal types used by the `HtmlView` derive macro.
+
 use darling::FromMeta;
 use quote::quote;
 use syn::Expr;
 
+/// Wraps a `syn::Expr` so it can be used with `darling`.
 pub struct ExprOrString(pub Expr);
 
 impl darling::FromMeta for ExprOrString {
@@ -10,6 +13,7 @@ impl darling::FromMeta for ExprOrString {
     }
 }
 
+/// Layout mode for the `HtmlView` derive.
 #[derive(Default)]
 pub enum Mode {
     #[default]
@@ -41,6 +45,7 @@ impl darling::FromMeta for Mode {
     }
 }
 
+/// Post-processing mode for the `HtmlView` derive.
 #[derive(Default)]
 pub enum PostProc {
     #[default]
@@ -63,6 +68,7 @@ impl darling::FromMeta for PostProc {
     }
 }
 
+/// DaisyUI color attribute for the `HtmlView` derive.
 #[derive(FromMeta)]
 pub enum DaisyColorAttr {
     Primary,

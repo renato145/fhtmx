@@ -6,36 +6,49 @@ use crate::{
 use indexmap::{IndexMap, IndexSet};
 use std::borrow::Cow;
 
+/// Shared behavior for HTML and SVG elements.
 pub trait Element: Sized {
+    /// The element tag name, e.g. `"div"`.
     fn tag(&self) -> &'static str;
+    /// Reference to the attribute map.
     fn attrs(&self) -> &IndexMap<Cow<'static, str>, AttributeValue>;
+    /// Mutable reference to the attribute map.
     fn attrs_mut(&mut self) -> &mut IndexMap<Cow<'static, str>, AttributeValue>;
+    /// Reference to the class set.
     fn classes(&self) -> &IndexSet<Cow<'static, str>>;
+    /// Mutable reference to the class set.
     fn classes_mut(&mut self) -> &mut IndexSet<Cow<'static, str>>;
+    /// Reference to child nodes.
     fn children(&self) -> &[HtmlNode];
+    /// Mutable reference to child nodes.
     fn children_mut(&mut self) -> &mut Vec<HtmlNode>;
+    /// Whether this is a void element (e.g. `<br>`, `<img>`).
     fn is_void_tag(&self) -> bool;
+    /// Whether this is an inline element (affects indentation during rendering).
     fn is_inline_tag(&self) -> bool;
 
+    /// Number of child nodes.
     #[inline]
     fn len(&self) -> usize {
         self.children().len()
     }
 
+    /// Whether this element has no children.
     fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
-    /// Gets the child at position
+    /// Gets the child at `index`.
     fn get_child(&self, index: usize) -> Option<&HtmlNode> {
         self.children().get(index)
     }
 
-    /// Gets the child at position
+    /// Gets a mutable reference to the child at `index`.
     fn get_child_mut(&mut self, index: usize) -> Option<&mut HtmlNode> {
         self.children_mut().get_mut(index)
     }
 
+    /// Whether all children are inline (no block-level children).
     fn has_inline_content(&self) -> bool {
         let has_block = self.children().iter().any(|o| match o {
             HtmlNode::Element(x) => !x.is_inline_tag(),
@@ -45,6 +58,7 @@ pub trait Element: Sized {
         !has_block
     }
 
+    /// Sets an attribute on `self` mutably.
     fn set_attr_mut<K, V>(&mut self, attr: K, value: V)
     where
         K: Into<Cow<'static, str>>,
@@ -55,6 +69,7 @@ pub trait Element: Sized {
         }
     }
 
+    /// Sets an attribute and returns `self`.
     fn set_attr<K, V>(mut self, attr: K, value: V) -> Self
     where
         K: Into<Cow<'static, str>>,
@@ -64,7 +79,7 @@ pub trait Element: Sized {
         self
     }
 
-    /// Sets an attribute if contains a value
+    /// Sets an attribute if `value` is `Some`.
     fn set_opt_attr_mut<K, V>(&mut self, attr: K, value: Option<V>)
     where
         K: Into<Cow<'static, str>>,
@@ -75,7 +90,7 @@ pub trait Element: Sized {
         }
     }
 
-    /// Sets an attribute if contains a value
+    /// Sets an attribute if `value` is `Some` and returns `self`.
     fn set_opt_attr<K, V>(mut self, attr: K, value: Option<V>) -> Self
     where
         K: Into<Cow<'static, str>>,
@@ -85,6 +100,7 @@ pub trait Element: Sized {
         self
     }
 
+    /// Sets a raw (unescaped) attribute on `self` mutably.
     fn set_raw_attr_mut<K, V>(&mut self, attr: K, value: V)
     where
         K: Into<Cow<'static, str>>,
@@ -95,6 +111,7 @@ pub trait Element: Sized {
         }
     }
 
+    /// Sets a raw (unescaped) attribute and returns `self`.
     fn set_raw_attr<K, V>(mut self, attr: K, value: V) -> Self
     where
         K: Into<Cow<'static, str>>,
@@ -104,7 +121,7 @@ pub trait Element: Sized {
         self
     }
 
-    /// Sets an attribute if contains a value
+    /// Sets a raw attribute if `value` is `Some`.
     fn set_opt_raw_attr_mut<K, V>(&mut self, attr: K, value: Option<V>)
     where
         K: Into<Cow<'static, str>>,
@@ -115,7 +132,7 @@ pub trait Element: Sized {
         }
     }
 
-    /// Sets an attribute if contains a value
+    /// Sets a raw attribute if `value` is `Some` and returns `self`.
     fn set_opt_raw_attr<K, V>(mut self, attr: K, value: Option<V>) -> Self
     where
         K: Into<Cow<'static, str>>,
@@ -125,29 +142,31 @@ pub trait Element: Sized {
         self
     }
 
+    /// Sets a boolean (empty) attribute on `self` mutably.
     fn set_empty_attr_mut(&mut self, attr: impl Into<Cow<'static, str>>) {
         self.attrs_mut().insert(attr.into(), AttributeValue::Empty);
     }
 
+    /// Sets a boolean (empty) attribute and returns `self`.
     fn set_empty_attr(mut self, attr: impl Into<Cow<'static, str>>) -> Self {
         self.set_empty_attr_mut(attr);
         self
     }
 
-    /// Sets an empty_attrs if contains an attr
+    /// Sets a boolean attribute if `attr` is `Some`.
     fn set_opt_empty_attr_mut(&mut self, attr: Option<impl Into<Cow<'static, str>>>) {
         if let Some(attr) = attr {
             self.set_empty_attr_mut(attr);
         }
     }
 
-    /// Sets an empty_attrs if contains an attr
+    /// Sets a boolean attribute if `attr` is `Some` and returns `self`.
     fn set_opt_empty_attr(mut self, attr: Option<impl Into<Cow<'static, str>>>) -> Self {
         self.set_opt_empty_attr_mut(attr);
         self
     }
 
-    /// Sets the class attribute
+    /// Replaces all classes with `class`.
     fn class_mut(&mut self, class: impl Into<Cow<'static, str>>) {
         if !self.classes().is_empty() {
             self.classes_mut().clear();
@@ -155,16 +174,18 @@ pub trait Element: Sized {
         self.add_class_mut(class);
     }
 
-    /// Sets the class attribute
+    /// Replaces all classes with `class` and returns `self`.
     fn class(mut self, class: impl Into<Cow<'static, str>>) -> Self {
         self.class_mut(class);
         self
     }
 
+    /// Whether the element has the given class.
     fn has_class(&self, class: &str) -> bool {
         self.classes().contains(class)
     }
 
+    /// Adds a class to `self` mutably. Supports space-separated classes.
     fn add_class_mut(&mut self, class: impl Into<Cow<'static, str>>) {
         let class = class.into();
         if class.is_empty() {
@@ -179,31 +200,37 @@ pub trait Element: Sized {
         }
     }
 
+    /// Adds a class and returns `self`. Supports space-separated classes.
     fn add_class(mut self, class: impl Into<Cow<'static, str>>) -> Self {
         self.add_class_mut(class);
         self
     }
 
+    /// Adds a class if `class` is `Some`.
     fn add_opt_class_mut(&mut self, class: Option<impl Into<Cow<'static, str>>>) {
         if let Some(class) = class {
             self.add_class_mut(class);
         }
     }
 
+    /// Adds a class if `class` is `Some` and returns `self`.
     fn add_opt_class(mut self, class: Option<impl Into<Cow<'static, str>>>) -> Self {
         self.add_opt_class_mut(class);
         self
     }
 
+    /// Removes a class from `self` mutably.
     fn remove_class_mut(&mut self, class: &str) {
         self.classes_mut().shift_remove(class);
     }
 
+    /// Removes a class and returns `self`.
     fn remove_class(mut self, class: &str) -> Self {
         self.remove_class_mut(class);
         self
     }
 
+    /// Toggles a class on `self` mutably.
     fn toggle_class_mut(&mut self, class: impl Into<Cow<'static, str>>) {
         let class = class.into();
         if self.has_class(&class) {
@@ -213,23 +240,24 @@ pub trait Element: Sized {
         }
     }
 
+    /// Toggles a class and returns `self`.
     fn toggle_class(mut self, class: impl Into<Cow<'static, str>>) -> Self {
         self.toggle_class_mut(class);
         self
     }
 
-    /// Adds a raw html child
+    /// Adds a raw HTML child mutably.
     fn add_raw_mut(&mut self, raw: impl ToString) {
         self.children_mut().push(raw_node(raw));
     }
 
-    /// Adds a raw html child
+    /// Adds a raw HTML child and returns `self`.
     fn add_raw(mut self, raw: impl ToString) -> Self {
         self.add_raw_mut(raw);
         self
     }
 
-    /// Adds a child
+    /// Adds a child mutably.
     fn add_child_mut(&mut self, node: impl IntoNode) {
         let node = node.into_node();
         match node {
@@ -240,49 +268,50 @@ pub trait Element: Sized {
         }
     }
 
-    /// Adds a child
+    /// Adds a child and returns `self`.
     fn add_child(mut self, node: impl IntoNode) -> Self {
         self.add_child_mut(node);
         self
     }
 
-    /// Alias for `add_child_mut`
+    /// Alias for [`add_child_mut`](Self::add_child_mut).
     #[inline]
     fn add_mut(&mut self, node: impl IntoNode) {
         self.add_child_mut(node)
     }
 
-    /// Alias for `add_child`
+    /// Alias for [`add_child`](Self::add_child).
     #[inline]
     fn add(self, node: impl IntoNode) -> Self {
         self.add_child(node)
     }
 
-    /// Adds child if it contains a value
+    /// Adds a child if `node` is `Some`.
     fn add_opt_child_mut(&mut self, node: Option<impl IntoNode>) {
         if let Some(child) = node {
             self.add_child_mut(child);
         }
     }
 
-    /// Adds child if it contains a value
+    /// Adds a child if `node` is `Some` and returns `self`.
     fn add_opt_child(mut self, node: Option<impl IntoNode>) -> Self {
         self.add_opt_child_mut(node);
         self
     }
 
-    /// Alias for `add_opt_child_mut`
+    /// Alias for [`add_opt_child_mut`](Self::add_opt_child_mut).
     #[inline]
     fn add_opt_mut(&mut self, node: Option<impl IntoNode>) {
         self.add_opt_child_mut(node)
     }
 
-    /// Alias for `add_opt_child`
+    /// Alias for [`add_opt_child`](Self::add_opt_child).
     #[inline]
     fn add_opt(self, node: Option<impl IntoNode>) -> Self {
         self.add_opt_child(node)
     }
 
+    /// Inserts a child at `index` mutably.
     fn insert_child_mut(&mut self, index: usize, node: impl IntoNode) {
         let node = node.into_node();
         match node {
@@ -293,66 +322,71 @@ pub trait Element: Sized {
         }
     }
 
+    /// Inserts a child at `index` and returns `self`.
     fn insert_child(mut self, index: usize, node: impl IntoNode) -> Self {
         self.insert_child_mut(index, node);
         self
     }
 
-    /// Adds child if it contains a value
+    /// Inserts a child at `index` if `node` is `Some`.
     fn insert_opt_child_mut(&mut self, index: usize, node: Option<impl IntoNode>) {
         if let Some(child) = node {
             self.insert_child_mut(index, child);
         }
     }
 
-    /// Adds child if it contains a value
+    /// Inserts a child at `index` if `node` is `Some` and returns `self`.
     fn insert_opt_child(mut self, index: usize, node: Option<impl IntoNode>) -> Self {
         self.insert_opt_child_mut(index, node);
         self
     }
 
+    /// Prepends a child mutably.
     fn prepend_child_mut(&mut self, node: impl IntoNode) {
         self.insert_child_mut(0, node)
     }
 
+    /// Prepends a child and returns `self`.
     fn prepend_child(self, node: impl IntoNode) -> Self {
         self.insert_child(0, node)
     }
 
+    /// Prepends a child if `node` is `Some`.
     fn prepend_opt_child_mut(&mut self, node: Option<impl IntoNode>) {
         self.insert_opt_child_mut(0, node)
     }
 
+    /// Prepends a child if `node` is `Some` and returns `self`.
     fn prepend_opt_child(self, node: Option<impl IntoNode>) -> Self {
         self.insert_opt_child(0, node)
     }
 
-    /// Add children
+    /// Adds multiple children mutably.
     fn add_children_mut(&mut self, nodes: impl IntoIterator<Item = impl IntoNode>) {
         self.children_mut()
             .extend(nodes.into_iter().map(|n| n.into_node()));
     }
 
-    /// Add children
+    /// Adds multiple children and returns `self`.
     fn add_children(mut self, nodes: impl IntoIterator<Item = impl IntoNode>) -> Self {
         self.add_children_mut(nodes);
         self
     }
 
-    /// Adds children if it contains a value
+    /// Adds multiple children if `nodes` is `Some`.
     fn add_opt_children_mut(&mut self, nodes: Option<impl IntoIterator<Item = impl IntoNode>>) {
         if let Some(children) = nodes {
             self.add_children_mut(children);
         }
     }
 
-    /// Adds children if it contains a value
+    /// Adds multiple children if `nodes` is `Some` and returns `self`.
     fn add_opt_children(mut self, nodes: Option<impl IntoIterator<Item = impl IntoNode>>) -> Self {
         self.add_opt_children_mut(nodes);
         self
     }
 
-    /// Add children
+    /// Inserts multiple children at `index` mutably.
     fn insert_children_mut(
         &mut self,
         index: usize,
@@ -362,7 +396,7 @@ pub trait Element: Sized {
             .splice(index..index, nodes.into_iter().map(|o| o.into_node()));
     }
 
-    /// Add children
+    /// Inserts multiple children at `index` and returns `self`.
     fn insert_children(
         mut self,
         index: usize,
@@ -372,7 +406,7 @@ pub trait Element: Sized {
         self
     }
 
-    /// Adds child if it contains a value
+    /// Inserts multiple children at `index` if `nodes` is `Some`.
     fn insert_opt_children_mut(
         &mut self,
         index: usize,
@@ -383,7 +417,7 @@ pub trait Element: Sized {
         }
     }
 
-    /// Adds child if it contains a value
+    /// Inserts multiple children at `index` if `nodes` is `Some` and returns `self`.
     fn insert_opt_children(
         mut self,
         index: usize,
@@ -393,6 +427,7 @@ pub trait Element: Sized {
         self
     }
 
+    /// Replaces the child at `index` with `f(child_element)` if it is an element.
     fn update_html_element_mut<F>(&mut self, index: usize, f: F)
     where
         F: FnOnce(HtmlElement) -> HtmlElement,
@@ -407,6 +442,7 @@ pub trait Element: Sized {
         self.insert_child_mut(index, node);
     }
 
+    /// Replaces the child at `index` with `f(child_element)` if it is an element and returns `self`.
     fn update_html_element<F>(mut self, index: usize, f: F) -> Self
     where
         F: FnOnce(HtmlElement) -> HtmlElement,

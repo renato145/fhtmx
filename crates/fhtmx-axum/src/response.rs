@@ -5,8 +5,9 @@ use axum::{
 use fhtmx::prelude::Render;
 use http::{HeaderName, header, request};
 
+/// Renders fhtmx nodes into an Axum [`Response`].
 pub trait FhtmxAxumResponse {
-    /// Build a Html response
+    /// Builds an HTML response.
     fn render_response(&self) -> Response;
 }
 
@@ -21,6 +22,7 @@ impl<T: Render> FhtmxAxumResponse for T {
     }
 }
 
+/// Extractor that checks if the `hx-request` header is present.
 /// Always “true” on htmx requests.
 #[derive(Debug, Clone, Copy)]
 pub struct HxRequest(pub bool);

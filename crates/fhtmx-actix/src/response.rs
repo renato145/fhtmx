@@ -6,6 +6,7 @@ use actix_web::{
 };
 use fhtmx::prelude::Render;
 
+/// Renders fhtmx nodes into an Actix [`HttpResponse`].
 pub trait FhtmxActixRender {
     /// Renders as a `ContentType::html()`
     fn render_response(&self) -> HttpResponse;
@@ -20,11 +21,11 @@ impl<T: Render> FhtmxActixRender for T {
     }
 }
 
-/// Is the HX-Request header present
+/// Extractor that checks if the `HX-Request` header is present.
 pub struct HXRequest(bool);
 
 impl HXRequest {
-    /// Checks if the HX-Request header is present from htmx
+    /// Whether this request was initiated by htmx.
     pub fn is_htmx(&self) -> bool {
         self.0
     }
