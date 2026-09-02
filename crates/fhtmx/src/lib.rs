@@ -20,6 +20,8 @@
 //! - `actix`: Enables Actix-web response integration.
 //! - `axum`: Enables Axum response integration.
 
+#![warn(missing_docs)]
+
 mod attribute;
 mod components;
 mod element;

@@ -1,3 +1,6 @@
+//! DaisyUI card, dropdown, fab and accordion examples; writes the result to
+//! `examples/daisy_xtra.html`.
+
 use fhtmx::prelude::*;
 use lipsum::lipsum;
 

@@ -1,5 +1,14 @@
 /// Semantic colors used by `DaisyUI` components.
 /// These colors adapt to the current theme automatically.
+///
+/// # Examples
+///
+/// ```
+/// use fhtmx::prelude::*;
+///
+/// let badge = span().class(DaisyColor::Primary.bg_content()).add("New");
+/// assert!(badge.render().contains("bg-primary text-primary-content"));
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum DaisyColor {
     /// Primary brand color

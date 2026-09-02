@@ -2,6 +2,8 @@
 //!
 //! Provides response helpers, SSE utilities, and the `HXRequest` header extractor.
 
+#![warn(missing_docs)]
+
 /// Response helpers for Actix.
 pub mod response;
 /// Server-sent events for Actix.

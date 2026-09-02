@@ -1,3 +1,5 @@
+//! `HtmlView` derive example in `list` mode; writes the result to `examples/html_view.html`.
+
 use fake::{
     Dummy, Fake, Faker,
     faker::{lorem::en::Sentence, name::en::Name},

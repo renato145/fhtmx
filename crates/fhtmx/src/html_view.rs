@@ -16,6 +16,26 @@ where
 }
 
 /// Renders a type as HTML (table, list, or card).
+///
+/// The [`HtmlView`](derive@crate::prelude::HtmlView) derive implements this trait for named structs,
+/// generating a list, table or right-aligned table layout (see the `mode` attribute).
+///
+/// # Examples
+///
+/// ```
+/// use fhtmx::prelude::*;
+///
+/// #[derive(HtmlView)]
+/// #[html_view(title = "User", mode = "table")]
+/// struct User {
+///     name: String,
+///     #[html_view(alias = "Age")]
+///     age: u8,
+/// }
+///
+/// let html = User { name: "Ana".to_string(), age: 30 }.render_view();
+/// assert!(html.contains("<td>Ana</td>"));
+/// ```
 pub trait HtmlView {
     /// Returns the inner content without wrapping.
     fn html_content(&self) -> HtmlNode;

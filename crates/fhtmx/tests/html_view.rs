@@ -1,3 +1,5 @@
+//! Integration tests for the `HtmlView` derive macro.
+
 use fhtmx::prelude::*;
 
 #[test]

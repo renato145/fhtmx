@@ -7,6 +7,18 @@ use actix_web::{
 use fhtmx::prelude::Render;
 
 /// Renders fhtmx nodes into an Actix [`HttpResponse`].
+///
+/// # Examples
+///
+/// ```
+/// use actix_web::HttpResponse;
+/// use fhtmx::prelude::*;
+/// use fhtmx_actix::prelude::FhtmxActixRender;
+///
+/// fn index() -> HttpResponse {
+///     div().add("Hello, htmx!").render_response()
+/// }
+/// ```
 pub trait FhtmxActixRender {
     /// Renders as a `ContentType::html()`
     fn render_response(&self) -> HttpResponse;
@@ -22,6 +34,20 @@ impl<T: Render> FhtmxActixRender for T {
 }
 
 /// Extractor that checks if the `HX-Request` header is present.
+///
+/// Implementing [`Header`](actix_web::http::header::Header) also makes it usable as a request
+/// extractor. Use [`is_htmx`](Self::is_htmx) to branch between full pages and htmx partials.
+///
+/// # Examples
+///
+/// ```
+/// use fhtmx::prelude::*;
+/// use fhtmx_actix::prelude::HXRequest;
+///
+/// fn is_htmx(req: HXRequest) -> bool {
+///     req.is_htmx()
+/// }
+/// ```
 pub struct HXRequest(bool);
 
 impl HXRequest {

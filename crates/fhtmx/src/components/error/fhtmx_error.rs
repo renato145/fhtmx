@@ -9,6 +9,21 @@ use std::fmt::{self, Write};
 pub type FhtmxResult<T> = Result<T, FhtmxError>;
 
 /// An error that can be rendered as HTML using fhtmx components.
+///
+/// By default it renders as a toast and is traced when converted into a response
+/// (see the `actix`/`axum` feature integrations).
+///
+/// # Examples
+///
+/// ```
+/// use fhtmx::prelude::*;
+///
+/// let html = FhtmxError::custom_error("Something went wrong")
+///     .disable_toast()
+///     .into_element()
+///     .render();
+/// assert!(html.contains("Something went wrong"));
+/// ```
 pub struct FhtmxError {
     /// Custom error message.
     pub context: Option<String>,
@@ -342,6 +357,18 @@ impl<T> FhtmxErrorExt for Result<T, FhtmxError> {
 
 /// Extension methods for `Result<T, E>` and `Option<T>` to convert into `FhtmxError`.
 /// Similar to `anyhow::Context`.
+///
+/// # Examples
+///
+/// ```
+/// use fhtmx::prelude::*;
+///
+/// let err = "abc"
+///     .parse::<u8>()
+///     .fhtmx_context("Failed to parse age")
+///     .unwrap_err();
+/// assert_eq!(err.get_main_error(), "Failed to parse age");
+/// ```
 #[allow(clippy::result_large_err)]
 pub trait FhtmxContext<T> {
     /// Wrap the error as a `FhtmxError`.

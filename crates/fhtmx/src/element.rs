@@ -7,6 +7,18 @@ use indexmap::{IndexMap, IndexSet};
 use std::borrow::Cow;
 
 /// Shared behavior for HTML and SVG elements.
+///
+/// Provides the builder methods used to compose attributes, classes and children.
+/// All elements created by the tag functions in the prelude implement this trait.
+///
+/// # Examples
+///
+/// ```
+/// use fhtmx::prelude::*;
+///
+/// let list = ul().add_children(["one", "two"].map(|x| li().add(x)));
+/// assert_eq!(list.render(), "<ul>\n  <li>one</li>\n  <li>two</li>\n</ul>");
+/// ```
 pub trait Element: Sized {
     /// The element tag name, e.g. `"div"`.
     fn tag(&self) -> &'static str;

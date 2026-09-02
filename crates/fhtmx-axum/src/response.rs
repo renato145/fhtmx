@@ -5,7 +5,19 @@ use axum::{
 use fhtmx::prelude::Render;
 use http::{HeaderName, header, request};
 
-/// Renders fhtmx nodes into an Axum [`Response`].
+/// Renders fhtmx nodes into an Axum [`Response`](axum::response::Response).
+///
+/// # Examples
+///
+/// ```
+/// use axum::response::Response;
+/// use fhtmx::prelude::*;
+/// use fhtmx_axum::prelude::FhtmxAxumResponse;
+///
+/// fn index() -> Response {
+///     div().add("Hello, htmx!").render_response()
+/// }
+/// ```
 pub trait FhtmxAxumResponse {
     /// Builds an HTML response.
     fn render_response(&self) -> Response;
@@ -22,8 +34,18 @@ impl<T: Render> FhtmxAxumResponse for T {
     }
 }
 
-/// Extractor that checks if the `hx-request` header is present.
-/// Always “true” on htmx requests.
+/// Extractor that reports whether the request was initiated by htmx
+/// (the `hx-request` header is present).
+///
+/// # Examples
+///
+/// ```
+/// use fhtmx_axum::response::HxRequest;
+///
+/// fn is_htmx(req: HxRequest) -> bool {
+///     req.0
+/// }
+/// ```
 #[derive(Debug, Clone, Copy)]
 pub struct HxRequest(pub bool);
 

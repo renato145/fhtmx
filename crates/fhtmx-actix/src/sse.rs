@@ -162,7 +162,7 @@ pub fn sse_broadcast(senders: Vec<mpsc::Sender<Event>>, data: Data) -> usize {
         .count()
 }
 
-/// Route to handle web sockets
+/// Route to handle server-sent events (SSE) connections.
 #[tracing::instrument(skip_all)]
 pub async fn sse_handler<T: Send + Sync + 'static>(
     state: web::Data<SseState<T>>,

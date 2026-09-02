@@ -2,6 +2,8 @@
 //!
 //! Provides response helpers, SSE utilities, and the `HxRequest` extractor.
 
+#![warn(missing_docs)]
+
 /// Response helpers for Axum.
 pub mod response;
 /// Server-sent events for Axum.

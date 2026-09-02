@@ -3,6 +3,7 @@ use axum_core::response::{IntoResponse, Response};
 use http::{HeaderMap, header};
 
 impl FhtmxError {
+    /// Renders the error as an Axum [`Response`] with htmx `HX-Retarget` and `HX-Reswap` headers.
     pub fn render_axum_response(&self) -> Response {
         let mut headers = HeaderMap::new();
         headers.insert(

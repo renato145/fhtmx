@@ -61,6 +61,23 @@ impl AttributeValue {
 }
 
 /// Types that can be converted into an [`AttributeValue`].
+///
+/// Conversions returning `None` omit the attribute entirely. Notably, `bool`
+/// maps `true` to an empty (boolean) attribute and `false` to `None`, which
+/// makes `set_attr("disabled", enabled)` a concise conditional toggle.
+///
+/// # Examples
+///
+/// ```
+/// use fhtmx::prelude::*;
+///
+/// let el = input()
+///     .typ("text")
+///     .set_attr("value", 42)
+///     .set_attr("disabled", true)
+///     .set_attr("autofocus", false);
+/// assert_eq!(el.render(), r#"<input type="text" value="42" disabled />"#);
+/// ```
 pub trait IntoAttributeValue: Sized {
     /// Converts into an [`AttributeValue`]. Returns `None` to omit the attribute.
     fn into_attr(self) -> Option<AttributeValue>;

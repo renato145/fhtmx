@@ -1,3 +1,5 @@
+//! Markdown rendering example with `mk_markdown`; writes the result to `examples/markdown.html`.
+
 use fhtmx::prelude::*;
 
 static MD: &str = r#"# h1 Heading

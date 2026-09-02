@@ -64,6 +64,9 @@ pub enum HXTarget<'a> {
     Closest(&'a str),
     /// `find <CSS selector>` which will find the first child descendant element that matches the
     /// given CSS selector.
+    ///
+    /// Note that htmx expects the selector along with the keyword; pass `"find .row"` directly to
+    /// `hx_target` for that form, since this variant renders the bare value `find`.
     Find,
     /// `next` which resolves to `element.nextElementSibling`
     Next,
@@ -191,77 +194,58 @@ impl std::fmt::Display for HtmxResponseHeader {
 
 // TODO: simplify
 macro_rules! set_htmx_attr {
-    ($attr:ident = $name:expr; $eg:expr) => {
+    ($attr:ident = $name:expr; $doc:literal) => {
         paste! {
-            #[doc = "Sets the `" $name "` attribute.\nExample: `" $eg "`"]
+            #[doc = "Sets the `" $name "` attribute.\n\n" $doc]
             pub fn $attr(self, value: impl IntoAttributeValue) -> Self {
                 self.set_raw_attr($name, value)
             }
         }
     };
 
-    ($attr:ident = $name:expr) => {
-        paste! {
-            #[doc = "Sets the `" $name "` attribute."]
-            pub fn $attr(self, value: impl IntoAttributeValue) -> Self {
-                self.set_raw_attr($name, value)
-            }
-        }
-    };
-
-    ($attr:ident) => {
-        paste! {
-            #[doc = "Sets the `" $attr "` attribute."]
-            pub fn $attr(self, value: impl IntoAttributeValue) -> Self {
-                self.set_raw_attr(stringify!([< $attr:lower >]), value)
-            }
-        }
-    };
-
-    ($attr:ident$(=$name:expr)?$(;$eg:expr)?, $($rest:ident$(=$name_rest:expr)?$(;$eg_rest:expr)?),+) => {
-        set_htmx_attr!($attr$(=$name)?$(;$eg)?);
-        set_htmx_attr!($($rest$(=$name_rest)?$(;$eg_rest)?),+);
+    ($attr:ident$(=$name:expr)?$(;$doc:literal)?, $($rest:ident$(=$name_rest:expr)?$(;$doc_rest:literal)?),+) => {
+        set_htmx_attr!($attr$(=$name)?$(;$doc)?);
+        set_htmx_attr!($($rest$(=$name_rest)?$(;$doc_rest)?),+);
     };
 }
 
-// TODO: add documentation for each attr
 impl HtmlElement {
     set_htmx_attr!(
-        hx_boost = "hx-boost"; r#"a().hx_boost("true")"#,
-        hx_confirm = "hx-confirm",
-        hx_delete = "hx-delete",
-        hx_disable = "hx-disable",
-        hx_disabled_elt = "hx-disabled-elt",
-        hx_ext = "hx-ext",
-        hx_get = "hx-get",
-        hx_headers = "hx-headers",
-        hx_history = "hx-history",
-        hx_history_elt = "hx-history-elt",
-        hx_include = "hx-include",
-        hx_indicator = "hx-indicator",
-        hx_inherit = "hx-inherit",
-        hx_params = "hx-params",
-        hx_patch = "hx-patch",
-        hx_post = "hx-post",
-        hx_preserve = "hx-preserve",
-        hx_prompt = "hx-prompt",
-        hx_push_url = "hx-push-url",
-        hx_put = "hx-put",
-        hx_replace_url = "hx-replace-url",
-        hx_request = "hx-request",
-        hx_select = "hx-select",
-        hx_select_oob = "hx-select-oob",
-        hx_swap = "hx-swap"; "div().hx_swap(HXSwap::OuterHTML)",
-        hx_swap_oob = "hx-swap-oob",
-        hx_sync = "hx-sync",
-        hx_target = "hx-target"; r#"div().hx_target(HXTarget::Closest("form"))"#,
-        hx_trigger = "hx-trigger",
-        hx_validate = "hx-validate",
-        hx_vals = "hx-vals"; r##"div().hx_vals(format!(r#"{{"key": "{x}"}}"#))"##,
-        sse_connect = "sse-connect",
-        sse_swap = "sse-swap",
-        ws_connect = "ws-connect",
-        ws_send = "ws-send"
+        hx_boost = "hx-boost"; "Progressively enhances anchors and forms to use AJAX requests.\n\nExample: `a().hx_boost(\"true\")`",
+        hx_confirm = "hx-confirm"; "Shows a `confirm()` dialog before issuing a request.",
+        hx_delete = "hx-delete"; "Issues a `DELETE` request to the given URL.",
+        hx_disable = "hx-disable"; "Disables htmx processing for the element and its children.",
+        hx_disabled_elt = "hx-disabled-elt"; "Disables the elements matching the given CSS selector while a request is in flight.",
+        hx_ext = "hx-ext"; "Enables htmx extensions for the element and its children.",
+        hx_get = "hx-get"; "Issues a `GET` request to the given URL.",
+        hx_headers = "hx-headers"; "Adds JSON name/value pairs as request headers.",
+        hx_history = "hx-history"; "Controls whether the element's state is saved in the local history cache.",
+        hx_history_elt = "hx-history-elt"; "Marks the element to snapshot for history restoration.",
+        hx_include = "hx-include"; "Includes the values of the elements matching the given CSS selector in the request.",
+        hx_indicator = "hx-indicator"; "Applies `htmx-request` classes to the elements matching the given CSS selector while a request is in flight.",
+        hx_inherit = "hx-inherit"; "Controls inheritance of htmx attributes from ancestor elements.",
+        hx_params = "hx-params"; "Filters the parameters that are submitted with the request.",
+        hx_patch = "hx-patch"; "Issues a `PATCH` request to the given URL.",
+        hx_post = "hx-post"; "Issues a `POST` request to the given URL.",
+        hx_preserve = "hx-preserve"; "Preserves the element between requests.",
+        hx_prompt = "hx-prompt"; "Shows a `prompt()` dialog before issuing a request; the result is sent as the `HX-Prompt` header.",
+        hx_push_url = "hx-push-url"; "Pushes the given URL into the browser history stack after a request.",
+        hx_put = "hx-put"; "Issues a `PUT` request to the given URL.",
+        hx_replace_url = "hx-replace-url"; "Replaces the current URL in the location bar after a request.",
+        hx_request = "hx-request"; "Configures request aspects via a JSON value: `timeout`, `credentials` and `noHeaders`.",
+        hx_select = "hx-select"; "Selects a subset of the response, matching the given CSS selector, to swap in.",
+        hx_select_oob = "hx-select-oob"; "Selects out-of-band content from the response, matching the given CSS selector, to swap.",
+        hx_swap = "hx-swap"; "Controls how the response content is swapped in relative to the target. See [`HXSwap`].\n\nExample: `div().hx_swap(HXSwap::OuterHTML)`",
+        hx_swap_oob = "hx-swap-oob"; "Marks response content as out of band, swapping it into other parts of the page.",
+        hx_sync = "hx-sync"; "Synchronizes requests between elements (e.g. to abort or replace in-flight requests).",
+        hx_target = "hx-target"; "Overrides the target element of the request. See [`HXTarget`].\n\nExample: `div().hx_target(HXTarget::Closest(\"form\"))`",
+        hx_trigger = "hx-trigger"; "Specifies the event(s) that trigger the request (e.g. `click`, `every 2s`).",
+        hx_validate = "hx-validate"; "Controls whether inputs are validated before a request is submitted.",
+        hx_vals = "hx-vals"; "Adds JSON name/value pairs as request parameters.\n\nExample: `div().hx_vals(r#\"{\"myVal\": \"My Value\"}\"#)`",
+        sse_connect = "sse-connect"; "Connects to a Server-Sent Events source at the given URL.",
+        sse_swap = "sse-swap"; "Swaps in content from the Server-Sent Events event with the given name.",
+        ws_connect = "ws-connect"; "Connects to a WebSocket endpoint at the given URL.",
+        ws_send = "ws-send"; "Sends the element's input values over the WebSocket connection on trigger."
     );
 }
 

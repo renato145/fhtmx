@@ -1,3 +1,5 @@
+//! Showcase of the built-in icons and components; writes the result to `examples/components.html`.
+
 use fhtmx::prelude::*;
 use lipsum::lipsum;
 

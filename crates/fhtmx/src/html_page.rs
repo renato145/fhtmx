@@ -7,6 +7,20 @@ use crate::{
 };
 
 /// A complete HTML page builder (doctype, head, body).
+///
+/// # Examples
+///
+/// ```
+/// use fhtmx::prelude::*;
+///
+/// let page = HtmlPage::new()
+///     .title("My page")
+///     .description("A test page")
+///     .add_body_node(h1().add("Hello"));
+/// let html = page.render();
+/// assert!(html.starts_with("<!DOCTYPE html>"));
+/// assert!(html.contains("<title>My page</title>"));
+/// ```
 #[derive(Clone, Debug)]
 pub struct HtmlPage {
     doctype: bool,

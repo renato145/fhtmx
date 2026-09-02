@@ -6,6 +6,16 @@ use pulldown_cmark::{Options, Parser};
 /// Other options:
 /// - prose-sm, prose-lg, prose-xl, prose-2xl
 /// - prose-slate, prose-zinc, prose-neutral, prose-stone, prose-invert (dark mode)
+///
+/// # Examples
+///
+/// ```
+/// use fhtmx::prelude::*;
+///
+/// let html = mk_markdown("# Title\n\nSome **bold** text.").render();
+/// assert!(html.contains("<h1>Title</h1>"));
+/// assert!(html.contains("<strong>bold</strong>"));
+/// ```
 pub fn mk_markdown(md: impl AsRef<str>) -> HtmlElement {
     let md = md.as_ref().trim();
     let parser = Parser::new_ext(md, Options::all());

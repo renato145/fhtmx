@@ -43,6 +43,17 @@ pub fn raw_node(raw: impl ToString) -> HtmlNode {
 }
 
 /// Creates a [`HtmlNode::Fragment`] from an iterator of nodes.
+///
+/// A fragment renders its children without a wrapper element.
+///
+/// # Examples
+///
+/// ```
+/// use fhtmx::prelude::*;
+///
+/// let nodes = fragment(["a", "b"]);
+/// assert_eq!(nodes.render(), "a\nb");
+/// ```
 #[inline]
 pub fn fragment(nodes: impl IntoIterator<Item = impl IntoNode>) -> HtmlNode {
     HtmlNode::Fragment(nodes.into_iter().map(|n| n.into_node()).collect())

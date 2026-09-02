@@ -1,3 +1,5 @@
+//! Form example using DaisyUI fieldsets and inputs; writes the result to `examples/daisy_form.html`.
+
 use fhtmx::prelude::*;
 
 fn labelled_fieldset(lbl: &str, inputs: &[(&str, &str, &str)]) -> HtmlElement {

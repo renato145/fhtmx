@@ -2,6 +2,8 @@
 //!
 //! Currently provides the [`HtmlView`](crate::derive_html_view) derive macro.
 
+#![warn(missing_docs)]
+
 mod utils;
 
 use crate::utils::{DaisyColorAttr, ExprOrString, Mode, PostProc};

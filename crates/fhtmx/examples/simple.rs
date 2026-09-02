@@ -1,3 +1,5 @@
+//! Minimal `fhtmx` example: renders a small page and writes it to `examples/simple.html`.
+
 use fhtmx::prelude::*;
 
 fn main() {

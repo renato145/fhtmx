@@ -1,6 +1,20 @@
 use url::form_urlencoded;
 
 /// Builds a URL with optional query parameters.
+///
+/// Values are appended with `form_urlencoded`, so names and values are properly escaped.
+///
+/// # Examples
+///
+/// ```
+/// use fhtmx::prelude::UrlBuilder;
+///
+/// let url = UrlBuilder::new("/items")
+///     .push_query("page", "2")
+///     .push_query("q", "rust & htmx")
+///     .finish();
+/// assert_eq!(url, "/items?page=2&q=rust+%26+htmx");
+/// ```
 pub struct UrlBuilder {
     /// The base URL path.
     pub base: String,

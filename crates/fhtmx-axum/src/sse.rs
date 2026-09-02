@@ -22,14 +22,14 @@ use uuid::Uuid;
 /// # Example
 ///
 /// ```rust,ignore
-/// use actix_web::App;
+/// use axum::Router;
 /// use fhtmx_axum::sse::SseSetup;
 ///
 /// let sse_setup = SseSetup::new();
-/// let sse_data = sse_setup.state_data();
-/// App::new()
-///     .configure(|cfg| sse_setup.setup_route("/sse", cfg))
-///     .app_data(sse_data);
+/// let sse_state = sse_setup.state_data();
+/// let app: Router<()> = Router::new()
+///     .merge(sse_setup.sse_route("/sse"))
+///     .with_state(sse_state);
 /// ```
 #[derive(Clone, Copy)]
 pub struct SseSetup<T> {
@@ -174,7 +174,7 @@ pub fn sse_broadcast<D: AsRef<str>>(senders: Vec<mpsc::Sender<Event>>, data: D) 
         .count()
 }
 
-/// Route to handle web sockets
+/// Route to handle server-sent events (SSE) connections.
 #[tracing::instrument(skip_all)]
 pub async fn sse_handler<T: Send + Sync + 'static>(
     State(state): State<SseState<T>>,

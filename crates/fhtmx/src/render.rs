@@ -5,6 +5,18 @@ use crate::{
 };
 
 /// Renders a value to an HTML string.
+///
+/// Implemented for all [`Element`](crate::element::Element) types and [`HtmlNode`]s.
+/// Output is pretty-printed: block-level children are indented, inline content stays on one line.
+///
+/// # Examples
+///
+/// ```
+/// use fhtmx::prelude::*;
+///
+/// let html = div().class("flex").add(p().add("Hi")).render();
+/// assert_eq!(html, "<div class=\"flex\">\n  <p>Hi</p>\n</div>");
+/// ```
 pub trait Render {
     /// Renders the HTML into `buf` with the given indentation level.
     fn render_to(&self, buf: &mut String, indent: usize);
