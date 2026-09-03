@@ -1,18 +1,24 @@
 # fhtmx
 
-Rust HTML builder library with htmx support. Cargo workspace with 4 crates.
+Rust HTML builder library with htmx and DaisyUI support. Cargo workspace with 4 crates.
 
 ## Project
 
 - **Language**: Rust (edition 2024)
-- **Workspace root**: `Cargo.toml` with members `crates/*`
+- **Workspace root**: `Cargo.toml`, members `crates/*`; `actix-example/` and `axum-example/` are
+  separate demo apps excluded from the workspace (own `Cargo.toml`; actix-example has a justfile +
+  browser-sync config for live preview)
 - **Crates**:
-  - `fhtmx` — core HTML/htmx builder, components, `HtmlView` derive macro re-export
-  - `fhtmx-derive` — proc-macro crate (`HtmlView` derive)
-  - `fhtmx-actix` — Actix-web response helpers and SSE utilities
-  - `fhtmx-axum` — Axum response helpers and SSE utilities
-- **Examples**: `crates/fhtmx/examples/`
+  - `fhtmx` — core HTML/SVG/htmx builder, DaisyUI components, `HtmlView` derive re-export
+  - `fhtmx-derive` — proc-macro crate (`HtmlView` derive, `darling`-based)
+  - `fhtmx-actix` — Actix-web response helpers, SSE utilities, `HXRequest` extractor
+  - `fhtmx-axum` — Axum response helpers, SSE utilities, `HxRequest` extractor
 - **Features on `fhtmx`**: `anyhow` (default), `chrono_0_4`, `jiff_0_2`, `actix`, `axum`
+  (actix/axum add `FhtmxError` → response conversions)
+- All crates use `#![warn(missing_docs)]`: public items need doc comments; non-trivial public APIs
+  carry runnable `# Examples` doctests
+- `TODO.md` tracks a prioritized backlog of known issues (items 1–32); consult it before
+  "fixing" documented behavior
 
 ## Commands
 
@@ -21,55 +27,87 @@ Rust HTML builder library with htmx support. Cargo workspace with 4 crates.
 | Check all targets | `cargo check --all-targets` |
 | Clippy | `cargo clippy --all-targets` |
 | Format check | `cargo fmt --all -- --check` |
-| Test all | `cargo test` |
-| Test single | `cargo test <test_name>` or `cargo test <module::test_name>` |
+| Test all (incl. doctests) | `cargo test` |
+| Test single | `cargo test <name>` (test name or `module::test_name`) |
 | Test one crate | `cargo test -p fhtmx` |
-| Run example | `cargo run --example <name>` (from `crates/fhtmx/`) |
+| Doctests only | `cargo test --doc` |
+| Run example | `cargo run --example <name>` from `crates/fhtmx/` (writes `examples/<name>.html`) |
+| Run all examples | `just run-examples` (from `crates/fhtmx/`) |
+| Clippy + fmt | `just checks` (from `crates/fhtmx/`) |
 | Watch/loop | `bacon` (configs in root and `crates/fhtmx/`) |
 
-- Tests use snapshot assertions via `insta` (inline snapshots).
-- Husky + commitlint enforce conventional commits (`npm install` / `pnpm install` for Node dev deps).
+- Tests use `insta` inline snapshots (`assert_snapshot!(x, @r#"..."#)`) and `googletest` matchers
+  (`#[gtest]`); unit tests live inline in `#[cfg(test)]` modules, integration tests in
+  `crates/fhtmx/tests/`. Intentional render changes require updating the inline snapshots.
+- Husky + commitlint enforce conventional commits (`npm install` / `pnpm install` for the
+  `commit-msg` hook). Releases go through release-please.
 
 ## Code Style
 
-- Standard `cargo fmt`; no custom `rustfmt.toml`.
-- No custom `clippy.toml`; standard `cargo clippy --all-targets`.
-- Prefer builder-pattern methods with owned `self` and `_mut` variants (e.g., `add()` / `add_mut()`).
-- Use `Cow<'static, str>` for strings stored in elements.
-- Use `IndexMap`/`IndexSet` to preserve insertion order of attrs/classes.
-- Implement `IntoNode` and `IntoAttributeValue` for custom types to integrate with the builder.
-- Macros are central: `children!`, `set_attr!`, `create_tag_fn!`, `set_htmx_attr!`, `set_empty_attr!`.
-- Errors in proc macros use `darling` for derive parsing and return `TokenStream` errors via `e.write_errors().into()`.
-- Feature-gate optional dependencies cleanly (e.g., `#[cfg(feature = "chrono_0_4")]`).
+- Standard `cargo fmt`; no custom `rustfmt.toml` / `clippy.toml`.
+- Builder pattern: consuming methods return `Self` (e.g. `add()`, `set_attr()`), paired `_mut`
+  variants (e.g. `add_mut()`) for in-place building.
+- Strings stored in elements use `Cow<'static, str>`; attrs/classes use `IndexMap`/`IndexSet` to
+  preserve insertion order.
+- Integrate custom types by implementing `IntoNode` (children) and `IntoAttributeValue` (attrs).
+- Keyword-aliased names: `typ()` = `type`, `for_()` = `for`, `r#async`, `main_tag()` = `<main>`;
+  SVG constructors are `svg_*` and camelCase attrs use explicit names (e.g. `view_box = "viewBox"`).
+- Component naming: `dc_*` wraps a single DaisyUI class; `mk_*` composes a component;
+  `source_*` / `script_setup_*` build `<head>` tags.
+- Macros are central: `children!`, `set_attr!`, `set_empty_attr!`, `create_tag_fn!` (HTML tags),
+  `create_svg_fn!` (SVG tags), `set_htmx_attr!` (htmx attrs, with per-attribute docs).
+- Errors in proc macros: parse with `darling`, return `TokenStream` errors via
+  `e.write_errors().into()`; never `unwrap()` user input.
+- Feature-gate optional dependencies cleanly (`#[cfg(feature = "chrono_0_4")]`).
 
 ## Architecture
 
-Core types and flow:
+Core flow:
 
 1. `HtmlNode` (enum) — Doctype, Raw, Text, Element, SvgElement, Fragment
-2. `Element` (trait) — shared behavior for HTML/SVG: tag, attrs, classes, children, void/inline checks
-3. `HtmlElement` (struct) — concrete element implementing `Element`
-4. `Render` (trait) — `render()` → `String`, `render_to(buf, indent)`
-5. `IntoNode` / `AsNode` — convert values into `HtmlNode`
-6. `IntoAttributeValue` — convert values into `AttributeValue` (Empty, Raw, Value)
+2. `Element` (trait) — shared behavior for HTML/SVG: tag, attrs, classes, children, void/inline
+   checks; all builder methods (`class`, `set_attr`, `add`, `add_raw`, `add_opt`, …) live here
+3. `HtmlElement` / `SvgElement` — concrete elements; tag constructors generated by macros
+   (`div()`, `p()`, `svg_circle()`, …)
+4. `Render` (trait) — `render()` → `String`; 2-space indentation, block vs inline layout, void
+   tags render `<br />`
+5. `IntoNode` / `AsNode` — convert values into `HtmlNode`; `IntoAttributeValue` → `AttributeValue`
+   (Empty, Raw, Value; `bool`: `true` = empty attr, `false` = omit)
+6. `Raw` values are inserted unescaped (used for JSON in `hx-vals` / `hx-headers`)
 
-Key modules in `fhtmx`:
-- `html_element.rs` — all HTML tag constructors (`div()`, `p()`, etc.) and `HtmlElement`
-- `element.rs` — `Element` trait, builder methods (`class`, `set_attr`, `add`, `add_raw`, etc.)
-- `render.rs` — `Render` impl; indentation logic for block vs inline content
-- `node.rs` — `HtmlNode`, `IntoNode`, `AsNode`, `children!` macro
-- `attribute.rs` — `AttributeValue`, `IntoAttributeValue`
-- `htmx.rs` — htmx attribute setters and enums (`HXSwap`, `HXTarget`, request/response headers)
-- `html_page.rs` — `HtmlPage` builder (doctype, head, body)
-- `html_view.rs` — `HtmlView` trait and `html_list_row`; derive macro generates card/table/list views
-- `components/` — DaisyUI wrappers, forms, markdown, alerts, toast, theme, lazy load, error components
-- `svg.rs` — SVG element builder
-- `js.rs` — JS snippet helpers
+Key modules in `crates/fhtmx/src`:
+- `html_element.rs` — `HtmlElement`, HTML tag constructors, shared attr/empty-attr setters
+- `element.rs` — `Element` trait + builder methods; `set_attr!` / `set_empty_attr!` macros
+- `render.rs` — `Render` impl; indentation logic
+- `node.rs` — `HtmlNode`, `IntoNode` / `AsNode`, `children!`, `fragment()`
+- `attribute.rs` — `AttributeValue`, `IntoAttributeValue`, escaping on render
+- `htmx.rs` — htmx attr setters + `HXSwap`, `HXTarget`, request/response header enums
+- `html_page.rs` — `HtmlPage` builder (doctype, head meta, body)
+- `html_view.rs` — `HtmlView` trait and `html_list_row`
+- `sources.rs` — CDN `<script>`/`<link>` tags (htmx pinned with SRI hash, SSE/WS extensions,
+  alpinejs, tailwind, daisyui) and bundled assets `setup_toast.js`, `setup_sse.js`, `typrose.css`
+- `url_query.rs` — `UrlBuilder` for encoded query strings
+- `utils.rs` — `escape_html*`, `random_id` (uuid-based)
+- `svg.rs` — `SvgElement` builder
+- `js.rs` — `iife()` script helper
+- `components/` — DaisyUI wrappers (`daisy.rs`), composites (`daisy_xtra.rs`), forms, alerts,
+  callouts, markdown, toast (alpine), theme, lazy load, icons, `DaisyColor`, and `error/`:
+  - `FhtmxError` — renderable error (toast or alert/callout); `FhtmxContext` / `FhtmxErrorExt`
+    builder traits; with `actix`/`axum` features it converts to an HTTP 200 response with
+    `HX-Retarget`/`HX-Reswap` headers (200 so htmx swaps the error into the page)
 
-Integrations:
-- `fhtmx-actix`: `response.rs` (Actix `Responder`), `sse.rs` (SSE streams), `utils.rs`
-- `fhtmx-axum`: `response.rs` (Axum `IntoResponse`), `sse.rs` (SSE streams), `utils.rs`
+Integrations (`fhtmx-actix`, `fhtmx-axum` mirror each other):
+- `response.rs` — `render_response()` (HTML `Responder` / `IntoResponse` for any `Render`),
+  `HXRequest` / `HxRequest` extractor, `FhtmxActixResult` / `FhtmxAxumResult` aliases
+- `sse.rs` — `SseSetup` / `SseState` (dashmap of `SseSession`s, keyed by uuid), `send_message`,
+  `broadcast`, `broadcast_all_but`; clients pass their session id as the `sse_id` query param
+  (see `setup_sse.js`); actix uses `actix-web-lab` for SSE
 
 `fhtmx-derive`:
 - `HtmlView` derive reads `#[html_view(...)]` attributes on structs and fields using `darling`
-- Supports modes: `List`, `Table`, `TableRight`
+- Struct attrs: `title`, `mode` (`list` | `table` | `table_right`), `color`, `class`, `postproc`
+- Field attrs: `skip`, `alias`, `value`, `value_display`, `value_debug`, `value_debug_pretty`,
+  `row_class`, `value_class`
+
+Examples (`crates/fhtmx/examples/`): standalone binaries that render a full page and write it to
+`examples/<name>.html` for browser preview.
