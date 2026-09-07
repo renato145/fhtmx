@@ -17,4 +17,4 @@ tracing = { workspace = true }
 tokio = { workspace = true }
 dashmap = { workspace = true }
 serde = { workspace = true }
-actix-web-lab = "0.26"
+actix-web-lab = "0.27"

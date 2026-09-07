@@ -200,6 +200,7 @@ pub async fn sse_handler<T: Send + Sync + 'static>(
 /// Query parameter for identifying an SSE session.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SseHandlerQuery {
-    /// The SSE session id.
-    pub id: Uuid,
+    /// The SSE session id, sent by [`setup_sse.js`](https://docs.rs/fhtmx/latest/fhtmx/index.html)
+    /// as the `sse_id` query parameter.
+    pub sse_id: Uuid,
 }

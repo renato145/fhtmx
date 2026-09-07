@@ -199,6 +199,7 @@ fn sort_list_btn(n: usize) -> HtmlElement {
                     .add_class("self-start btn-error btn-sm")
                     .hx_post("/todo/clear")
                     .hx_target("#todo-list")
+                    .hx_swap("innerHTML swapEmpty:true")
                     .hx_confirm("Are you sure?")
                     .add("Clear todo"),
             )
@@ -235,9 +236,8 @@ async fn index(state: web::Data<State>) -> HttpResponse {
                     .name("msg")
                     .hx_post("/broadcast")
                     .hx_trigger("keyup[key=='Enter']")
-                    // .hx_target(HXTarget::This)
                     .hx_swap(HXSwap::None)
-                    .set_attr("hx-on::after-request", "this.value = ''")
+                    .set_attr("hx-on::after:request", "this.value = ''")
                     .placeholder("Write a message to broadcast"),
             ),
             mk_card(
@@ -249,14 +249,12 @@ async fn index(state: web::Data<State>) -> HttpResponse {
             )
             .add_class("card-sm")
             .hx_get("/start_stream")
-            .hx_trigger("sse:sse_id once")
+            .hx_trigger("sse_id once from:body")
             .hx_swap(HXSwap::None),
         ]),
     )
     .add_class("bg-base-300")
-    .hx_ext("sse")
-    .sse_connect("/sse")
-    .sse_swap("message,sse_id")
+    .hx_sse_connect("/sse")
     .hx_swap(HXSwap::AfterBegin)
     .hx_target("#logs");
     let page = div()
@@ -267,7 +265,7 @@ async fn index(state: web::Data<State>) -> HttpResponse {
                 .hx_post("/todo")
                 .hx_target("#todo-list")
                 .hx_swap(HXSwap::BeforeEnd)
-                .set_attr("hx-on::after-request", "this.reset()")
+                .set_attr("hx-on::after:request", "this.reset()")
                 .add(
                     label()
                         .class("flex items-center")

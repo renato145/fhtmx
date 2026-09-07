@@ -3,34 +3,24 @@ use crate::{element::Element, html_element::*};
 /// Script tag with source for htmx
 pub fn source_htmx() -> HtmlElement {
     script()
-        .src("https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js")
+        .src("https://cdn.jsdelivr.net/npm/htmx.org@4.0.0")
         .set_attr(
             "integrity",
-            "sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz",
+            "sha384-BvJpBiO8Kh31EqtJe5DRIeWrHWnCGkwytKs9NKFi86Hhw96dEqdEMzZDeK9iEGTc",
         )
         .set_attr("crossorigin", "anonymous")
 }
 
-/// Script tag with source for the sse htmx extension
+/// Script tag with source for the htmx `hx-sse` extension. Enables `hx-sse:connect` and
+/// `hx-sse:close` (see [`hx-sse`](https://four.htmx.org/extensions/hx-sse/)); no `hx-ext` needed.
 pub fn source_htmx_sse() -> HtmlElement {
-    script()
-        .src("https://cdn.jsdelivr.net/npm/htmx-ext-sse@2.2.4")
-        .set_attr(
-            "integrity",
-            "sha384-A986SAtodyH8eg8x8irJnYUk7i9inVQqYigD6qZ9evobksGNIXfeFvDwLSHcp31N",
-        )
-        .set_attr("crossorigin", "anonymous")
+    script().src("https://cdn.jsdelivr.net/npm/htmx.org@4.0.0/dist/ext/hx-sse.min.js")
 }
 
-/// Script tag with source for the ws htmx extension
+/// Script tag with source for the htmx `hx-ws` extension. Enables `hx-ws:connect` and `hx-ws:send`
+/// (see [`hx-ws`](https://four.htmx.org/extensions/hx-ws/)); no `hx-ext` needed.
 pub fn source_htmx_ws() -> HtmlElement {
-    script()
-        .src("https://cdn.jsdelivr.net/npm/htmx-ext-ws@2.0.4")
-        .set_attr(
-            "integrity",
-            "sha384-1RwI/nvUSrMRuNj7hX1+27J8XDdCoSLf0EjEyF69nacuWyiJYoQ/j39RT1mSnd2G",
-        )
-        .set_attr("crossorigin", "anonymous")
+    script().src("https://cdn.jsdelivr.net/npm/htmx.org@4.0.0/dist/ext/hx-ws.min.js")
 }
 
 /// Script tag with source for alpinejs

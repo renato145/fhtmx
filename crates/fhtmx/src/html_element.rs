@@ -256,6 +256,17 @@ pub fn main_tag() -> HtmlElement {
     HtmlElement::new("main")
 }
 
+/// Creates an `hx-partial` html element.
+///
+/// Updates multiple elements from a single response, with explicit control over targeting and
+/// swap strategy: the content is swapped into the element matched by `hx-target` (or the
+/// shorthand `id`) using `hx-swap` (defaults to `innerHTML`). Either `hx-target` or `id` is
+/// required; if both are present, `hx-target` takes precedence. A response containing only
+/// `hx-partial` tags leaves the main target untouched
+pub fn hx_partial() -> HtmlElement {
+    HtmlElement::new("hx-partial")
+}
+
 impl HtmlElement {
     set_attr!(
         accesskey,
