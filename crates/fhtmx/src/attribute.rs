@@ -3,14 +3,15 @@ use crate::utils::escape_html_to;
 /// Represents the value of an HTML attribute.
 ///
 /// - [`Empty`](Self::Empty): boolean attribute with no value (`hidden`, `disabled`, etc.)
-/// - [`Raw`](Self::Raw): inserted as-is (useful for JSON or unescaped values)
+/// - [`Raw`](Self::Raw): inserted as-is; explicit escape hatch — JSON/HCON values do not need it,
+///   since the browser decodes character references in attribute values before scripts read them
 /// - [`Value`](Self::Value): HTML-escaped on render
 // TODO: use Cow here when rust gets the specialization feature
 #[derive(Clone, Debug)]
 pub enum AttributeValue {
     /// Boolean attribute with no value.
     Empty,
-    /// Raw string inserted without HTML escaping.
+    /// Raw string inserted without HTML escaping; explicit escape hatch, see the type docs.
     Raw(String),
     /// Escaped string value.
     Value(String),

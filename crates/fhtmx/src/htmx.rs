@@ -10,6 +10,12 @@
 //! let html = div().set_attr("hx-target:inherited", "#output").render();
 //! assert!(html.contains(r##"hx-target:inherited="#output""##));
 //! ```
+//!
+//! Setter values are rendered HTML-escaped. That is transparent to `htmx`: the browser decodes
+//! character references in attribute values before scripts read them, so JSON/HCON values
+//! round-trip exactly and user data cannot terminate the attribute or inject new ones. Use
+//! [`Element::set_raw_attr`](crate::element::Element::set_raw_attr) for the rare deliberate
+//! unescaped case.
 
 use crate::{
     attribute::{AttributeValue, IntoAttributeValue},
@@ -211,7 +217,7 @@ macro_rules! set_htmx_attr {
         paste! {
             #[doc = "Sets the `" $name "` attribute.\n\n" $doc]
             pub fn $attr(self, value: impl IntoAttributeValue) -> Self {
-                self.set_raw_attr($name, value)
+                self.set_attr($name, value)
             }
         }
     };
@@ -277,7 +283,7 @@ impl HtmlElement {
     /// assert!(html.contains(r#"hx-status:422="target:#errors""#));
     /// ```
     pub fn hx_status(self, code: impl std::fmt::Display, value: impl IntoAttributeValue) -> Self {
-        self.set_raw_attr(format!("hx-status:{code}"), value)
+        self.set_attr(format!("hx-status:{code}"), value)
     }
 }
 
@@ -294,12 +300,44 @@ mod test {
             .hx_swap(HXSwap::OuterHTML)
             .hx_headers(format!(r#"{{"Authorization": "Bearer {}"}}"#, token))
             .render();
-        insta::assert_snapshot!(res, @r#"<p hx-get="/some_route" hx-swap="outerHTML" hx-headers='{"Authorization": "Bearer asdoiu12309usad"}'></p>"#);
+        insta::assert_snapshot!(res, @r#"<p hx-get="/some_route" hx-swap="outerHTML" hx-headers="{&quot;Authorization&quot;: &quot;Bearer asdoiu12309usad&quot;}"></p>"#);
     }
 
     #[test]
     fn hx_vals_works() {
         let res = div().hx_vals(r#"{"myVal": "My Value"}"#).render();
-        insta::assert_snapshot!(res, @r#"<div hx-vals='{"myVal": "My Value"}'></div>"#);
+        insta::assert_snapshot!(res, @r#"<div hx-vals="{&quot;myVal&quot;: &quot;My Value&quot;}"></div>"#);
+    }
+
+    // Item 21 (REPORT.md F07): htmx attribute setters must render HTML-escaped values. The HTML
+    // parser decodes character references in attribute values before htmx reads them, so escaping
+    // round-trips user data (including JSON) and makes attribute injection impossible.
+
+    #[test]
+    fn hx_vals_escapes_mixed_quotes() {
+        let res = div().hx_vals(r#"{"name": "O'Reilly"}"#).render();
+        insta::assert_snapshot!(res, @r#"<div hx-vals="{&quot;name&quot;: &quot;O&#x27;Reilly&quot;}"></div>"#);
+    }
+
+    #[test]
+    fn hx_confirm_cannot_inject_attributes() {
+        let res = div().hx_confirm("\"' data-audit='injected").render();
+        insta::assert_snapshot!(res, @r#"<div hx-confirm="&quot;&#x27; data-audit=&#x27;injected"></div>"#);
+        // A raw apostrophe would close the attribute early and leak the rest as new attributes.
+        assert!(!res.contains('\''));
+    }
+
+    #[test]
+    fn hx_vals_preserves_entity_references() {
+        let res = div()
+            .hx_vals(r#"{"text": "AT&T &quot;quoted&quot;"}"#)
+            .render();
+        insta::assert_snapshot!(res, @r#"<div hx-vals="{&quot;text&quot;: &quot;AT&amp;T &amp;quot;quoted&amp;quot;&quot;}"></div>"#);
+    }
+
+    #[test]
+    fn hx_attrs_without_special_chars_are_unchanged() {
+        let res = button().hx_get("/items").hx_target("#list").render();
+        insta::assert_snapshot!(res, @r##"<button hx-get="/items" hx-target="#list"></button>"##);
     }
 }
