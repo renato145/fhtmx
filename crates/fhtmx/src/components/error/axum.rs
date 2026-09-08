@@ -1,4 +1,4 @@
-use crate::{components::FhtmxError, htmx::HXSwap, render::Render};
+use crate::{components::FhtmxError, html_element::IntoHtmlElement, htmx::HXSwap, render::Render};
 use axum_core::response::{IntoResponse, Response};
 use http::{HeaderMap, header};
 
@@ -28,7 +28,7 @@ impl FhtmxError {
             }
             _ => {}
         }
-        let html_body = self.as_element().render();
+        let html_body = self.into_element().render();
         (headers, html_body).into_response()
     }
 }

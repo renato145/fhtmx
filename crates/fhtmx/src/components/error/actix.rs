@@ -1,4 +1,5 @@
 use crate::components::FhtmxError;
+use crate::html_element::IntoHtmlElement;
 use crate::htmx::HXSwap;
 use crate::render::Render;
 use actix_web::http::header::ContentType;
@@ -7,7 +8,7 @@ use actix_web::{HttpResponse, ResponseError};
 impl FhtmxError {
     /// Renders the error as an Actix [`HttpResponse`] with htmx headers.
     pub fn render_actix_response(&self) -> HttpResponse {
-        let html_body = self.as_element().render();
+        let html_body = self.into_element().render();
         let mut builder = HttpResponse::Ok();
         builder.content_type(ContentType::html());
         match (self.as_toast, &self.hx_retarget) {

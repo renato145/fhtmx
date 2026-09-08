@@ -161,29 +161,6 @@ impl FhtmxError {
         self.hide_source = true;
         self
     }
-
-    /// Renders the error as an [`HtmlElement`].
-    pub fn as_element(&self) -> HtmlElement {
-        let main_error = self.get_main_error();
-        let mut error_html = match (self.hide_source, self.get_source_error()) {
-            (true, _) | (false, None) => {
-                mk_alert_error(main_error).set_opt_attr("id", self.id.as_ref())
-            }
-            (false, Some(s)) => mk_callout_error(
-                Some(&main_error),
-                pre().class("text-wrap text-sm").add(s),
-                true,
-            ),
-        };
-        if let Some(xtra_classes) = &self.xtra_classes {
-            error_html = error_html.add_class(xtra_classes.clone());
-        }
-        if self.as_toast {
-            error_html.setup_toast(false)
-        } else {
-            error_html
-        }
-    }
 }
 
 impl fmt::Display for FhtmxError {
@@ -212,25 +189,34 @@ impl std::error::Error for FhtmxError {
     }
 }
 
-impl IntoHtmlElement for FhtmxError {
+impl IntoHtmlElement for &FhtmxError {
     fn into_element(self) -> HtmlElement {
         let main_error = self.get_main_error();
         let mut error_html = match (self.hide_source, self.get_source_error()) {
-            (true, _) | (false, None) => mk_alert_error(main_error).set_opt_attr("id", self.id),
+            (true, _) | (false, None) => {
+                mk_alert_error(main_error).set_opt_attr("id", self.id.as_ref())
+            }
             (false, Some(s)) => mk_callout_error(
                 Some(&main_error),
                 pre().class("text-wrap text-sm").add(s),
                 true,
-            ),
+            )
+            .set_opt_attr("id", self.id.as_ref()),
         };
-        if let Some(xtra_classes) = self.xtra_classes {
-            error_html = error_html.add_class(xtra_classes);
+        if let Some(xtra_classes) = &self.xtra_classes {
+            error_html = error_html.add_class(xtra_classes.clone());
         }
         if self.as_toast {
             error_html.setup_toast(false)
         } else {
             error_html
         }
+    }
+}
+
+impl IntoHtmlElement for FhtmxError {
+    fn into_element(self) -> HtmlElement {
+        (&self).into_element()
     }
 }
 
@@ -538,6 +524,21 @@ mod tests {
             .into_element()
             .render();
         expect_that!(s, not(contains_substring(r#"x-data="toast""#)));
+    }
+
+    #[gtest]
+    fn render_id_works_in_both_branches() {
+        let mk = || {
+            FhtmxError::from_error("not-a-number".parse::<i32>().unwrap_err())
+                .set_context("Some context")
+                .set_id("err-1")
+        };
+
+        let s = mk().into_element().render();
+        expect_that!(s, contains_substring(r#"id="err-1""#));
+
+        let s = mk().hide_source().into_element().render();
+        expect_that!(s, contains_substring(r#"id="err-1""#));
     }
 
     #[cfg(feature = "anyhow")]
