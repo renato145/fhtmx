@@ -271,6 +271,7 @@ impl HtmlElement {
     set_attr!(
         accesskey,
         alt,
+        aria_label = "aria-label",
         contenteditable,
         decoding,
         data_tip = "data-tip",

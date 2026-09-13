@@ -167,7 +167,7 @@ fn main() {
             h1().add("Components using DaisyUI")
                 .class("text-2xl font-bold text-center"),
         )
-        .add(wrapper("Theme change", theme_toogle_with_size(10)))
+        .add(wrapper("Theme change", theme_toggle_with_size(10)))
         .add(wrapper("Icons", icons))
         .add(wrapper("Alerts", alerts))
         .add(wrapper("Callout blocks", callout_blocks))
