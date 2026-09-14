@@ -6,48 +6,100 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script>document.addEventListener("alpine:init", () => {
-  Alpine.data("toast", (millis = 3000, afterPointerMillis = 1000) => ({
-    show: true,
-    fadeTimeout: null,
-    timeout: null,
+    <script>(() => {
+  const FADE_MS = 1000;
+  const FADE_IN_MS = 50;
+  const DEFAULT_MILLIS = 3000;
+  const DEFAULT_HOVER_MILLIS = 1000;
+  const HIDE_CLASS = "fhtmx-toast-hide";
+  const STYLE_ID = "fhtmx-toast-style";
+  const css = [
+    "[data-toast]{",
+    "opacity:1;",
+    `transition:opacity ${FADE_IN_MS}ms ease-out;`,
+    `animation:fhtmx-toast-enter ${FADE_IN_MS}ms ease-out;`,
+    "}",
+    `[data-toast].${HIDE_CLASS}{opacity:0;transition:opacity ${FADE_MS}ms ease-in}`,
+    "@keyframes fhtmx-toast-enter{from{opacity:0}}",
+  ].join("");
+  const initialized = new WeakSet();
 
-    init() {
-      this.fadeTimeout = setTimeout(() => {
-        this.show = false;
-      }, millis);
-      this.timeout = setTimeout(() => {
-        this.$el.remove();
-      }, millis + 1000);
-      this.$el.addEventListener("pointerenter", () => {
-        clearTimeout(this.fadeTimeout);
-        clearTimeout(this.timeout);
-        this.fadeTimeout = null;
-        this.timeout = null;
-        this.show = true;
-      });
-      this.$el.addEventListener("pointerleave", () => {
-        if (this.fadeTimeout === null) {
-          this.fadeTimeout = setTimeout(() => {
-            this.show = false;
-          }, afterPointerMillis);
-        }
-        if (this.timeout === null) {
-          this.timeout = setTimeout(() => {
-            this.$el.remove();
-          }, afterPointerMillis + 1000);
-        }
-      });
-    },
+  const injectStyle = () => {
+    if (document.getElementById(STYLE_ID) !== null) return;
+    const style = document.createElement("style");
+    style.id = STYLE_ID;
+    style.textContent = css;
+    document.head.appendChild(style);
+  };
 
-    destroy() {
-      clearTimeout(this.fadeTimeout);
-      clearTimeout(this.timeout);
-    },
-  }));
-});
+  const setupToast = (el) => {
+    if (initialized.has(el)) return;
+    initialized.add(el);
+    const readMillis = (attr, fallback) => {
+      const value = Number.parseInt(el.dataset[attr], 10);
+      return Number.isNaN(value) ? fallback : value;
+    };
+    const millis = readMillis("toastMillis", DEFAULT_MILLIS);
+    const hoverMillis = readMillis("toastHoverMillis", DEFAULT_HOVER_MILLIS);
+    let fadeTimeout = null;
+    let removeTimeout = null;
+
+    const startTimers = (delay) => {
+      fadeTimeout = setTimeout(() => {
+        el.classList.add(HIDE_CLASS);
+      }, delay);
+      removeTimeout = setTimeout(() => {
+        el.remove();
+      }, delay + FADE_MS);
+    };
+    const cancelTimers = () => {
+      clearTimeout(fadeTimeout);
+      clearTimeout(removeTimeout);
+      fadeTimeout = null;
+      removeTimeout = null;
+    };
+
+    const pause = () => {
+      cancelTimers();
+      el.classList.remove(HIDE_CLASS);
+    };
+    const resume = () => {
+      if (fadeTimeout === null) startTimers(hoverMillis);
+    };
+
+    startTimers(millis);
+    el.addEventListener("pointerenter", pause);
+    el.addEventListener("focusin", pause);
+    el.addEventListener("pointerleave", resume);
+    el.addEventListener("focusout", (e) => {
+      if (el.contains(e.relatedTarget)) return;
+      resume();
+    });
+  };
+
+  const scanNode = (node) => {
+    if (node.matches?.("[data-toast]")) setupToast(node);
+    for (const el of node.querySelectorAll?.("[data-toast]") ?? []) setupToast(el);
+  };
+
+  const start = () => {
+    injectStyle();
+    scanNode(document);
+    new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+          if (node instanceof Element) scanNode(node);
+        }
+      }
+    }).observe(document.documentElement, { childList: true, subtree: true });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start, { once: true });
+  } else {
+    start();
+  }
+})();
 </script>
     <script data-light-theme="light" data-dark-theme="dark">(() => {
   const lightTheme = document.currentScript?.dataset.lightTheme || "light";
@@ -440,18 +492,17 @@
       </div>
       <div class="container flex flex-col mx-auto mt-4 p-4 rounded-box items-start bg-base-300 text-base-content">
         <h2 class="text-2xl font-semibold mb-4">Toasts</h2>
-        <div class="w-full" x-data="{ items: [], i: 0 }">
-          <button class="btn btn-primary" @click="items.push(i++)">Spawn toast</button>
-          <div class="toast">
-            <template x-for="item in items">
-              <div class="alert alert-success" role="alert" x-data="toast" x-show="show" x-transition:enter="transition ease-out duration-50" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-1000" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <span class="whitespace-pre-wrap">Some success message :)</span>
-              </div>
-            </template>
-          </div>
+        <div class="w-full">
+          <button class="btn btn-primary" onclick="document.getElementById(&#x27;toast-demo-container&#x27;).appendChild(document.getElementById(&#x27;toast-demo-template&#x27;).content.cloneNode(true))">Spawn toast</button>
+          <template id="toast-demo-template">
+            <div class="alert alert-success" role="alert" data-toast>
+              <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span class="whitespace-pre-wrap">Some success message :)</span>
+            </div>
+          </template>
+          <div class="toast" id="toast-demo-container"></div>
         </div>
       </div>
       <div class="container flex flex-col mx-auto mt-4 p-4 rounded-box items-start bg-base-300 text-base-content">

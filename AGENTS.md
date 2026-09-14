@@ -91,7 +91,7 @@ Key modules in `crates/fhtmx/src`:
 - `svg.rs` — `SvgElement` builder
 - `js.rs` — `iife()` script helper
 - `components/` — DaisyUI wrappers (`daisy.rs`), composites (`daisy_xtra.rs`), forms, alerts,
-  callouts, markdown, toast (alpine), theme, lazy load, icons, `DaisyColor`, and `error/`:
+  callouts, markdown, toast, theme, lazy load, icons, `DaisyColor`, and `error/`:
   - `FhtmxError` — renderable error (toast or alert/callout); `FhtmxContext` / `FhtmxErrorExt`
     builder traits; with `actix`/`axum` features it converts to an HTTP 200 response with
     `HX-Retarget`/`HX-Reswap` headers (200 so htmx swaps the error into the page)

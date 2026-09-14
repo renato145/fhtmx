@@ -518,12 +518,12 @@ mod tests {
         let s = FhtmxError::custom_error("Some error")
             .into_element()
             .render();
-        expect_that!(s, contains_substring(r#"x-data="toast""#));
+        expect_that!(s, contains_substring("data-toast"));
         let s = FhtmxError::custom_error("Some error")
             .disable_toast()
             .into_element()
             .render();
-        expect_that!(s, not(contains_substring(r#"x-data="toast""#)));
+        expect_that!(s, not(contains_substring("data-toast")));
     }
 
     #[gtest]

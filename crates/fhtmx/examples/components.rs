@@ -128,20 +128,22 @@ fn main() {
 
     let toasts = div()
         .class("w-full")
-        .set_attr("x-data", "{ items: [], i: 0 }")
         .add(
             dc_btn()
                 .add_class("btn-primary")
-                .set_attr("@click", "items.push(i++)")
+                .set_attr(
+                    "onclick",
+                    "document.getElementById('toast-demo-container').appendChild(\
+                     document.getElementById('toast-demo-template').content.cloneNode(true))",
+                )
                 .add("Spawn toast"),
         )
         .add(
-            div().class("toast").add(
-                template()
-                    .set_attr("x-for", "item in items")
-                    .add(mk_alert_success("Some success message :)").setup_toast(false)),
-            ),
-        );
+            template()
+                .set_attr("id", "toast-demo-template")
+                .add(mk_alert_success("Some success message :)").setup_toast(false)),
+        )
+        .add(div().class("toast").set_attr("id", "toast-demo-container"));
 
     let lazy_load = div()
         .class("w-full flex flex-col gap-4")
@@ -180,8 +182,6 @@ fn main() {
         .title("Components")
         .add_header_node(daisy_link())
         .add_header_node(source_tailwind())
-        .add_header_node(source_alpinejs_persist())
-        .add_header_node(source_alpinejs())
         .add_header_node(script_setup_toast())
         .add_header_node(script_setup_theme("light", "dark"))
         .add_body_node(body)
