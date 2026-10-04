@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/renato145/fhtmx/compare/fhtmx-derive-v0.6.1...fhtmx-derive-v0.7.0) (2026-10-04)
+
+
+### Features
+
+* update to htmx4 ([53766f9](https://github.com/renato145/fhtmx/commit/53766f9be468582c205a475b26c3528fb00a650a))
+
 ## [0.6.1](https://github.com/renato145/fhtmx/compare/fhtmx-derive-v0.6.0...fhtmx-derive-v0.6.1) (2026-06-04)
 
 
