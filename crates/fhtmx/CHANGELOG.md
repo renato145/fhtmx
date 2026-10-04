@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.0.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.32.0...fhtmx-v1.0.0) (2026-10-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* **error:** the public FhtmxError::as_element was removed; use
+
+### Features
+
+* update to htmx4 ([53766f9](https://github.com/renato145/fhtmx/commit/53766f9be468582c205a475b26c3528fb00a650a))
+
+
+### Bug Fixes
+
+* **error:** dedupe render, apply id in callout ([0629f8d](https://github.com/renato145/fhtmx/commit/0629f8da3152a2c649ce4af5963c0cd745184bda))
+* html-escape htmx attribute values ([8b81865](https://github.com/renato145/fhtmx/commit/8b81865f6a5870c661bf24daf7f679bb6e3dbf11))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fhtmx-derive bumped from 0.6.1 to 0.7.0
+
 ## [0.32.0](https://github.com/renato145/fhtmx/compare/fhtmx-v0.31.0...fhtmx-v0.32.0) (2026-06-04)
 
 
