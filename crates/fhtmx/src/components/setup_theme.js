@@ -5,22 +5,20 @@
 
   const isLightMode = () => localStorage.getItem("isLightMode") === "true";
 
-  const themeChange = (isLightMode) => {
-    document.documentElement.dataset.theme = isLightMode
-      ? lightTheme
-      : darkTheme;
+  const themeChange = (light) => {
+    document.documentElement.dataset.theme = light ? lightTheme : darkTheme;
   };
 
   const sync = () => {
-    const isLightMode = isLightMode();
+    const light = isLightMode();
     document.querySelectorAll(toggles).forEach((toggle) => {
-      toggle.checked = isLightMode;
+      toggle.checked = light;
     });
   };
 
-  const setIsLightMode = (isLightMode) => {
-    localStorage.setItem("isLightMode", String(isLightMode));
-    themeChange(isLightMode);
+  const setIsLightMode = (light) => {
+    localStorage.setItem("isLightMode", String(light));
+    themeChange(light);
     sync();
   };
 
