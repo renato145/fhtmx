@@ -7,11 +7,12 @@ edition = "2024"
 fhtmx = { path = "../crates/fhtmx", features = ["actix"] }
 fhtmx-actix = { path = "../crates/fhtmx-actix" }
 anyhow = "1.0"
-tokio = { version = "1.53", features = ["macros", "rt-multi-thread", "fs"] }
-actix-web = "4.15"
+thiserror = "2.0"
+tokio = { version = "1.54", features = ["macros", "rt-multi-thread", "fs"] }
+actix-web = "4.17"
 serde = { version = "1.0", features = ["derive"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tracing-actix-web = "0.7"
-uuid = { version = "1.26", features = ["v4"] }
-actix-web-lab = "0.27"
+uuid = { version = "1.28", features = ["v4"] }
+actix-web-lab = "0.29"
