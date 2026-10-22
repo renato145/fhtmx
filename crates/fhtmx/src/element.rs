@@ -259,12 +259,12 @@ pub trait Element: Sized {
     }
 
     /// Adds a raw HTML child mutably.
-    fn add_raw_mut(&mut self, raw: impl ToString) {
+    fn add_raw_mut(&mut self, raw: impl Into<String>) {
         self.children_mut().push(raw_node(raw));
     }
 
     /// Adds a raw HTML child and returns `self`.
-    fn add_raw(mut self, raw: impl ToString) -> Self {
+    fn add_raw(mut self, raw: impl Into<String>) -> Self {
         self.add_raw_mut(raw);
         self
     }

@@ -46,9 +46,9 @@ pub struct FhtmxError {
 
 impl FhtmxError {
     /// Defines a new custom error as toast and with tracing
-    pub fn custom_error(e: impl ToString) -> Self {
+    pub fn custom_error(e: impl Into<String>) -> Self {
         Self {
-            context: Some(e.to_string()),
+            context: Some(e.into()),
             source: None,
             hx_retarget: None,
             hx_reswap: None,
@@ -113,22 +113,22 @@ impl FhtmxError {
     }
 
     /// Sets the context of the error
-    pub fn set_context(mut self, context: impl ToString) -> Self {
-        self.context = Some(context.to_string());
+    pub fn set_context(mut self, context: impl Into<String>) -> Self {
+        self.context = Some(context.into());
         self
     }
 
     /// Retargets the error response to an error container id. When rendering as toast (default),
     /// default retarget is "#toast-container"
-    pub fn hx_retarget(mut self, target: impl ToString) -> Self {
-        self.hx_retarget = Some(target.to_string());
+    pub fn hx_retarget(mut self, target: impl Into<String>) -> Self {
+        self.hx_retarget = Some(target.into());
         self
     }
 
     /// Sets the swap strategy for the error response. When rendering as toast (default),
     /// default reswap is `HXSwap::AfterBegin`
-    pub fn hx_reswap(mut self, swap: impl ToString) -> Self {
-        self.hx_reswap = Some(swap.to_string());
+    pub fn hx_reswap(mut self, swap: impl Into<String>) -> Self {
+        self.hx_reswap = Some(swap.into());
         self
     }
 
@@ -139,14 +139,14 @@ impl FhtmxError {
     }
 
     /// Add id to the rendered error
-    pub fn set_id(mut self, id: impl ToString) -> Self {
-        self.id = Some(id.to_string());
+    pub fn set_id(mut self, id: impl Into<String>) -> Self {
+        self.id = Some(id.into());
         self
     }
 
     /// Add extra classes to the rendered error
-    pub fn set_xtra_classes(mut self, xtra_classes: impl ToString) -> Self {
-        self.xtra_classes = Some(xtra_classes.to_string());
+    pub fn set_xtra_classes(mut self, xtra_classes: impl Into<String>) -> Self {
+        self.xtra_classes = Some(xtra_classes.into());
         self
     }
 
@@ -223,24 +223,24 @@ impl IntoHtmlElement for FhtmxError {
 /// Extension methods for [`FhtmxError`] and `Result<T, FhtmxError>`.
 pub trait FhtmxErrorExt {
     /// Sets the context of the error
-    fn fhtmx_set_context(self, context: impl ToString) -> Self;
+    fn fhtmx_set_context(self, context: impl Into<String>) -> Self;
 
     /// Retargets the error response to an error container id. When rendering as toast (default),
     /// default retarget is "#toast-container"
-    fn fhtmx_retarget(self, target: impl ToString) -> Self;
+    fn fhtmx_retarget(self, target: impl Into<String>) -> Self;
 
     /// Sets the swap strategy for the error response. When rendering as toast (default),
     /// default reswap is `HXSwap::AfterBegin`
-    fn fhtmx_hx_reswap(self, swap: impl ToString) -> Self;
+    fn fhtmx_hx_reswap(self, swap: impl Into<String>) -> Self;
 
     /// Do not log the error when rendering response
     fn fhtmx_skip_tracing(self) -> Self;
 
     /// Add id to the rendered error
-    fn fhtmx_add_id(self, id: impl ToString) -> Self;
+    fn fhtmx_add_id(self, id: impl Into<String>) -> Self;
 
     /// Add extra classes to the rendered error
-    fn fhtmx_add_classes(self, xtra_classes: impl ToString) -> Self;
+    fn fhtmx_add_classes(self, xtra_classes: impl Into<String>) -> Self;
 
     /// Do not set the rendered error as a toast
     fn fhtmx_disable_toast(self) -> Self;
@@ -250,15 +250,15 @@ pub trait FhtmxErrorExt {
 }
 
 impl FhtmxErrorExt for FhtmxError {
-    fn fhtmx_set_context(self, context: impl ToString) -> Self {
+    fn fhtmx_set_context(self, context: impl Into<String>) -> Self {
         self.set_context(context)
     }
 
-    fn fhtmx_retarget(self, target: impl ToString) -> Self {
+    fn fhtmx_retarget(self, target: impl Into<String>) -> Self {
         self.hx_retarget(target)
     }
 
-    fn fhtmx_hx_reswap(self, swap: impl ToString) -> Self {
+    fn fhtmx_hx_reswap(self, swap: impl Into<String>) -> Self {
         self.hx_reswap(swap)
     }
 
@@ -266,11 +266,11 @@ impl FhtmxErrorExt for FhtmxError {
         self.skip_tracing()
     }
 
-    fn fhtmx_add_id(self, id: impl ToString) -> Self {
+    fn fhtmx_add_id(self, id: impl Into<String>) -> Self {
         self.set_id(id)
     }
 
-    fn fhtmx_add_classes(self, xtra_classes: impl ToString) -> Self {
+    fn fhtmx_add_classes(self, xtra_classes: impl Into<String>) -> Self {
         self.set_xtra_classes(xtra_classes)
     }
 
@@ -284,21 +284,21 @@ impl FhtmxErrorExt for FhtmxError {
 }
 
 impl<T> FhtmxErrorExt for Result<T, FhtmxError> {
-    fn fhtmx_set_context(self, context: impl ToString) -> Self {
+    fn fhtmx_set_context(self, context: impl Into<String>) -> Self {
         match self {
             Ok(ok) => Ok(ok),
             Err(e) => Err(e.fhtmx_set_context(context)),
         }
     }
 
-    fn fhtmx_retarget(self, target: impl ToString) -> Self {
+    fn fhtmx_retarget(self, target: impl Into<String>) -> Self {
         match self {
             Ok(ok) => Ok(ok),
             Err(e) => Err(e.fhtmx_retarget(target)),
         }
     }
 
-    fn fhtmx_hx_reswap(self, swap: impl ToString) -> Self {
+    fn fhtmx_hx_reswap(self, swap: impl Into<String>) -> Self {
         match self {
             Ok(ok) => Ok(ok),
             Err(e) => Err(e.fhtmx_hx_reswap(swap)),
@@ -312,14 +312,14 @@ impl<T> FhtmxErrorExt for Result<T, FhtmxError> {
         }
     }
 
-    fn fhtmx_add_id(self, id: impl ToString) -> Self {
+    fn fhtmx_add_id(self, id: impl Into<String>) -> Self {
         match self {
             Ok(ok) => Ok(ok),
             Err(e) => Err(e.fhtmx_add_id(id)),
         }
     }
 
-    fn fhtmx_add_classes(self, xtra_classes: impl ToString) -> Self {
+    fn fhtmx_add_classes(self, xtra_classes: impl Into<String>) -> Self {
         match self {
             Ok(ok) => Ok(ok),
             Err(e) => Err(e.fhtmx_add_classes(xtra_classes)),
@@ -390,7 +390,7 @@ where
     {
         match self {
             Ok(ok) => Ok(ok),
-            Err(e) => Err(FhtmxError::from_error(e).fhtmx_set_context(context)),
+            Err(e) => Err(FhtmxError::from_error(e).fhtmx_set_context(context.to_string())),
         }
     }
 
@@ -401,7 +401,7 @@ where
     {
         match self {
             Ok(ok) => Ok(ok),
-            Err(e) => Err(FhtmxError::from_error(e).fhtmx_set_context(f())),
+            Err(e) => Err(FhtmxError::from_error(e).fhtmx_set_context(f().to_string())),
         }
     }
 }
@@ -420,7 +420,7 @@ impl<T> FhtmxContext<T> for Option<T> {
     {
         match self {
             Some(ok) => Ok(ok),
-            None => Err(FhtmxError::custom_error(context)),
+            None => Err(FhtmxError::custom_error(context.to_string())),
         }
     }
 
@@ -431,7 +431,7 @@ impl<T> FhtmxContext<T> for Option<T> {
     {
         match self {
             Some(ok) => Ok(ok),
-            None => Err(FhtmxError::custom_error(f())),
+            None => Err(FhtmxError::custom_error(f().to_string())),
         }
     }
 }

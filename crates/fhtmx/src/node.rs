@@ -38,8 +38,8 @@ impl HtmlNode {
 
 /// Creates a [`HtmlNode::Raw`] node from a string.
 #[inline]
-pub fn raw_node(raw: impl ToString) -> HtmlNode {
-    HtmlNode::Raw(raw.to_string())
+pub fn raw_node(raw: impl Into<String>) -> HtmlNode {
+    HtmlNode::Raw(raw.into())
 }
 
 /// Creates a [`HtmlNode::Fragment`] from an iterator of nodes.

@@ -16,8 +16,8 @@ macro_rules! new_alert {
         paste! {
             $(
                 #[doc = "Creates a new Daisy alert component with " $color " color."]
-                pub fn [<mk_alert_ $color>](s: impl ToString) -> HtmlElement {
-                    let child = span().class("whitespace-pre-wrap").add(s.to_string());
+                pub fn [<mk_alert_ $color>](s: impl Into<String>) -> HtmlElement {
+                    let child = span().class("whitespace-pre-wrap").add(s.into());
                     mk_alert(icons::$color(), child).add_class(concat!("alert-", stringify!($color)))
                 }
             )*

@@ -55,14 +55,14 @@ impl HtmlPage {
     }
 
     /// Sets the page title.
-    pub fn title(mut self, title: impl ToString) -> Self {
-        self.title = Some(title.to_string());
+    pub fn title(mut self, title: impl Into<String>) -> Self {
+        self.title = Some(title.into());
         self
     }
 
     /// Sets the meta description.
-    pub fn description(mut self, description: impl ToString) -> Self {
-        self.description = Some(description.to_string());
+    pub fn description(mut self, description: impl Into<String>) -> Self {
+        self.description = Some(description.into());
         self
     }
 

@@ -23,9 +23,9 @@ pub struct UrlBuilder {
 
 impl UrlBuilder {
     /// Creates a new builder with the given base URL.
-    pub fn new(base: impl ToString) -> Self {
+    pub fn new(base: impl Into<String>) -> Self {
         Self {
-            base: base.to_string(),
+            base: base.into(),
             query_encoder: None,
         }
     }
