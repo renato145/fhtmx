@@ -1,6 +1,9 @@
 use crate::{element::Element, html_element::*};
 
 /// Script to setup toast
+///
+/// You may want to add a `dc_toast().id("toast-container")` element in your page if you want to use
+/// `.setup_toast()`
 pub fn script_setup_toast() -> HtmlElement {
     script().add_raw(include_str!("setup_toast.js"))
 }
