@@ -4,3 +4,14 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+fhtmx = { path = "../crates/fhtmx", features = ["axum"] }
+fhtmx-axum = { path = "../crates/fhtmx-axum" }
+anyhow = "1.0"
+thiserror = "2.0"
+tokio = { version = "1.54", features = ["macros", "rt-multi-thread", "net"] }
+axum = "0.8"
+serde = { version = "1.0", features = ["derive"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tower-http = { version = "0.7", features = ["trace"] }
+uuid = { version = "1.28", features = ["v4"] }

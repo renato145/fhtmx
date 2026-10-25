@@ -1,0 +1,25 @@
+_default:
+  @just --choose
+
+checks:
+  #!/usr/bin/env bash
+  set -x
+  cargo clippy --all-targets
+  cargo fmt --all -- --check
+
+clippy-pedantic:
+  cargo clippy --workspace -- -W clippy::pedantic
+
+watch-run:
+  bacon run-long
+
+browser-sync:
+  npm run browser-sync
+
+tmux-run:
+  #!/usr/bin/env bash
+  tmux new-window
+  tmux split-window -v -p 25
+  tmux select-pane -t 0; tmux send-keys "just watch-run" C-m
+  tmux select-pane -t 1; tmux send-keys "just browser-sync" C-m
+  tmux select-pane -t 0

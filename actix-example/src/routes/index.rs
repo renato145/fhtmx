@@ -13,7 +13,6 @@ fn page_layout(title: &str, content: impl IntoNode) -> HttpResponse {
     let html_body = HtmlPage::new()
         .custom_html_node(html().set_attr("data-theme", "dark").lang("en"))
         .add_header_node(source_htmx())
-        .add_header_node(source_htmx_sse())
         .add_header_node(daisy_link())
         .add_header_node(source_tailwind())
         .add_header_node(script_setup_toast())

@@ -6,7 +6,7 @@ Rust HTML builder library with htmx and DaisyUI support. Cargo workspace with 4 
 
 - **Language**: Rust (edition 2024)
 - **Workspace root**: `Cargo.toml`, members `crates/*`; `actix-example/` and `axum-example/` are
-  separate demo apps excluded from the workspace (own `Cargo.toml`; actix-example has a justfile +
+  separate demo apps excluded from the workspace (own `Cargo.toml`; both have a justfile +
   browser-sync config for live preview)
 - **Crates**:
   - `fhtmx` — core HTML/SVG/htmx builder, DaisyUI components, `HtmlView` derive re-export
