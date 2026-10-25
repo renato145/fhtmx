@@ -31,7 +31,7 @@ pub async fn add_todo(
     if n == 1 {
         html_body.push(sort_list_btn(1).hx_swap_oob("true"));
     }
-    Ok(Html(html_body.into_node().render()))
+    Ok(Html(html_body.render()))
 }
 
 #[tracing::instrument(skip(state))]
@@ -50,7 +50,7 @@ pub async fn rm_todo(
     if todo_list.is_empty() {
         html_body.push(sort_list_btn(0).hx_swap_oob("true"));
     }
-    Ok(Html(html_body.into_node().render()))
+    Ok(Html(html_body.render()))
 }
 
 #[tracing::instrument(skip(state))]

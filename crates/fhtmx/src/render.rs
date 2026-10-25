@@ -146,6 +146,20 @@ impl Render for HtmlNode {
     }
 }
 
+impl<T: Render> Render for Vec<T> {
+    fn render_to(&self, buf: &mut String, indent: usize) {
+        for node in self {
+            node.render_to(buf, indent);
+            buf.push('\n');
+        }
+        buf.pop();
+    }
+
+    fn size_hint(&self) -> usize {
+        self.iter().map(|n| n.size_hint()).sum()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
