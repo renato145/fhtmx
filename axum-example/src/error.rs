@@ -12,10 +12,20 @@ pub enum AppError {
     IdNotFound,
 }
 
+impl AppError {
+    fn status_code(&self) -> StatusCode {
+        match self {
+            Self::InvalidContent => StatusCode::UNPROCESSABLE_ENTITY,
+            Self::InvalidUuid(_) => StatusCode::BAD_REQUEST,
+            Self::IdNotFound => StatusCode::NOT_FOUND,
+        }
+    }
+}
+
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
         (
-            StatusCode::BAD_REQUEST,
+            self.status_code(),
             Html(mk_alert_error(self.to_string()).setup_toast(true).render()),
         )
             .into_response()

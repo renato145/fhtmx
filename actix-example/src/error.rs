@@ -13,7 +13,11 @@ pub enum AppError {
 
 impl ResponseError for AppError {
     fn status_code(&self) -> actix_web::http::StatusCode {
-        actix_web::http::StatusCode::BAD_REQUEST
+        match self {
+            Self::InvalidContent => actix_web::http::StatusCode::UNPROCESSABLE_ENTITY,
+            Self::InvalidUuid(_) => actix_web::http::StatusCode::BAD_REQUEST,
+            Self::IdNotFound => actix_web::http::StatusCode::NOT_FOUND,
+        }
     }
 
     fn error_response(&self) -> HttpResponse {
