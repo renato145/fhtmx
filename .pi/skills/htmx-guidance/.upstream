@@ -1,0 +1,4 @@
+upstream_repo=bigskysoftware/htmx
+upstream_ref=v4.0.0
+upstream_path=dist/skills/htmx-guidance.md
+upstream_sha256=01417667f919e00586b5deeec95a1ccbed596f6c0d024cbea513dfb203affc1b

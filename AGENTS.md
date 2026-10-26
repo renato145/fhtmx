@@ -35,12 +35,17 @@ Rust HTML builder library with htmx and DaisyUI support. Cargo workspace with 4 
 | Run all examples | `just run-examples` (from `crates/fhtmx/`) |
 | Clippy + fmt | `just checks` (from `crates/fhtmx/`) |
 | Watch/loop | `bacon` (configs in root and `crates/fhtmx/`) |
+| Check htmx skill freshness | `just skills-check` |
+| Update htmx skill from upstream | `just skills-update` |
 
 - Tests use `insta` inline snapshots (`assert_snapshot!(x, @r#"..."#)`) and `googletest` matchers
   (`#[gtest]`); unit tests live inline in `#[cfg(test)]` modules, integration tests in
   `crates/fhtmx/tests/`. Intentional render changes require updating the inline snapshots.
 - Husky + commitlint enforce conventional commits (`npm install` / `pnpm install` for the
   `commit-msg` hook). Releases go through release-please.
+- `.pi/skills/htmx-guidance/SKILL.md` is vendored from `bigskysoftware/htmx`
+  (`dist/skills/htmx-guidance.md`); `.upstream` pins the release tag and SHA-256. Don't edit it by
+  hand: run `just skills-update` to follow the latest htmx release and `just skills-check` to verify.
 
 ## Code Style
 
