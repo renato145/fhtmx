@@ -4,6 +4,7 @@ use crate::{
 };
 use axum::{extract::State, response::Html};
 use fhtmx::prelude::*;
+use std::sync::Arc;
 
 fn page_layout(title: &str, content: impl IntoNode) -> Html<String> {
     let body = main_container()
@@ -24,7 +25,7 @@ fn page_layout(title: &str, content: impl IntoNode) -> Html<String> {
 }
 
 #[tracing::instrument(skip(state))]
-pub async fn index_page(State(state): State<AppState>) -> Html<String> {
+pub async fn index_page(State(state): State<Arc<AppState>>) -> Html<String> {
     let items = state.read_todo_list();
     let todo_list = div().class("mt-4 p-4 flex flex-col gap-y-2").add_children([
         todo_list_description(items.len()),

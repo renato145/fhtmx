@@ -3,7 +3,7 @@ use actix_example::{
         index::index_page,
         todo::{add_todo, clear_todo, get_todo, rm_todo, sort_todo, todo_form, update_todo},
     },
-    state::State,
+    state::AppState,
 };
 use actix_web::{App, HttpResponse, HttpServer, web};
 use fhtmx::prelude::*;
@@ -29,7 +29,7 @@ async fn main() -> anyhow::Result<()> {
         )
         .init();
 
-    let state = web::Data::new(State::default());
+    let state = web::Data::new(AppState::default());
 
     HttpServer::new(move || {
         App::new()
@@ -52,7 +52,7 @@ async fn main() -> anyhow::Result<()> {
 }
 
 #[tracing::instrument(skip(state))]
-async fn js_invoke(state: web::Data<State>) -> HttpResponse {
+async fn js_invoke(state: web::Data<AppState>) -> HttpResponse {
     let n = state.todo_list.lock().unwrap().len();
     iife(format!(r#"alert("Your list got {n} items.");"#)).render_response()
 }

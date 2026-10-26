@@ -1,7 +1,7 @@
 use crate::{
     error::AppError,
     html_elements::{sort_list_btn, todo_list_description},
-    state::State,
+    state::AppState,
 };
 use actix_web::{HttpResponse, web};
 use fhtmx::prelude::*;
@@ -18,7 +18,7 @@ pub struct TodoContent {
 #[tracing::instrument(skip(state))]
 pub async fn add_todo(
     web::Form(params): web::Form<TodoContent>,
-    state: web::Data<State>,
+    state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     let (new_item, n) = state.add_item(params.content)?;
     let mut html_body = vec![
@@ -34,7 +34,7 @@ pub async fn add_todo(
 #[tracing::instrument(skip(state))]
 pub async fn rm_todo(
     id: web::Path<String>,
-    state: web::Data<State>,
+    state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     let id = Uuid::from_str(&id).map_err(AppError::InvalidUuid)?;
     let mut todo_list = state.todo_list.lock().unwrap();
@@ -53,7 +53,7 @@ pub async fn rm_todo(
 #[tracing::instrument(skip(state))]
 pub async fn todo_form(
     id: web::Path<String>,
-    state: web::Data<State>,
+    state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     let id = Uuid::from_str(&id).map_err(AppError::InvalidUuid)?;
     let response = state
@@ -67,7 +67,7 @@ pub async fn todo_form(
 #[tracing::instrument(skip(state))]
 pub async fn get_todo(
     id: web::Path<String>,
-    state: web::Data<State>,
+    state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     let id = Uuid::from_str(&id).map_err(AppError::InvalidUuid)?;
     let response = state
@@ -82,7 +82,7 @@ pub async fn get_todo(
 pub async fn update_todo(
     id: web::Path<String>,
     web::Form(params): web::Form<TodoContent>,
-    state: web::Data<State>,
+    state: web::Data<AppState>,
 ) -> Result<HttpResponse, AppError> {
     let id = Uuid::from_str(&id).map_err(AppError::InvalidUuid)?;
     let mut todo_list = state.todo_list.lock().unwrap();
@@ -95,14 +95,14 @@ pub async fn update_todo(
 }
 
 #[tracing::instrument(skip(state))]
-pub async fn sort_todo(state: web::Data<State>) -> HttpResponse {
+pub async fn sort_todo(state: web::Data<AppState>) -> HttpResponse {
     let mut todo_list = state.todo_list.lock().unwrap();
     todo_list.sort_by_key(|o| o.value.clone());
     todo_list.clone().into_node().render_response()
 }
 
 #[tracing::instrument(skip(state))]
-pub async fn clear_todo(state: web::Data<State>) -> HttpResponse {
+pub async fn clear_todo(state: web::Data<AppState>) -> HttpResponse {
     state.todo_list.lock().unwrap().clear();
     fragment([
         todo_list_description(0).hx_swap_oob("true"),

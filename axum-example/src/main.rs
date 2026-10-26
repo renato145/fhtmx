@@ -12,6 +12,7 @@ use axum_example::{
     state::AppState,
 };
 use fhtmx::prelude::*;
+use std::sync::Arc;
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{fmt::format::FmtSpan, layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -33,7 +34,7 @@ async fn main() -> anyhow::Result<()> {
         )
         .init();
 
-    let state = AppState::default();
+    let state = Arc::new(AppState::default());
 
     let app = Router::new()
         .route("/", get(index_page))
@@ -52,7 +53,7 @@ async fn main() -> anyhow::Result<()> {
 }
 
 #[tracing::instrument(skip(state))]
-async fn js_invoke(State(state): State<AppState>) -> Html<String> {
+async fn js_invoke(State(state): State<Arc<AppState>>) -> Html<String> {
     let n = state.todo_list.lock().unwrap().len();
     Html(iife(format!(r#"alert("Your list got {n} items.");"#)).render())
 }

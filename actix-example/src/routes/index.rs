@@ -1,6 +1,6 @@
 use crate::{
     html_elements::{sort_list_btn, todo_list_description},
-    state::State,
+    state::AppState,
 };
 use actix_web::{HttpResponse, http::header::ContentType, web};
 use fhtmx::prelude::*;
@@ -26,7 +26,7 @@ fn page_layout(title: &str, content: impl IntoNode) -> HttpResponse {
 }
 
 #[tracing::instrument(skip_all)]
-pub async fn index_page(state: web::Data<State>) -> HttpResponse {
+pub async fn index_page(state: web::Data<AppState>) -> HttpResponse {
     let items = state.read_todo_list();
     let todo_list = div().class("mt-4 p-4 flex flex-col gap-y-2").add_children([
         todo_list_description(items.len()),

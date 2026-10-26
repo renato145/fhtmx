@@ -10,7 +10,7 @@ use axum::{
 };
 use fhtmx::prelude::*;
 use serde::Deserialize;
-use std::str::FromStr;
+use std::{str::FromStr, sync::Arc};
 use uuid::Uuid;
 
 #[derive(Debug, Deserialize)]
@@ -20,7 +20,7 @@ pub struct TodoContent {
 
 #[tracing::instrument(skip(state))]
 pub async fn add_todo(
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
     Form(params): Form<TodoContent>,
 ) -> Result<Html<String>, AppError> {
     let (new_item, n) = state.add_item(params.content)?;
@@ -36,7 +36,7 @@ pub async fn add_todo(
 
 #[tracing::instrument(skip(state))]
 pub async fn rm_todo(
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
     Path(id): Path<String>,
 ) -> Result<Html<String>, AppError> {
     let id = Uuid::from_str(&id).map_err(AppError::InvalidUuid)?;
@@ -55,7 +55,7 @@ pub async fn rm_todo(
 
 #[tracing::instrument(skip(state))]
 pub async fn todo_form(
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
     Path(id): Path<String>,
 ) -> Result<Html<String>, AppError> {
     let id = Uuid::from_str(&id).map_err(AppError::InvalidUuid)?;
@@ -71,7 +71,7 @@ pub async fn todo_form(
 
 #[tracing::instrument(skip(state))]
 pub async fn get_todo(
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
     Path(id): Path<String>,
 ) -> Result<Html<String>, AppError> {
     let id = Uuid::from_str(&id).map_err(AppError::InvalidUuid)?;
@@ -87,7 +87,7 @@ pub async fn get_todo(
 
 #[tracing::instrument(skip(state))]
 pub async fn update_todo(
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
     Path(id): Path<String>,
     Form(params): Form<TodoContent>,
 ) -> Result<Html<String>, AppError> {
@@ -102,14 +102,14 @@ pub async fn update_todo(
 }
 
 #[tracing::instrument(skip(state))]
-pub async fn sort_todo(State(state): State<AppState>) -> Html<String> {
+pub async fn sort_todo(State(state): State<Arc<AppState>>) -> Html<String> {
     let mut todo_list = state.todo_list.lock().unwrap();
     todo_list.sort_by_key(|o| o.value.clone());
     Html(todo_list.clone().into_node().render())
 }
 
 #[tracing::instrument(skip(state))]
-pub async fn clear_todo(State(state): State<AppState>) -> Html<String> {
+pub async fn clear_todo(State(state): State<Arc<AppState>>) -> Html<String> {
     state.todo_list.lock().unwrap().clear();
     Html(
         fragment([

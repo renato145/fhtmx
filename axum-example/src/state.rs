@@ -1,16 +1,13 @@
 use crate::{domain::TodoListItem, error::AppError};
-use std::sync::{Arc, Mutex};
+use std::sync::Mutex;
 use uuid::Uuid;
 
 #[derive(Default)]
-pub struct State {
+pub struct AppState {
     pub todo_list: Mutex<Vec<TodoListItem>>,
 }
 
-/// Shared application state for the axum handlers.
-pub type AppState = Arc<State>;
-
-impl State {
+impl AppState {
     pub fn read_todo_list(&self) -> Vec<TodoListItem> {
         self.todo_list.lock().unwrap().clone()
     }
