@@ -1,6 +1,6 @@
 ---
 name: fhtmx-axum-guidance
-description: Use when writing or reviewing Axum handlers with fhtmx-axum — HTML responses via render_response(), the HxRequest extractor, FhtmxError as IntoResponse, out-of-band swaps, and Server-Sent Events (SseSetup/SseState). Pair with the fhtmx-guidance skill for the builder API.
+description: Use when writing or reviewing Axum handlers with fhtmx-axum — HTML responses via Html<String>, the HxRequest extractor, error responses via IntoResponse, out-of-band swaps, and Server-Sent Events (SseSetup/SseState). Pair with the fhtmx-guidance skill for the builder API.
 metadata:
   fhtmx-axum: "0.4"
   fhtmx: "0.32"
@@ -29,25 +29,27 @@ axum = "0.8"
 use fhtmx::prelude::*;
 
 // ⚠️ SSE types are NOT in the axum prelude — import them explicitly:
-use fhtmx_axum::prelude::*;                      // response helpers + result alias
+use fhtmx_axum::prelude::*;                      // HxRequest + response helpers
 use fhtmx_axum::sse::{SseSetup, SseState, SseHandlerQuery};
 ```
 
 ## Rendering responses
 
-`FhtmxAxumResponse` is implemented for every `Render` type and produces an axum `Response`
-with `text/html; charset=utf-8`:
+Return typed HTML with `Html<String>`; axum sets `text/html; charset=utf-8`:
 
 ```rust
-use fhtmx_axum::prelude::*;
+use axum::response::Html;
+use fhtmx::prelude::*;
 
-fn handler() -> Response {
-    div().id("result").add("Hello, htmx!").render_response()
+fn handler() -> Html<String> {
+    Html(div().id("result").add("Hello, htmx!").render())
 }
 ```
 
 A partial handler renders just the fragment (no `HtmlPage`); a full page handler wraps the
-fragment in `HtmlPage` (see `fhtmx-guidance`).
+fragment in `HtmlPage` (see `fhtmx-guidance`). The `FhtmxAxumResponse::render_response()`
+helper still exists when an opaque `Response` is required, but prefer `Html<String>` in
+normal handlers.
 
 ## Full page vs partial: HxRequest extractor
 
@@ -55,39 +57,69 @@ fragment in `HtmlPage` (see `fhtmx-guidance`).
 destructure it directly in the handler signature:
 
 ```rust
+use axum::{extract::State, response::Html};
 use fhtmx_axum::prelude::HxRequest;
+use std::sync::Arc;
 
-async fn index(HxRequest(is_htmx): HxRequest, State(state): State<AppState>) -> Response {
+async fn index(
+    HxRequest(is_htmx): HxRequest,
+    State(state): State<Arc<AppState>>,
+) -> Html<String> {
     if is_htmx {
-        render_list(state).render_response() // partial
+        Html(render_list(state).render()) // partial
     } else {
-        page_layout("Items", render_list(state)) // full page
+        page_layout("Items", render_list(state)) // full page -> Html<String>
     }
 }
 ```
 
 ## Errors
 
-`FhtmxError` implements `IntoResponse`: it responds with **HTTP 200** plus
-`HX-Retarget`/`HX-Reswap` headers (default `#toast-container` / `afterbegin` when rendered
-as a toast) so htmx always swaps the error into the page. It is traced via `tracing::error!`
-unless `.skip_tracing()` was set.
-
-Return `FhtmxAxumResult<T>` (= `Result<Response, FhtmxError>`) and attach context with
-`fhtmx_context` / `into_fhtmx_error` from the `fhtmx` prelude:
+Define a typed error enum and implement `IntoResponse`. The example
+(`axum-example/src/error.rs`) maps each variant to a status code and renders the message as
+an OOB toast:
 
 ```rust
-async fn rm_todo(Path(id): Path<String>, State(state): State<AppState>) -> FhtmxAxumResult {
-    let id = Uuid::from_str(&id).fhtmx_context("invalid id")?;
-    let item = state.get_item(id).fhtmx_context("id not found")?;
-    Ok(item.html().render_response())
+use axum::http::StatusCode;
+use axum::response::{Html, IntoResponse, Response};
+use fhtmx::prelude::*;
+
+#[derive(Debug, thiserror::Error)]
+pub enum AppError {
+    #[error("Invalid content for a todo item.")]
+    InvalidContent,
+    #[error("Invalid uuid.")]
+    InvalidUuid(#[source] uuid::Error),
+    #[error("Id not found.")]
+    IdNotFound,
+}
+
+impl AppError {
+    fn status_code(&self) -> StatusCode {
+        match self {
+            Self::InvalidContent => StatusCode::UNPROCESSABLE_ENTITY,
+            Self::InvalidUuid(_) => StatusCode::BAD_REQUEST,
+            Self::IdNotFound => StatusCode::NOT_FOUND,
+        }
+    }
+}
+
+impl IntoResponse for AppError {
+    fn into_response(self) -> Response {
+        (
+            self.status_code(),
+            Html(mk_alert_error(self.to_string()).setup_toast(true).render()),
+        )
+            .into_response()
+    }
 }
 ```
 
-Customize error rendering with `FhtmxError::custom_error(...).disable_toast()`
-(alert/callout instead of toast), `.hx_retarget("#errors")`, `.hide_source()`. htmx 4 swaps
-4xx/5xx responses by default — keep the 200-status behavior unless you add an `hx-status`
-policy.
+Handlers return `Result<Html<String>, AppError>` (or `Html<String>` on success) and use `?`
+normally. Requires `script_setup_toast()` in `<head>` and
+`dc_toast().id("toast-container")` in the body. htmx 4 swaps 4xx/5xx responses by default;
+the OOB toast is handled separately, but add `hx-status` on destructive actions if the main
+target must not swap on error.
 
 ## Out-of-band swaps
 
@@ -95,12 +127,14 @@ Update several page regions from one response: main target in the body, other re
 with `.hx_swap_oob("true")` (replace-by-id):
 
 ```rust
-vec![
-    new_item.html(),
-    todo_description(len).hx_swap_oob("true"),
-]
+Html(
+    vec![
+        new_item.html(),
+        todo_description(len).hx_swap_oob("true"),
+    ]
     .into_node() // Vec<HtmlNode> -> fragment
-    .render_response()
+    .render(),
+)
 ```
 
 ## Server-Sent Events
@@ -126,7 +160,7 @@ Producer handler (spawns a task; sends rendered HTML as a plain string):
 ```rust
 async fn start_stream(
     Query(query): Query<SseHandlerQuery>,     // sse_id: Uuid from setup_sse.js
-    State(state): State<AppState>,
+    State(state): State<Arc<AppState>>,
     sse_state: State<SseState<FhtmxUiNoSessionData>>,
 ) -> Response {
     let id = query.sse_id;
@@ -164,7 +198,9 @@ HtmlPage::new()
   adapter's `HXRequest`, there is no `.is_htmx()` method. Don't mix them.
 - The axum prelude does **not** re-export the `sse` module (the actix prelude does) — always
   `use fhtmx_axum::sse::{SseSetup, SseState, SseHandlerQuery};` explicitly.
+- Name the shared state `AppState`, not `State`: `axum::extract::State` is also in scope,
+  and the examples use `State<Arc<AppState>>`.
 - `.hx_swap_oob("true")` replaces the element **with the same id** in the page; the swapped
   element must carry the matching `id`.
-- Error responses are HTTP 200 by design (see Errors); do not map `FhtmxError` to 4xx/5xx
-  without an `hx-status` policy.
+- Error responses use real 4xx/5xx statuses and render an OOB toast (see Errors); use
+  `hx-status` when the main target must not swap on error.

@@ -1,6 +1,6 @@
 ---
 name: fhtmx-guidance
-description: Use when writing or reviewing Rust code that builds HTML with the fhtmx crate — tag builders, Element methods, DaisyUI components (dc_*/mk_*), HtmlPage, the HtmlView derive, FhtmxError, htmx attributes, or SVG. Framework-agnostic; pair with fhtmx-actix-guidance or fhtmx-axum-guidance for web-handler wiring.
+description: Use when writing or reviewing Rust code that builds HTML with the fhtmx crate — tag builders, Element methods, DaisyUI components (dc_*/mk_*), HtmlPage, the HtmlView derive, error rendering, htmx attributes, or SVG. Framework-agnostic; pair with fhtmx-actix-guidance or fhtmx-axum-guidance for web-handler wiring.
 metadata:
   fhtmx: "0.32"
 ---
@@ -243,7 +243,7 @@ let page = HtmlPage::new()
 | `daisy_link()` | DaisyUI 5 stylesheet |
 | `typography_css()` | prose/typography styles |
 | `script_setup_sse()` | SSE session-id handshake (see framework skills) |
-| `script_setup_toast()` | toast dismissal — required by `setup_toast`/`FhtmxError` toasts |
+| `script_setup_toast()` | toast dismissal — required by `setup_toast()` toasts |
 | `script_setup_theme(light, dark)` | theme switching — required by `theme_toggle()` |
 
 Defaults: charset UTF-8 and viewport meta are preset; `.title()` optional.
@@ -293,37 +293,25 @@ Struct attrs: `title` (string or expr), `mode` (`"list"` default | `"table"` |
 Field attrs: `skip`, `alias`, `value` (expr), `value_display`, `value_debug`,
 `value_debug_pretty` (exactly one of `value*` allowed), `row_class`, `value_class`.
 
-## Errors: FhtmxError
+## Errors
 
-`FhtmxError` renders any failure as HTML. Default: a DaisyUI error **toast**; adapters send
-HTTP **200** with `HX-Retarget: #toast-container` and `HX-Reswap: afterbegin` so htmx always
-swaps it into the page. With a source chain it renders as a callout containing the
-"Caused by" chain (`.hide_source()` to drop it).
+Use a typed app error (`thiserror`) and render its message as a DaisyUI alert marked for the
+toast container. Both examples (`actix-example/`, `axum-example/`) follow this pattern:
 
 ```rust
-use fhtmx::prelude::*;
-
-// Attach context to any Result<T, E: Error> or Option<T>:
-let n: i32 = "abc".parse().fhtmx_context("Failed to parse age")?;
-let user = users.find(id).fhtmx_context("User not found")?;
-
-// From anyhow::Error (default feature):
-return Err(e).into_fhtmx_error();
-
-// Customize the rendered response:
-Err(FhtmxError::custom_error("Could not save")
-    .disable_toast()          // render as alert/callout instead of toast
-    .hx_retarget("#errors")   // custom retarget (implies no default toast retarget)
-    .skip_tracing())
+// Framework-agnostic error body: OOB-inserted into #toast-container.
+mk_alert_error("Could not save").setup_toast(true).render()
 ```
 
-`FhtmxErrorExt` gives `fhtmx_*`-prefixed setters on both `FhtmxError` and
-`Result<T, FhtmxError>` for use in `?`-heavy handlers. Handlers return
-`Result<impl Response, FhtmxError>` — see the framework skills for the response types.
-
-⚠️ htmx 4 swaps 4xx/5xx responses by default; fhtmx deliberately answers errors with 200 +
-retarget headers. If you return error HTML with an error status instead, design it as swap
-content or opt out with `hx-status:4xx="swap:none"`.
+- The page must include `script_setup_toast()` in `<head>` and
+  `dc_toast().id("toast-container")` in the body.
+- `setup_toast(true)` wraps the alert in `hx-swap-oob="afterbegin:#toast-container"`, so it
+  is consumed out-of-band and removed from the normal swap.
+- Implement the framework's error trait (`ResponseError` for Actix, `IntoResponse` for Axum)
+  and map each variant to a real status code (e.g. `400`, `404`, `422`) — see the framework
+  skills for complete examples.
+- htmx 4 swaps 4xx/5xx responses by default. The OOB toast is handled separately, but add
+  `hx-status` on destructive actions if the main target must not swap on error.
 
 ## Utilities
 
@@ -351,8 +339,8 @@ Integrate custom types by implementing:
    "fix" this with `set_raw_attr`.
 4. `mk_markdown` emits raw HTML from the markdown source — trusted input only; sanitize
    untrusted markdown upstream.
-5. `FhtmxError` responding with HTTP 200 + `HX-Retarget` is intentional (htmx must swap the
-   error into the page); do not change it to 4xx/5xx without an `hx-status` policy.
+5. Errors are normally rendered as OOB toasts (`setup_toast(true)`); htmx 4 still swaps
+   4xx/5xx responses by default, so use `hx-status` when the target must not change.
 6. Prefer `IntoNode` over `ToString` at component boundaries so callers can pass elements,
    not just text.
 

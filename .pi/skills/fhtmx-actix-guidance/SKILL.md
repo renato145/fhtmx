@@ -1,6 +1,6 @@
 ---
 name: fhtmx-actix-guidance
-description: Use when writing or reviewing Actix-web handlers with fhtmx-actix — HTML responses via render_response(), the HXRequest extractor, FhtmxError as ResponseError, out-of-band swaps, and Server-Sent Events (SseSetup/SseState). Pair with the fhtmx-guidance skill for the builder API.
+description: Use when writing or reviewing Actix-web handlers with fhtmx-actix — HTML responses via render_response(), the HXRequest extractor, error responses via ResponseError, out-of-band swaps, and Server-Sent Events (SseSetup/SseState). Pair with the fhtmx-guidance skill for the builder API.
 metadata:
   fhtmx-actix: "0.11"
   fhtmx: "0.32"
@@ -52,7 +52,7 @@ fragment in `HtmlPage` (see `fhtmx-guidance`).
 ```rust
 use fhtmx_actix::prelude::HXRequest;
 
-async fn index(req: HXRequest, state: web::Data<State>) -> HttpResponse {
+async fn index(req: HXRequest, state: web::Data<AppState>) -> HttpResponse {
     if req.is_htmx() {
         render_list(state).render_response() // partial
     } else {
@@ -63,26 +63,45 @@ async fn index(req: HXRequest, state: web::Data<State>) -> HttpResponse {
 
 ## Errors
 
-`FhtmxError` implements `ResponseError`: it responds with **HTTP 200** plus
-`HX-Retarget`/`HX-Reswap` headers (default `#toast-container` / `afterbegin` when rendered
-as a toast) so htmx always swaps the error into the page. It is traced via `tracing::error!`
-unless `.skip_tracing()` was set.
-
-Return `FhtmxActixResult<T>` (= `Result<HttpResponse, FhtmxError>`) and attach context with
-`fhtmx_context` / `into_fhtmx_error` from the `fhtmx` prelude:
+Define a typed error enum and implement `ResponseError`. The example
+(`actix-example/src/error.rs`) maps each variant to a status code and renders the message as
+an OOB toast:
 
 ```rust
-async fn rm_todo(id: web::Path<String>, state: web::Data<State>) -> FhtmxActixResult {
-    let id = Uuid::from_str(&id).fhtmx_context("invalid id")?;
-    let item = state.get_item(id).fhtmx_context("id not found")?;
-    Ok(item.html().render_response())
+use actix_web::{HttpResponse, ResponseError, http::header::ContentType};
+use fhtmx::prelude::*;
+
+#[derive(Debug, thiserror::Error)]
+pub enum AppError {
+    #[error("Invalid content for a todo item.")]
+    InvalidContent,
+    #[error("Invalid uuid.")]
+    InvalidUuid(#[source] uuid::Error),
+    #[error("Id not found.")]
+    IdNotFound,
+}
+
+impl ResponseError for AppError {
+    fn status_code(&self) -> actix_web::http::StatusCode {
+        match self {
+            Self::InvalidContent => actix_web::http::StatusCode::UNPROCESSABLE_ENTITY,
+            Self::InvalidUuid(_) => actix_web::http::StatusCode::BAD_REQUEST,
+            Self::IdNotFound => actix_web::http::StatusCode::NOT_FOUND,
+        }
+    }
+
+    fn error_response(&self) -> HttpResponse {
+        HttpResponse::build(self.status_code())
+            .content_type(ContentType::html())
+            .body(mk_alert_error(self.to_string()).setup_toast(true).render())
+    }
 }
 ```
 
-Customize error rendering with `FhtmxError::custom_error(...).disable_toast()`
-(alert/callout instead of toast), `.hx_retarget("#errors")`, `.hide_source()`. htmx 4 swaps
-4xx/5xx responses by default — keep the 200-status behavior unless you add an `hx-status`
-policy.
+Handlers return `Result<HttpResponse, AppError>` and use `?` normally. Requires
+`script_setup_toast()` in `<head>` and `dc_toast().id("toast-container")` in the body.
+htmx 4 swaps 4xx/5xx responses by default; the OOB toast is handled separately, but add
+`hx-status` on destructive actions if the main target must not swap on error.
 
 ## Out-of-band swaps
 
@@ -121,7 +140,7 @@ use actix_web_lab::sse::Data;
 
 async fn start_stream(
     web::Query(query): web::Query<SseHandlerQuery>,   // sse_id: Uuid from setup_sse.js
-    state: web::Data<State>,
+    state: web::Data<AppState>,
     sse_state: web::Data<SseState<FhtmxUiNoSessionData>>,
 ) -> HttpResponse {
     let id = query.sse_id;
@@ -160,5 +179,5 @@ HtmlPage::new()
   tuple-struct `HxRequest(pub bool)` — don't mix them.
 - `.hx_swap_oob("true")` replaces the element **with the same id** in the page; the swapped
   element must carry the matching `id`.
-- Error responses are HTTP 200 by design (see Errors); do not map `FhtmxError` to 4xx/5xx
-  without an `hx-status` policy.
+- Error responses use real 4xx/5xx statuses and render an OOB toast (see Errors); use
+  `hx-status` when the main target must not swap on error.
